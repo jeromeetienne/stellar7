@@ -26,7 +26,7 @@ THREEx.Stellar7Map	= function(){
 		return collided
 	}
 	this.collideWithShoot	= function(shoot){
-		var position	= shoot.object3d.position
+		var position	= shoot.model.object3d.position
 		var collided	= false
 		if( position.x > +this.width/2 ){
 			position.x	= +this.width/2

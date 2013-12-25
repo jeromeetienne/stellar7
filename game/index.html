@@ -3,18 +3,23 @@
 <script src="vendor/require.js/require.js"></script>
 <script src="vendor/three.js/examples/js/Detector.js"></script>
 <script src="vendor/threex.windowresize.js"></script>
+
 <script src='../threex.stellar7tankmodel.js'></script>
 <script src='../threex.stellar7tankcontrols.js'></script>
 <script src='../threex.stellar7tankkeyboardcontrols.js'></script>
 <script src='../threex.stellar7tankplayer.js'></script>
+<script src='../threex.stellar7shootmodel.js'></script>
 <script src='../threex.stellar7shoot.js'></script>
 <script src='../threex.stellar7game.js'></script>
 <script src='../threex.stellar7map.js'></script>
 <script src='webaudiox.gamesounds.js'></script>
+<script src='threex.lightpool.js'></script>
+
 <body style='margin: 0px; background-color: #bbbbbb; overflow: hidden;'><script>
 require([ 'bower_components/threex.grassground/package.require.js'
 	, 'bower_components/threex.keyboardstate/package.require.js'
 	, 'bower_components/threex.skymap/package.require.js'
+	, 'bower_components/threex.spaceships/package.require.js'
 	, 'bower_components/webaudiox/build/webaudiox.js'
 	], function(){
 	// detect WebGL
@@ -37,6 +42,8 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	// handle window resize events
 	var winResize	= new THREEx.WindowResize(renderer, camera)
 
+	window.Stellar7	= {}
+
 	//////////////////////////////////////////////////////////////////////////////////
 	//		add mars							//
 	//////////////////////////////////////////////////////////////////////////////////
@@ -44,18 +51,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	var mesh	= THREEx.createSkymap('mars')
 	scene.add( mesh )
 
-	//////////////////////////////////////////////////////////////////////////////////
-	//		add the grass ground				//
-	//////////////////////////////////////////////////////////////////////////////////	
-	var mesh	= new THREEx.GrassGround({
-		width		: 10,
-		height		: 10,
-		repeatX		: 30,
-		repeatY		: 30,
-	})
-	mesh.scale.multiplyScalar(10)
-	console.dir(mesh)
-	scene.add(mesh)
+
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		default 3 points lightning					//
@@ -69,6 +65,47 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	var backLight	= new THREE.DirectionalLight('white', 0.75)
 	backLight.position.set(-0.5, -0.5, -2)
 	scene.add( backLight )		
+
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
+	
+	var lightPool	= new THREEx.LightPool(scene)
+	Stellar7.lightPool	= lightPool
+	var light	= lightPool.getPointLight()
+	light.color.set('pink')
+	light.intensity	= 1
+	light.position.y+= 10;
+	// lightPool.putPointLight(light)
+
+		// scene.add(light)
+
+	// var light	= new THREE.PointLight('red', 1)
+	// scene.add(light)
+	// light.color.set('yellow')
+	// light.intensity	= 10
+	// light.position.y+= 2;
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		add the grass ground						//
+	//////////////////////////////////////////////////////////////////////////////////	
+	var mesh	= new THREEx.GrassGround({
+		width		: 10,
+		height		: 10,
+		repeatX		: 30,
+		repeatY		: 30,
+	})
+	mesh.material	= new THREE.MeshPhongMaterial({
+		map	: mesh.material.map,
+		color	: 0x44FF44,
+	})
+
+
+
+	mesh.scale.multiplyScalar(10)
+	console.dir(mesh)
+	scene.add(mesh)
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		add an object and make it move					//
@@ -103,16 +140,6 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	// 	camera.lookAt( scene.position )
 	// })
 	
-	
-	//////////////////////////////////////////////////////////////////////////////////
-	//		comment								//
-	//////////////////////////////////////////////////////////////////////////////////
-	var sounds	= new WebAudiox.GameSounds()
-	window.sounds	= sounds
-	sounds.lineOut.volume	= 0.1
-	sounds.add('contactFence', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
-	sounds.add('shootTank', 'sounds/151022__bubaproducer__laser-shot-silenced.wav')
-
 	//////////////////////////////////////////////////////////////////////////////////
 	//		put camera behind						//
 	//////////////////////////////////////////////////////////////////////////////////
@@ -120,6 +147,16 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	player.model.cannonMesh.add(camera)
 	camera.position.set(0,0.75,-2)
 	camera.lookAt(new THREE.Vector3(0,0,2))
+
+	
+	//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
+	var sounds	= new WebAudiox.GameSounds()
+	Stellar7.sounds	= sounds
+	sounds.lineOut.volume	= 0.1
+	sounds.add('contactFence', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
+	sounds.add('shootTank', 'sounds/151022__bubaproducer__laser-shot-silenced.wav')
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		render the scene						//
