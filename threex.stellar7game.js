@@ -33,6 +33,7 @@ THREEx.Stellar7Game	= function(scene){
 	onRenderFcts.push(function(delta, now){
 		players.forEach(function(player){
 			var collided	= map.collideWithTank(player)
+			if( collided )	sounds.play('contactFence')
 			if( collided )	player.onMapCollision()
 		})
 	})
@@ -40,8 +41,8 @@ THREEx.Stellar7Game	= function(scene){
 	onRenderFcts.push(function(delta, now){
 		shoots.forEach(function(shoot){
 			var collided	= map.collideWithShoot(shoot)
-			// if( collided )	shoot.onMapCollision()
 			if( collided ){
+				sounds.play('contactFence')
 				scene.remove( shoot.object3d )
 				shoots.splice(shoots.indexOf(shoot),1)
 			}
@@ -55,6 +56,7 @@ THREEx.Stellar7Game	= function(scene){
 
 		player.addEventListener('fire', function(){
 			var shoot	= new THREEx.Stellar7Shoot.fromTank(player.model)
+			sounds.play('shootTank')
 			scene.add( shoot.object3d )
 			shoots.push(shoot)
 		})

@@ -1,11 +1,19 @@
-* how to code it
-* how to do the security ?
+
+* fightcode - how to do the security ?
   * how a bot can't know more than he should
   * likely a barrier webworker
 
 * in battlefield4, the mission "south china - get back to the valkyrie" is a LOT like a tank.
   * im thinking about copying this for stellar7 clone :)
   * video http://www.youtube.com/watch?v=ZmLtTWx6srk#t=437
+
+* sounds
+  * http://www.freesound.org/people/qubodup/sounds/200303/ for tank engine
+  * for shoot detonation http://www.freesound.org/people/qubodup/sounds/187676/
+  * for shoot/wall collision http://www.freesound.org/people/BigKahuna360/sounds/160421/
+
+
+
 
 What about code orga
 ====================

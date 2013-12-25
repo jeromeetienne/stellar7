@@ -10,16 +10,18 @@
 <script src='../threex.stellar7shoot.js'></script>
 <script src='../threex.stellar7game.js'></script>
 <script src='../threex.stellar7map.js'></script>
+<script src='webaudiox.gamesounds.js'></script>
 <body style='margin: 0px; background-color: #bbbbbb; overflow: hidden;'><script>
 require([ 'bower_components/threex.grassground/package.require.js'
 	, 'bower_components/threex.keyboardstate/package.require.js'
 	, 'bower_components/threex.skymap/package.require.js'
+	, 'bower_components/webaudiox/build/webaudiox.js'
 	], function(){
 	// detect WebGL
 	if( !Detector.webgl ){
 		Detector.addGetWebGLMessage();
 		throw 'WebGL Not Available'
-	} 
+	}
 	// setup webgl renderer full page
 	var renderer	= new THREE.WebGLRenderer();
 	renderer.setSize( window.innerWidth, window.innerHeight );
@@ -100,6 +102,15 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	// 	camera.position.y += (mouse.y*5 - camera.position.y) * (delta*3)
 	// 	camera.lookAt( scene.position )
 	// })
+	
+	
+	//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
+	var sounds	= new WebAudiox.GameSounds()
+	window.sounds	= sounds
+	sounds.add('contactFence', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
+	sounds.add('shootTank', 'sounds/151022__bubaproducer__laser-shot-silenced.wav')
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		put camera behind						//

@@ -1,8 +1,8 @@
 var THREEx	= THREEx	|| {}
 
 THREEx.Stellar7Map	= function(){
-	this.width	= 5
-	this.depth	= 5
+	this.width	= 20
+	this.depth	= 20
 	
 	this.collideWithTank	= function(tank){
 		var position	= tank.model.object3d.position

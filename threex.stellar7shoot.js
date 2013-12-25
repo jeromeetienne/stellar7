@@ -37,7 +37,7 @@ THREEx.Stellar7Shoot.fromTank	= function(tankModel){
 		.copy(tankModel.object3d.position)
 		.add(new THREE.Vector3(0,0.3, 0))
 
-	var velocity	= new THREE.Vector3(0, 0, 2);
+	var velocity	= new THREE.Vector3(0, 0, 20);
 	var rotationY	= tankModel.baseMesh.rotation.y + tankModel.cannonMesh.rotation.y
 	var matrix	= new THREE.Matrix4().makeRotationY(rotationY);
 	velocity.applyMatrix4( matrix );
