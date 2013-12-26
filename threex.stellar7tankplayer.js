@@ -26,7 +26,8 @@ THREEx.Stellar7TankPlayer	= function(){
 	//		controls							//
 	//////////////////////////////////////////////////////////////////////////////////
 
-	var tankControls= new THREEx.Stellar7TankControls(model)
+	var tankControls	= new THREEx.Stellar7TankControls(model)
+	this.tankControls	= tankControls
 	onRenderFcts.push(function(delta, now){
 		tankControls.update(delta, now)
 	})
@@ -76,9 +77,10 @@ THREEx.Stellar7TankPlayer	= function(){
 			controls.update(delta, now)
 		})
 		controls.addEventListener('idle', function(){
+			this.dispatchEvent({ type: 'idle' })
 			controls.push('turnRight', 1)
 				.push('moveAhead', 1)		
-		})
+		}.bind(this))
 		return this
 	}
 

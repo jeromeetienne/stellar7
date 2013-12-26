@@ -53,7 +53,7 @@ THREEx.Stellar7TankControls	= function(tank){
 
 		if( inputs.moveAhead )		moveSpeed	= +1
 		else if( inputs.moveBack )	moveSpeed	= -1
-		else				moveSpeed	= 0
+		else				moveSpeed	=  0
 
 		if( inputs.gunRight )		gunSpeed	= -Math.PI/4
 		else if( inputs.gunLeft )	gunSpeed	= +Math.PI/4
@@ -76,8 +76,8 @@ THREEx.Stellar7TankControls	= function(tank){
 		inputs.moveAhead	= direction > 0 ? true : false
 		inputs.moveBack		= direction < 0 ? true : false
 	}
-	this.moveAhead	= function(){ this.move(-1)	}.bind(this)
-	this.moveBack	= function(){ this.move(+1)	}.bind(this)
+	this.moveAhead	= function(){ this.move(+1)	}.bind(this)
+	this.moveBack	= function(){ this.move(-1)	}.bind(this)
 	this.moveStop	= function(){ this.move( 0)	}.bind(this)
 	
 	this.gun	= function(direction){
