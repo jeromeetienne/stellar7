@@ -7,6 +7,8 @@ THREEx.Stellar7ShootModel	= function(){
 	// do the material	
 	var material	= new THREE.MeshBasicMaterial({
 		color		: 0xffaacc,
+		color		: 'pink',
+		// opacity		: 0.8,
 		map		: texture,
 		side		: THREE.DoubleSide,
 		blending	: THREE.AdditiveBlending,
@@ -33,8 +35,8 @@ THREEx.Stellar7ShootModel	= function(){
 		// init canvas
 		var canvas	= document.createElement( 'canvas' );
 		var context	= canvas.getContext( '2d' );
-		canvas.width	= 16;
-		canvas.height	= 64;
+		canvas.width	= 64;
+		canvas.height	= 128;
 		// set gradient
 		var gradient	= context.createRadialGradient(
 			canvas.width/2, canvas.height /2, 0,

@@ -42,6 +42,7 @@ THREEx.Stellar7Game	= function(scene){
 		shoots.forEach(function(shoot){
 			var collided	= map.collideWithShoot(shoot)
 			if( collided ){
+				shoot.die()
 				Stellar7.sounds.play('contactFence')
 				scene.remove( shoot.model.object3d )
 				shoots.splice(shoots.indexOf(shoot),1)

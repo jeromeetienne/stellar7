@@ -6,9 +6,12 @@ THREEx.LightPool	= function(scene){
 	
 	var pointLights	= []
 	for(var i = 0; i < nPointLights; i++){
-		var pointLight	= new THREE.PointLight('red', 0)
+		var pointLight	= new THREE.PointLight('red', 10)
 		pointLights.push(pointLight)
 		scene.add(pointLight)
+	}
+	this.hasPointLight	= function(){
+		return pointLights.length > 0
 	}
 	this.getPointLight	= function(color, intensity, distance){
 		// handle parameters
@@ -19,7 +22,7 @@ THREEx.LightPool	= function(scene){
 		console.assert(pointLights.length > 0)
 		var pointLight	= pointLights.pop();
 		// reset parameters		
-		pointLight.color.copy(color)
+		pointLight.color.set(color)
 		pointLight.intensity	= intensity
 		pointLight.distance	= distance
 		pointLight.position.set(0,0,0)

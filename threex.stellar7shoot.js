@@ -1,6 +1,8 @@
 var THREEx	= THREEx	|| {}
 
 THREEx.Stellar7Shoot	= function(){
+	// add EventDispatcher in this object
+	THREE.EventDispatcher.prototype.apply(this)
 	// internal render function
 	var onRenderFcts= []
 	this.update	= function(delta, now){
@@ -8,11 +10,26 @@ THREEx.Stellar7Shoot	= function(){
 			onRenderFct(delta, now)
 		})
 	}
+	
+	this.die	= function(){
+		// notify onIdle event
+		this.dispatchEvent({ type: 'die' })		
+	}
 
 	// get the model
 	var model	= new THREEx.Stellar7ShootModel()
 	this.model	= model
 
+	// Attach a light to the model	
+	var lightPool	= Stellar7.lightPool
+	if( lightPool.hasPointLight() ){
+		var light	= lightPool.getPointLight('red', 15, 20)
+		model.object3d.add(light)
+		this.addEventListener('die', function(){
+			lightPool.putPointLight(light)
+		})
+	}
+	
 	//////////////////////////////////////////////////////////////////////////////////
 	//		physics								//
 	//////////////////////////////////////////////////////////////////////////////////

@@ -16,7 +16,7 @@
 <script src='webaudiox.gamesounds.js'></script>
 <script src='threex.lightpool.js'></script>
 
-<body style='margin: 0px; background-color: #bbbbbb; overflow: hidden;'><script>
+<body style='margin: 0px; background-color: #000000; overflow: hidden;'><script>
 require([ 'bower_components/threex.grassground/package.require.js'
 	, 'bower_components/threex.keyboardstate/package.require.js'
 	, 'bower_components/threex.skymap/package.require.js'
@@ -66,17 +66,20 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	
 	var lightPool	= new THREEx.LightPool(scene)
 	Stellar7.lightPool	= lightPool
-	var light	= lightPool.getPointLight()
-	light.color.set('red')
-	light.intensity	= 10
-	light.position.y+= 10;
+
+	// var light	= lightPool.getPointLight()
+	// light.color.set('red')
+	// light.intensity	= 10
+	// light.position.y+= 1;
 	// lightPool.putPointLight(light)
 
 		// scene.add(light)
 
 	// var light	= new THREE.PointLight('red', 1)
+	// var light	= lightPool.getPointLight()
+// window.light	= light
 	// scene.add(light)
-	// light.color.set('yellow')
+	// light.color.set('red')
 	// light.intensity	= 10
 	// light.position.y+= 2;
 
@@ -122,8 +125,8 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	//		add mars							//
 	//////////////////////////////////////////////////////////////////////////////////
 	
-	var mesh	= THREEx.createSkymap('mars')
-	scene.add( mesh )
+	// var mesh	= THREEx.createSkymap('mars')
+	// scene.add( mesh )
 
 	var mesh	= new THREEx.MontainsArena()
 	mesh.scale.x	*= 40
