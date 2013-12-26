@@ -35,15 +35,52 @@ THREEx.Stellar7TankPlayer	= function(){
 	// - maybe THREEx.Stellar7TankPlayer.createKeyboardControls with a better name
 	var keyboard	= new THREEx.KeyboardState()
 
-	var controls	= new THREEx.Stellar7TankKeyboardControls(keyboard, tankControls)
-	this.controls	= controls
-	onRenderFcts.push(function(delta, now){
-		controls.update(delta, now)
-	})
-	controls.addEventListener('fire', function(){
-		this.dispatchEvent({ type: 'fire' })
-	}.bind(this))
+	// var controls	= new THREEx.Stellar7TankControlsKeyboard(keyboard, tankControls)
+	// this.controls	= controls
+	// onRenderFcts.push(function(delta, now){
+	// 	controls.update(delta, now)
+	// })
+	// controls.addEventListener('fire', function(){
+	// 	this.dispatchEvent({ type: 'fire' })
+	// }.bind(this))
 
+	// var controlsQueue	= new THREEx.Stellar7TankControlsQueue(tankControls)
+	// for(var i = 0; i < 30; i++){
+	// 	controlsQueue.push('turnRight', 1).push('moveAhead', 1)		
+	// }
+	// onRenderFcts.push(function(delta, now){
+	// 	controlsQueue.update(delta, now)
+	// })
+
+	var controls	= null;
+	this.setControlsKeyboard	= function(){
+		// TODO this should not be duplicated
+		// - maybe THREEx.Stellar7TankPlayer.createKeyboardControls with a better name
+		var keyboard	= new THREEx.KeyboardState()
+
+		controls	= new THREEx.Stellar7TankControlsKeyboard(keyboard, tankControls)
+		this.controls	= controls
+		onRenderFcts.push(function(delta, now){
+			controls.update(delta, now)
+		})
+
+		controls.addEventListener('fire', function(){
+			this.dispatchEvent({ type: 'fire' })
+		}.bind(this))
+		return this
+	}
+	this.setControlsQueue	= function(){
+		controls	= new THREEx.Stellar7TankControlsQueue(tankControls)
+		this.controls	= controls
+		onRenderFcts.push(function(delta, now){
+			controls.update(delta, now)
+		})
+
+		for(var i = 0; i < 30; i++){
+			controls.push('turnRight', 1).push('moveAhead', 1)		
+		}
+		return this
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		comment								//
@@ -58,3 +95,20 @@ THREEx.Stellar7TankPlayer	= function(){
 }
 
 THREEx.Stellar7TankPlayer.id	= 0
+
+THREEx.Stellar7TankPlayer.createKeyboard	= function(){
+	var player	= new THREEx.Stellar7TankPlayer()
+	// TODO this should not be duplicated
+	// - maybe THREEx.Stellar7TankPlayer.createKeyboardControls with a better name
+	var keyboard	= new THREEx.KeyboardState()
+
+	var controls	= new THREEx.Stellar7TankControlsKeyboard(keyboard, player.tankControls)
+	player.controls	= controls
+	onRenderFcts.push(function(delta, now){
+		controls.update(delta, now)
+	})
+	controls.addEventListener('fire', function(){
+		player.dispatchEvent({ type: 'fire' })
+	})
+	return player
+}

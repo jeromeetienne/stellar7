@@ -6,7 +6,8 @@
 
 <script src='../threex.stellar7tankmodel.js'></script>
 <script src='../threex.stellar7tankcontrols.js'></script>
-<script src='../threex.stellar7tankkeyboardcontrols.js'></script>
+<script src='../threex.stellar7tankcontrolskeyboard.js'></script>
+<script src='../threex.stellar7tankcontrolsqueue.js'></script>
 <script src='../threex.stellar7tankplayer.js'></script>
 <script src='../threex.stellar7shootmodel.js'></script>
 <script src='../threex.stellar7shoot.js'></script>
@@ -20,6 +21,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	, 'bower_components/threex.keyboardstate/package.require.js'
 	, 'bower_components/threex.skymap/package.require.js'
 	, 'bower_components/threex.spaceships/package.require.js'
+	, 'bower_components/threex.montainsarena/package.require.js'
 	, 'bower_components/webaudiox/build/webaudiox.js'
 	], function(){
 	// detect WebGL
@@ -45,15 +47,6 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	window.Stellar7	= {}
 
 	//////////////////////////////////////////////////////////////////////////////////
-	//		add mars							//
-	//////////////////////////////////////////////////////////////////////////////////
-	
-	var mesh	= THREEx.createSkymap('mars')
-	scene.add( mesh )
-
-
-
-	//////////////////////////////////////////////////////////////////////////////////
 	//		default 3 points lightning					//
 	//////////////////////////////////////////////////////////////////////////////////
 	
@@ -74,8 +67,8 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	var lightPool	= new THREEx.LightPool(scene)
 	Stellar7.lightPool	= lightPool
 	var light	= lightPool.getPointLight()
-	light.color.set('pink')
-	light.intensity	= 1
+	light.color.set('red')
+	light.intensity	= 10
 	light.position.y+= 10;
 	// lightPool.putPointLight(light)
 
@@ -111,21 +104,33 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	//		add an object and make it move					//
 	//////////////////////////////////////////////////////////////////////////////////	
 
-	// var player	= new THREEx.Stellar7TankPlayer()
-	// onRenderFcts.push(function(delta, now){
-	// 	player.update(delta, now)
-	// })
-	
-	// scene.add(player.model.object3d)
-
 	var game	= new THREEx.Stellar7Game(scene)
 	onRenderFcts.push(function(delta, now){
 		game.update(delta, now)
 	})
 	
 	var player	= new THREEx.Stellar7TankPlayer()
+	player.setControlsQueue()
+	game.addPlayer(player)
+
+	var player	= new THREEx.Stellar7TankPlayer()
+	player.model.object3d.position.x	+= 1
+	player.setControlsKeyboard()
 	game.addPlayer(player)
 	
+	//////////////////////////////////////////////////////////////////////////////////
+	//		add mars							//
+	//////////////////////////////////////////////////////////////////////////////////
+	
+	var mesh	= THREEx.createSkymap('mars')
+	scene.add( mesh )
+
+	var mesh	= new THREEx.MontainsArena()
+	mesh.scale.x	*= 40
+	mesh.scale.z	*= 40
+	mesh.scale.y	*= 20
+	scene.add(mesh)
+
 	//////////////////////////////////////////////////////////////////////////////////
 	//		Camera Controls							//
 	//////////////////////////////////////////////////////////////////////////////////
@@ -154,7 +159,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	//////////////////////////////////////////////////////////////////////////////////
 	var sounds	= new WebAudiox.GameSounds()
 	Stellar7.sounds	= sounds
-	sounds.lineOut.volume	= 0.1
+	sounds.lineOut.volume	= 0.0
 	sounds.add('contactFence', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
 	sounds.add('shootTank', 'sounds/151022__bubaproducer__laser-shot-silenced.wav')
 

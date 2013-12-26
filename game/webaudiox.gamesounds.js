@@ -41,9 +41,7 @@ WebAudiox.GameSounds	= function(){
 		sounds[label]	= new WebAudiox.GameSound(this, url, playFn)
 	}
 	this.remove	= function(label){
-		console.assert('TO BE IMPLEMENTED')
 		delete sounds[label]
-		new WebAudiox.GameSound(url, playFn)
 	}
 	this.play	= function(label){
 		console.assert(sounds[label] !== undefined)
@@ -52,7 +50,7 @@ WebAudiox.GameSounds	= function(){
 }
 
 WebAudiox.GameSound	= function(gameSounds, url, playFn){
-	var loadedBuffer= null
+	// handle default arguments
 	playFn		= playFn	|| function(){
 		var source	= gameSounds.context.createBufferSource()
 		source.buffer	= loadedBuffer
@@ -61,6 +59,7 @@ WebAudiox.GameSound	= function(gameSounds, url, playFn){
 		return source				
 	}
 	// load the sound
+	var loadedBuffer= null
 	WebAudiox.loadBuffer(gameSounds.context, url, function(decodedBuffer){
 		loadedBuffer	= decodedBuffer;
 	})
@@ -73,5 +72,21 @@ WebAudiox.GameSound	= function(gameSounds, url, playFn){
 		// if not yet loaded, do nothing
 		if( loadedBuffer === null )	return;
 		return playFn(this)
+	}
+	
+	// possible three.js api
+	// sound.at(position).play(3)
+	// sound.follow(object3d).play(3)
+	
+	this.play	= function(object3d, intensity){
+		// * make it follow object3d
+		//   * so this mean there is a update function 
+		//   * (maybe there is already that in three.js event)
+		//   * this mean it has to be unfollowed when the sound is over
+		//   * how to know if a sound is over ? event ? setTimerout based on duration ?
+		//   * how to get duration ?
+		// * set a special intensity for this play
+		// * pass parameter generically in GameSounds
+		// * 
 	}
 }

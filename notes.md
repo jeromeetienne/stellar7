@@ -1,4 +1,13 @@
+TODO
+====
+* make the map circle 
+* all collision are done with boundaryRadius
+  * it is present everywhere
 
+
+
+Misc
+====
 * fightcode - how to do the security ?
   * how a bot can't know more than he should
   * likely a barrier webworker
@@ -14,13 +23,15 @@
 
 
 
-
 What about code orga
 ====================
 * THREEx.Stellar7.TankModel
 * THREEx.Stellar7.TankControls
   * may be bots controlled - fightcode like
-  * THREEx.Stellar7.TankKeyboardControls
+  * THREEx.Stellar7.TankControlsKeyboard
+* THREEx.Stellar7.TankControlsQueue
+  * actions are queued, executed for a amount of time and idle event is thrown
+  * based on fightCodeControls
 * THREEx.Stellar7.TankCameraControls
 * THREEx.Stellar7.TankPlayer
   * include Model, Controls, life

@@ -3,7 +3,7 @@ var THREEx	= THREEx	|| {}
 /**
  * controls the tank with the keyboard
  */
-THREEx.Stellar7TankKeyboardControls	= function(keyboard, tankControls){
+THREEx.Stellar7TankControlsKeyboard	= function(keyboard, tankControls){
 
 	// add EventDispatcher in this object
 	THREE.EventDispatcher.prototype.apply(this)

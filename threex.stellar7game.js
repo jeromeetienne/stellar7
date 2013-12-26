@@ -60,7 +60,8 @@ THREEx.Stellar7Game	= function(scene){
 			scene.add( shoot.model.object3d )
 			shoots.push(shoot)
 
-			shoot.model.object3d.rotation.y	= player.model.object3d.rotation.y
+			shoot.model.object3d.rotation.y	= player.model.cannonMesh.rotation.y 
+				+ player.model.baseMesh.rotation.y
 		})
 	}
 
