@@ -1,5 +1,8 @@
 var WebAudiox	= WebAudiox	|| {}
 
+/**
+ * attempts to a more structure sound banks
+ */
 WebAudiox.GameSounds	= function(){
 	// create WebAudio API context
 	var context	= new AudioContext()
@@ -49,8 +52,14 @@ WebAudiox.GameSounds	= function(){
 }
 
 WebAudiox.GameSound	= function(gameSounds, url, playFn){
-	var loadedBuffer	= null
-	
+	var loadedBuffer= null
+	playFn		= playFn	|| function(){
+		var source	= gameSounds.context.createBufferSource()
+		source.buffer	= loadedBuffer
+		source.connect(gameSounds.lineOut.destination)
+		source.start(0)
+		return source				
+	}
 	// load the sound
 	WebAudiox.loadBuffer(gameSounds.context, url, function(decodedBuffer){
 		loadedBuffer	= decodedBuffer;
@@ -63,16 +72,6 @@ WebAudiox.GameSound	= function(gameSounds, url, playFn){
 	this.play	= function(){
 		// if not yet loaded, do nothing
 		if( loadedBuffer === null )	return;
-		// if custom play function
-		if( playFn ){
-			playFn(this)
-			return
-		}
-		// default play function
-		var source	= gameSounds.context.createBufferSource()
-		source.buffer	= loadedBuffer
-		source.connect(gameSounds.lineOut.destination)
-		source.start(0)
-		return source				
+		return playFn(this)
 	}
 }
