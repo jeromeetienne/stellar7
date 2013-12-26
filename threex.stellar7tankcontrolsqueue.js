@@ -8,7 +8,7 @@ THREEx.Stellar7TankControlsQueue	= function(tankControls){
 	// add EventDispatcher in this object
 	THREE.EventDispatcher.prototype.apply(this)
 
-	var commands	= [];
+	var commands	= []; 
 
 	this.push	= function(action, duration){
 		console.assert(legitActions.indexOf(action) !== -1)
@@ -33,17 +33,19 @@ THREEx.Stellar7TankControlsQueue	= function(tankControls){
 	var legitActions= Object.keys(stopActions)
 	
 	var timerId	= null
-	function runNextCommand(){
+	var runNextCommand	= function(){
 		// get the next command
 		var command	= commands.pop()
 		// if there is no next command
 		if( command === undefined ){
 			// notify onIdle event
-			// - after that if commands.length > 0 then runNextCommand again
+			this.dispatchEvent({ type: 'idle' })
+			// after that if commands.length > 0 then runNextCommand again
+			if( commands.length > 0 )	runNextCommand()
 			return
 		}
 		// clear timer if needed
-		if(timerId){	
+		if( timerId ){	
 			clearTimeout(timerId)
 			timerId	= null
 		}
@@ -55,7 +57,7 @@ THREEx.Stellar7TankControlsQueue	= function(tankControls){
 			tankControls[stopAction]()
 			runNextCommand()
 		}, command.duration*1000)
-	}
+	}.bind(this)
 	
 	this.update	= function(delta, now){
 		if( timerId === null )	runNextCommand()			

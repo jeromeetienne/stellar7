@@ -33,7 +33,7 @@ THREEx.Stellar7TankPlayer	= function(){
 		
 	// TODO this should not be duplicated
 	// - maybe THREEx.Stellar7TankPlayer.createKeyboardControls with a better name
-	var keyboard	= new THREEx.KeyboardState()
+	// var keyboard	= new THREEx.KeyboardState()
 
 	// var controls	= new THREEx.Stellar7TankControlsKeyboard(keyboard, tankControls)
 	// this.controls	= controls
@@ -75,10 +75,10 @@ THREEx.Stellar7TankPlayer	= function(){
 		onRenderFcts.push(function(delta, now){
 			controls.update(delta, now)
 		})
-
-		for(var i = 0; i < 30; i++){
-			controls.push('turnRight', 1).push('moveAhead', 1)		
-		}
+		controls.addEventListener('idle', function(){
+			controls.push('turnRight', 1)
+				.push('moveAhead', 1)		
+		})
 		return this
 	}
 
