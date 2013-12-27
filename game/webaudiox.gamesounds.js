@@ -1,6 +1,17 @@
 var WebAudiox	= WebAudiox	|| {}
 
 /**
+ * ## how to implement 3d in this
+ * * GameSounds.update(delta)
+
+ * * GameSounds.follow(camera)
+ * * sound.follow(object3d).play()
+ * * sound.lookAt(vector3).play()
+ * * sound.at(vector3).play()
+ * * sound.velocity(vector3).play()
+ */
+
+/**
  * attempts to a more structure sound banks
  */
 WebAudiox.GameSounds	= function(){
@@ -51,7 +62,7 @@ WebAudiox.GameSounds	= function(){
 
 WebAudiox.GameSound	= function(gameSounds, url, playFn){
 	// handle default arguments
-	playFn		= playFn	|| function(){
+	playFn		= playFn || function(){
 		var source	= gameSounds.context.createBufferSource()
 		source.buffer	= loadedBuffer
 		source.connect(gameSounds.lineOut.destination)
@@ -74,11 +85,13 @@ WebAudiox.GameSound	= function(gameSounds, url, playFn){
 		return playFn(this)
 	}
 	
+
+	
 	// possible three.js api
 	// sound.at(position).play(3)
 	// sound.follow(object3d).play(3)
 	
-	this.play	= function(object3d, intensity){
+	// this.play	= function(object3d, intensity){
 		// * make it follow object3d
 		//   * so this mean there is a update function 
 		//   * (maybe there is already that in three.js event)
@@ -88,5 +101,5 @@ WebAudiox.GameSound	= function(gameSounds, url, playFn){
 		// * set a special intensity for this play
 		// * pass parameter generically in GameSounds
 		// * 
-	}
+	// }
 }

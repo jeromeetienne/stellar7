@@ -1,8 +1,12 @@
 var THREEx	= THREEx	|| {}
 
-THREEx.LightPool	= function(scene){
-	
-	var nPointLights= 10
+THREEx.LightPool	= function(scene, nPointLights){
+	// arguments default value
+	nPointLights	= nPointLights !== undefined ? nPointLights : 10
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		THREE.PointLight						//
+	//////////////////////////////////////////////////////////////////////////////////
 	
 	var pointLights	= []
 	for(var i = 0; i < nPointLights; i++){
@@ -20,8 +24,8 @@ THREEx.LightPool	= function(scene){
 		distance	= distance !== undefined ? distance : 0
 		// get available light
 		console.assert(pointLights.length > 0)
-		var pointLight	= pointLights.pop();
-		// reset parameters		
+		var pointLight	= pointLights.pop()
+		// reset parameters
 		pointLight.color.set(color)
 		pointLight.intensity	= intensity
 		pointLight.distance	= distance

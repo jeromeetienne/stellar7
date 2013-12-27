@@ -7,7 +7,7 @@ THREEx.Stellar7ShootModel	= function(){
 	// do the material	
 	var material	= new THREE.MeshBasicMaterial({
 		color		: 0xffaacc,
-		color		: 'pink',
+		color		: 0x884422,
 		// opacity		: 0.8,
 		map		: texture,
 		side		: THREE.DoubleSide,
