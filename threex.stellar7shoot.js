@@ -33,6 +33,21 @@ THREEx.Stellar7Shoot	= function(){
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////
+	//		collision							//
+	//////////////////////////////////////////////////////////////////////////////////
+	
+	var collisionSphere	= new THREE.Sphere(model.object3d.position, 0.1)
+	this.collisionSphere	= collisionSphere
+	
+	// visible debug for collisionSphere
+	if( true ){
+		var geometry	= new THREE.SphereGeometry( collisionSphere.radius, 32, 16 );
+		var material	= new THREE.MeshBasicMaterial({wireframe: true});
+		var mesh	= new THREE.Mesh( geometry, material );
+		model.object3d.add( mesh );		
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////
 	//		physics								//
 	//////////////////////////////////////////////////////////////////////////////////
 	var velocity	= new THREE.Vector3()
@@ -47,17 +62,21 @@ THREEx.Stellar7Shoot	= function(){
 /**
  * create a shoot as if it were originated by this tank
  */
-THREEx.Stellar7Shoot.fromTank	= function(tankModel){
+THREEx.Stellar7Shoot.fromPlayer	= function(player){
+	var playerModel	= player.model;
+	// create object
 	var shoot	= new THREEx.Stellar7Shoot()
+	shoot.fromPlayer= player
+	// setup position
 	shoot.model.object3d.position
-		.copy(tankModel.object3d.position)
+		.copy(playerModel.object3d.position)
 		.add(new THREE.Vector3(0,0.3, 0))
-
+	// setup velocity
 	var velocity	= new THREE.Vector3(0, 0, 20);
-	var rotationY	= tankModel.baseMesh.rotation.y + tankModel.cannonMesh.rotation.y
+	var rotationY	= playerModel.baseMesh.rotation.y + playerModel.cannonMesh.rotation.y
 	var matrix	= new THREE.Matrix4().makeRotationY(rotationY);
 	velocity.applyMatrix4( matrix );
 	shoot.velocity.copy(velocity)
-
+	// return just built shoot
 	return shoot
 }

@@ -97,8 +97,8 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	var player	= new THREEx.Stellar7TankPlayer()
 	player.setControlsQueue()
 	player.controls.addEventListener('idle', function(){
-		player.controls.push('turnRight', 1)
-				.push('moveAhead', 1)		
+		// player.controls.push('turnRight', 1)
+		// 		.push('moveAhead', 1)		
 	})
 	game.addPlayer(player)
 })()
@@ -152,23 +152,27 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	//////////////////////////////////////////////////////////////////////////////////
 	var sounds	= new WebAudiox.GameSounds()
 
-	// put a ListenerObject3DUpdater
-;(function(){
-	var object3d		= new THREE.Object3D()
-	humanPlayer.model.cannonMesh.add(object3d)
-	object3d.rotation.y	= -Math.PI
-	var listenerUpdater	= new WebAudiox.ListenerObject3DUpdater(sounds.context, object3d)
-	onRenderFcts.push(function(delta, now){
-		listenerUpdater.update(delta, now)
-	})	
-})()
 	
 	Stellar7.sounds	= sounds
 	sounds.lineOut.volume	= 0.0
 	sounds.add('contactFence', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
 	sounds.add('shootTank', 'sounds/151022__bubaproducer__laser-shot-silenced.wav')
 
+//////////////////////////////////////////////////////////////////////////////////
+//		experimentation on sound localisation				//
+//////////////////////////////////////////////////////////////////////////////////
 
+if(false){
+	// put a ListenerObject3DUpdater
+	;(function(){
+		var object3d		= new THREE.Object3D()
+		humanPlayer.model.cannonMesh.add(object3d)
+		object3d.rotation.y	= -Math.PI
+		var listenerUpdater	= new WebAudiox.ListenerObject3DUpdater(sounds.context, object3d)
+		onRenderFcts.push(function(delta, now){
+			listenerUpdater.update(delta, now)
+		})	
+	})()
 
 	var geometry	= new THREE.CubeGeometry(0.5,0.5,0.5);
 	var material	= new THREE.MeshNormalMaterial();
@@ -204,6 +208,8 @@ require([ 'bower_components/threex.grassground/package.require.js'
 		source.start(0)
 		return source						
 	})
+	
+}
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		render the scene						//

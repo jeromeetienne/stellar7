@@ -103,7 +103,9 @@ THREEx.Stellar7TankPlayer	= function(){
 	}
 	this.onTankCollision	= function(event){}
 	this.onShootCollision	= function(){}
-	this.onHitByShoot	= function(){}
+	this.onHitByShoot	= function(){
+		console.log('onHitByShoot')
+	}
 }
 
 THREEx.Stellar7TankPlayer.id	= 0
