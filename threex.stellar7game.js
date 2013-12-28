@@ -34,6 +34,53 @@ THREEx.Stellar7Game	= function(scene){
 	//////////////////////////////////////////////////////////////////////////////////
 
 	onRenderFcts.push(function(delta, now){
+		var lineOfSight	= new THREE.Line3()
+
+		for(var playerIdx1 = 0; playerIdx1 < players.length; playerIdx1++){
+			var player1	= players[playerIdx1]
+			var position1	= player1.model.object3d.position
+			lineOfSight.start.copy(position1)
+			var angle	= player1.model.cannonMesh.rotation.y 
+						+ player1.model.baseMesh.rotation.y
+			angle		= Math.PI/2 - angle
+			var delta	= new THREE.Vector3(Math.cos(angle), 0, Math.sin(angle))
+			delta.multiplyScalar(100)
+			lineOfSight.end.copy(position1).add(delta)
+			
+			
+			for(var playerIdx2 = 0; playerIdx2 < players.length; playerIdx2++){
+				var player2	= players[playerIdx2]
+				var sphere2	= player2.collisionSphere
+				var position2	= player2.model.object3d.position
+				// dont test other tanks
+				if( playerIdx1 === playerIdx2 )	continue
+
+				// project position on the lineOfSight
+				var projectedDot= lineOfSight.closestPointToPoint(position2, true)
+				// do nothing if it is before or after the lineOfSight
+				if( projectedDot.equals(lineOfSight.start) )	continue
+				if( projectedDot.equals(lineOfSight.end) )	contunue
+				// compute the distance between body position and the line of sight
+				var distance	= position2.distanceTo(projectedDot)
+				// if the distance is larger than tankPlayer.collisionSphere, the tank isnt seen
+				if( distance > sphere2.radius )	continue
+
+				// here there is a collision
+				// console.log('collision between', playerIdx1, playerIdx2)
+				// notify the event
+				player1.onScannedTank()
+				// no need to scan more 
+				break;
+			}
+			
+		}		
+	})
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		handle inter-tank collision					//
+	//////////////////////////////////////////////////////////////////////////////////
+
+	onRenderFcts.push(function(delta, now){
 		for(var playerIdx1 = 0; playerIdx1 < players.length-1; playerIdx1++){
 			var player1	= players[playerIdx1]
 			var sphere1	= player1.collisionSphere
@@ -123,7 +170,12 @@ THREEx.Stellar7Game	= function(scene){
 		players.push(player)
 		scene.add(player.model.object3d)
 
+		var lastFire	= 0
 		player.addEventListener('fire', function(){
+			// handle cool down period
+			if( Date.now() - lastFire < 500 )	return;
+			lastFire	= Date.now()
+			
 			var shoot	= new THREEx.Stellar7Shoot.fromPlayer(player)
 			scene.add( shoot.model.object3d )
 			shoot.model.object3d.rotation.y	= player.model.cannonMesh.rotation.y 

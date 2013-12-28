@@ -37,8 +37,7 @@ THREEx.Stellar7TankPlayer	= function(){
 		model.object3d.add( mesh );		
 	}
 
-	var collisionCannon	= new THREE.Line()
-	if( true ){
+	if( false ){
 		var geometry	= new THREE.Geometry()
 		geometry.vertices.push( new THREE.Vector3( 0, 0, 0) )
 		geometry.vertices.push( new THREE.Vector3( 0, 0, +100) )
@@ -95,7 +94,9 @@ THREEx.Stellar7TankPlayer	= function(){
 		console.log('mapCollision')
 	}
 	this.onTankCollision	= function(event){}
-	this.onShootCollision	= function(){}
+	this.onScannedTank	= function(event){
+		this.dispatchEvent({ type: 'fire' })		
+	}
 	this.onHitByBullet	= function(){
 		console.log('onHitByShoot')
 	}

@@ -94,23 +94,24 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	})
 	
 	
-	
-;(function(){
-	var player	= new THREEx.Stellar7TankPlayer()
-	player.setControlsQueue()
-	player.controls.addEventListener('idle', function(){
-		player.controls.push('turnRight', 1)
-				.push('moveAhead', 1)		
-	})
-	game.addPlayer(player)
-})()
 
 	var player	= new THREEx.Stellar7TankPlayer()
 	var humanPlayer	= player
 	player.model.object3d.position.x	+= 1
 	player.setControlsKeyboard()
 	game.addPlayer(player)
+	
 
+	
+;(function(){
+	var player	= new THREEx.Stellar7TankPlayer()
+	player.setControlsQueue()
+	player.controls.addEventListener('idle', function(){
+		// player.controls.push('turnRight', 1)
+		// 		.push('moveAhead', 1)		
+	})
+	game.addPlayer(player)
+})()
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		add mars							//
