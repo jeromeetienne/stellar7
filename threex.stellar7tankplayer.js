@@ -13,7 +13,7 @@ THREEx.Stellar7TankPlayer	= function(){
 			onRenderFct(delta, now)
 		})
 	}
-	
+
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	//		model								//
@@ -21,6 +21,21 @@ THREEx.Stellar7TankPlayer	= function(){
 
 	var model	= new THREEx.Stellar7TankModel()
 	this.model	= model
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		collision							//
+	//////////////////////////////////////////////////////////////////////////////////
+	
+	var collisionSphere	= new THREE.Sphere(model.object3d.position, 0.5)
+	this.collisionSphere	= collisionSphere
+	
+	// visible debug for collisionSphere
+	if( true ){
+		var geometry	= new THREE.SphereGeometry( collisionSphere.radius, 32, 16 );
+		var material	= new THREE.MeshBasicMaterial({wireframe: true});
+		var mesh	= new THREE.Mesh( geometry, material );
+		model.object3d.add( mesh );		
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		controls							//
@@ -76,11 +91,6 @@ THREEx.Stellar7TankPlayer	= function(){
 		onRenderFcts.push(function(delta, now){
 			controls.update(delta, now)
 		})
-		controls.addEventListener('idle', function(){
-			this.dispatchEvent({ type: 'idle' })
-			controls.push('turnRight', 1)
-				.push('moveAhead', 1)		
-		}.bind(this))
 		return this
 	}
 
@@ -91,7 +101,7 @@ THREEx.Stellar7TankPlayer	= function(){
 	this.onMapCollision	= function(){
 		console.log('mapCollision')
 	}
-	this.onTankCollision	= function(){}
+	this.onTankCollision	= function(event){}
 	this.onShootCollision	= function(){}
 	this.onHitByShoot	= function(){}
 }

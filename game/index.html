@@ -93,15 +93,23 @@ require([ 'bower_components/threex.grassground/package.require.js'
 		game.update(delta, now)
 	})
 	
+;(function(){
 	var player	= new THREEx.Stellar7TankPlayer()
 	player.setControlsQueue()
+	player.controls.addEventListener('idle', function(){
+		player.controls.push('turnRight', 1)
+				.push('moveAhead', 1)		
+	})
 	game.addPlayer(player)
+})()
 
 	var player	= new THREEx.Stellar7TankPlayer()
+	var humanPlayer	= player
 	player.model.object3d.position.x	+= 1
 	player.setControlsKeyboard()
 	game.addPlayer(player)
 	
+
 	//////////////////////////////////////////////////////////////////////////////////
 	//		add mars							//
 	//////////////////////////////////////////////////////////////////////////////////
@@ -134,7 +142,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	//		put camera behind						//
 	//////////////////////////////////////////////////////////////////////////////////
 	
-	player.model.cannonMesh.add(camera)
+	humanPlayer.model.cannonMesh.add(camera)
 	camera.position.set(0,0.75,-2)
 	camera.lookAt(new THREE.Vector3(0,0,2))
 
@@ -143,10 +151,59 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
 	var sounds	= new WebAudiox.GameSounds()
+
+	// put a ListenerObject3DUpdater
+;(function(){
+	var object3d		= new THREE.Object3D()
+	humanPlayer.model.cannonMesh.add(object3d)
+	object3d.rotation.y	= -Math.PI
+	var listenerUpdater	= new WebAudiox.ListenerObject3DUpdater(sounds.context, object3d)
+	onRenderFcts.push(function(delta, now){
+		listenerUpdater.update(delta, now)
+	})	
+})()
+	
 	Stellar7.sounds	= sounds
 	sounds.lineOut.volume	= 0.0
 	sounds.add('contactFence', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
 	sounds.add('shootTank', 'sounds/151022__bubaproducer__laser-shot-silenced.wav')
+
+
+
+	var geometry	= new THREE.CubeGeometry(0.5,0.5,0.5);
+	var material	= new THREE.MeshNormalMaterial();
+	var audioMesh	= new THREE.Mesh( geometry, material );
+	scene.add(audioMesh)
+
+	var soundUrl	= 'sounds/151022__bubaproducer__laser-shot-silenced.wav'
+	sounds.add('shootTest', soundUrl, function(sound){
+		var context	= sound.gameSounds.context
+		var destination	= sound.gameSounds.lineOut.destination
+		
+		// init AudioPannerNode
+		var panner	= context.createPanner()
+		// panner.coneOuterGain	= 0.1
+		// panner.coneOuterAngle	= Math.PI *180/Math.PI
+		// panner.coneInnerAngle	= 0 *180/Math.PI
+		panner.connect(destination)
+		destination	= panner
+		
+		// put a PannerObject3DUpdater
+		var pannerUpdater	= new WebAudiox.PannerObject3DUpdater(panner, audioMesh)
+		onRenderFcts.push(function(delta, now){
+			pannerUpdater.update(delta, now)
+		})
+
+		// init AudioBufferSourceNode
+		var source	= context.createBufferSource()
+		source.buffer	= sound.buffer
+		source.loop	= true
+		source.connect(destination)
+
+		// start the sound now
+		source.start(0)
+		return source						
+	})
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		render the scene						//

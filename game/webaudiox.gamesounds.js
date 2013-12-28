@@ -61,27 +61,30 @@ WebAudiox.GameSounds	= function(){
 }
 
 WebAudiox.GameSound	= function(gameSounds, url, playFn){
+	this.gameSounds	= gameSounds
 	// handle default arguments
-	playFn		= playFn || function(){
-		var source	= gameSounds.context.createBufferSource()
-		source.buffer	= loadedBuffer
-		source.connect(gameSounds.lineOut.destination)
+	playFn		= playFn || function(sound){
+		var context	= sound.gameSounds.context
+		var destination	= sound.gameSounds.lineOut.destination
+		var source	= context.createBufferSource()
+		source.buffer	= sound.buffer
+		source.connect(destination)
 		source.start(0)
-		return source				
+		return source						
 	}
 	// load the sound
-	var loadedBuffer= null
+	this.buffer= null
 	WebAudiox.loadBuffer(gameSounds.context, url, function(decodedBuffer){
-		loadedBuffer	= decodedBuffer;
-	})
+		this.buffer	= decodedBuffer;
+	}.bind(this))
 	
 	this.isReady	= function(){
-		return loadedBuffer !== null
+		return this.buffer !== null
 	}
 
 	this.play	= function(){
 		// if not yet loaded, do nothing
-		if( loadedBuffer === null )	return;
+		if( this.buffer === null )	return;
 		return playFn(this)
 	}
 	

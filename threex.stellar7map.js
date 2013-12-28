@@ -3,6 +3,7 @@ var THREEx	= THREEx	|| {}
 THREEx.Stellar7Map	= function(){
 	this.radius	= 20
 	
+	
 	this.collideWithTank	= function(tank){
 		var position	= tank.model.object3d.position
 		var collided	= false

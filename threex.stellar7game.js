@@ -31,13 +31,37 @@ THREEx.Stellar7Game	= function(scene){
 
 
 	onRenderFcts.push(function(delta, now){
+		for(var playerIdx1 = 0; playerIdx1 < players.length-1; playerIdx1++){
+			var sphere1	= players[playerIdx1].collisionSphere
+			var position1	= players[playerIdx1].model.object3d.position
+			for(var playerIdx2 = playerIdx1+1; playerIdx2 < players.length; playerIdx2++){
+				var sphere2	= players[playerIdx2].collisionSphere
+				var position2	= players[playerIdx2].model.object3d.position
+				// test if sphere collide
+				var colliding	= sphere1.intersectsSphere(sphere2)
+				console.log('texting', playerIdx1, 'colliding', playerIdx2, 'result', colliding)
+				// sphere bounce on each other
+				if( colliding ){
+					var delta	= position1.clone().sub(position2)
+					delta.setLength(delta.length() - sphere1.radius - sphere2.radius)
+					delta.multiplyScalar(1/2)
+					position1.sub(delta)
+					position2.add(delta)
+				}
+			}
+			
+		}
+	})
+
+	// player colliding with map
+	onRenderFcts.push(function(delta, now){
 		players.forEach(function(player){
 			var collided	= map.collideWithTank(player)
 			if( collided )	Stellar7.sounds.play('contactFence')
 			if( collided )	player.onMapCollision()
 		})
 	})
-
+	// shoots colliding with map
 	onRenderFcts.push(function(delta, now){
 		shoots.forEach(function(shoot){
 			var collided	= map.collideWithShoot(shoot)
