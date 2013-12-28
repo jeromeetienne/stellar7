@@ -30,7 +30,7 @@ THREEx.Stellar7Game	= function(scene){
 	var map		= new THREEx.Stellar7Map()
 
 	//////////////////////////////////////////////////////////////////////////////////
-	//		handle inter-tank collision								//
+	//		handle inter-tank collision					//
 	//////////////////////////////////////////////////////////////////////////////////
 
 	onRenderFcts.push(function(delta, now){
@@ -78,18 +78,21 @@ THREEx.Stellar7Game	= function(scene){
 				if( shoot.fromPlayer === player )	continue
 				// test if sphere collide
 				var colliding	= sphereShoot.intersectsSphere(spherePlayer)
-				console.log('texting', playerIdx, 'colliding', shootIdx, 'result', colliding)
 				// notify players if colliding
 				if( colliding ){
-					// player.onHitByBullet()
+					Stellar7.sounds.play('explosion')
+					player.onHitByBullet()
 					shoot.die()
-					scene.remove( shoot.model.object3d )
-					shoots.splice(shoots.indexOf(shoot),1)
 				}
 			}
 			
 		}
 	})
+	
+	//////////////////////////////////////////////////////////////////////////////////
+	//		colliding with map						//
+	//////////////////////////////////////////////////////////////////////////////////
+	
 
 	// player colliding with map
 	onRenderFcts.push(function(delta, now){
@@ -106,11 +109,14 @@ THREEx.Stellar7Game	= function(scene){
 			if( collided ){
 				Stellar7.sounds.play('contactFence')
 				shoot.die()
-				scene.remove( shoot.model.object3d )
-				shoots.splice(shoots.indexOf(shoot),1)
 			}
 		})
 	})
+	
+	//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
+	
 
 	
 	this.addPlayer	= function(player){
@@ -125,6 +131,12 @@ THREEx.Stellar7Game	= function(scene){
 
 
 			shoots.push(shoot)
+			
+			shoot.addEventListener('die', function(){
+				scene.remove( shoot.model.object3d )
+				shoots.splice(shoots.indexOf(shoot),1)
+			})
+
 
 
 			Stellar7.sounds.play('shootTank')

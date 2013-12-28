@@ -93,12 +93,14 @@ require([ 'bower_components/threex.grassground/package.require.js'
 		game.update(delta, now)
 	})
 	
+	
+	
 ;(function(){
 	var player	= new THREEx.Stellar7TankPlayer()
 	player.setControlsQueue()
 	player.controls.addEventListener('idle', function(){
-		// player.controls.push('turnRight', 1)
-		// 		.push('moveAhead', 1)		
+		player.controls.push('turnRight', 1)
+				.push('moveAhead', 1)		
 	})
 	game.addPlayer(player)
 })()
@@ -108,7 +110,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	player.model.object3d.position.x	+= 1
 	player.setControlsKeyboard()
 	game.addPlayer(player)
-	
+
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		add mars							//
@@ -151,12 +153,11 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
 	var sounds	= new WebAudiox.GameSounds()
-
-	
 	Stellar7.sounds	= sounds
-	sounds.lineOut.volume	= 0.0
+	sounds.lineOut.volume	= 0.2
 	sounds.add('contactFence', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
 	sounds.add('shootTank', 'sounds/151022__bubaproducer__laser-shot-silenced.wav')
+	sounds.add('explosion', 'sounds/211339__rjonesxlr8__explosion-04.wav')
 
 //////////////////////////////////////////////////////////////////////////////////
 //		experimentation on sound localisation				//
