@@ -36,7 +36,7 @@ THREEx.Stellar7ShootModel	= function(){
 		var canvas	= document.createElement( 'canvas' );
 		var context	= canvas.getContext( '2d' );
 		canvas.width	= 64;
-		canvas.height	= 128;
+		canvas.height	= 64;
 		// set gradient
 		var gradient	= context.createRadialGradient(
 			canvas.width/2, canvas.height /2, 0,

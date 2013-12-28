@@ -29,8 +29,10 @@ THREEx.Stellar7Game	= function(scene){
 	
 	var map		= new THREEx.Stellar7Map()
 
+	//////////////////////////////////////////////////////////////////////////////////
+	//		handle inter-tank collision								//
+	//////////////////////////////////////////////////////////////////////////////////
 
-	// handle inter-tank collision
 	onRenderFcts.push(function(delta, now){
 		for(var playerIdx1 = 0; playerIdx1 < players.length-1; playerIdx1++){
 			var player1	= players[playerIdx1]
@@ -61,7 +63,10 @@ THREEx.Stellar7Game	= function(scene){
 		}
 	})
 
-	// handle inter-tank collision
+	//////////////////////////////////////////////////////////////////////////////////
+	//		handle shoot-tank collision					//
+	//////////////////////////////////////////////////////////////////////////////////
+	
 	onRenderFcts.push(function(delta, now){
 		for(var playerIdx = 0; playerIdx < players.length; playerIdx++){
 			var player	= players[playerIdx]

@@ -23,7 +23,7 @@ THREEx.Stellar7Shoot	= function(){
 	// Attach a light to the model	
 	var lightPool	= Stellar7.lightPool
 	if( lightPool.hasPointLight() ){
-		var light	= lightPool.getPointLight(0x884488, 10)
+		var light	= lightPool.getPointLight('cyan', 1)
 		// var light	= new THREE.PointLight('red', 15, 20)
 
 		model.object3d.add(light)
@@ -36,11 +36,11 @@ THREEx.Stellar7Shoot	= function(){
 	//		collision							//
 	//////////////////////////////////////////////////////////////////////////////////
 	
-	var collisionSphere	= new THREE.Sphere(model.object3d.position, 0.1)
+	var collisionSphere	= new THREE.Sphere(model.object3d.position, 0.20)
 	this.collisionSphere	= collisionSphere
 	
 	// visible debug for collisionSphere
-	if( true ){
+	if( false ){
 		var geometry	= new THREE.SphereGeometry( collisionSphere.radius, 32, 16 );
 		var material	= new THREE.MeshBasicMaterial({wireframe: true});
 		var mesh	= new THREE.Mesh( geometry, material );
@@ -72,7 +72,7 @@ THREEx.Stellar7Shoot.fromPlayer	= function(player){
 		.copy(playerModel.object3d.position)
 		.add(new THREE.Vector3(0,0.3, 0))
 	// setup velocity
-	var velocity	= new THREE.Vector3(0, 0, 20);
+	var velocity	= new THREE.Vector3(0, 0, 10);
 	var rotationY	= playerModel.baseMesh.rotation.y + playerModel.cannonMesh.rotation.y
 	var matrix	= new THREE.Matrix4().makeRotationY(rotationY);
 	velocity.applyMatrix4( matrix );

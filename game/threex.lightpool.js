@@ -10,7 +10,7 @@ THREEx.LightPool	= function(scene, nPointLights){
 	
 	var pointLights	= []
 	for(var i = 0; i < nPointLights; i++){
-		var pointLight	= new THREE.PointLight('red', 10)
+		var pointLight	= new THREE.PointLight('black', 0)
 		pointLights.push(pointLight)
 		scene.add(pointLight)
 	}

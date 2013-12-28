@@ -51,8 +51,8 @@ THREEx.Stellar7TankControls	= function(tank){
 		else if( inputs.turnLeft )	turnSpeed	= +Math.PI/4
 		else				turnSpeed	= 0
 
-		if( inputs.moveAhead )		moveSpeed	= +1
-		else if( inputs.moveBack )	moveSpeed	= -1
+		if( inputs.moveAhead )		moveSpeed	= +2
+		else if( inputs.moveBack )	moveSpeed	= -2
 		else				moveSpeed	=  0
 
 		if( inputs.gunRight )		gunSpeed	= -Math.PI/4
