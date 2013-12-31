@@ -1,6 +1,6 @@
-THREEx.Stellar7ShootModel	= function(){
+THREEx.Stellar7BulletModel	= function(){
 	// your code goes here
-	var canvas	= generateShootCanvas();
+	var canvas	= generateBulletCanvas();
 	var texture	= new THREE.Texture( canvas );
 	texture.needsUpdate = true;
 
@@ -29,7 +29,7 @@ THREEx.Stellar7ShootModel	= function(){
 	
 	return
 		
-	function generateShootCanvas(){
+	function generateBulletCanvas(){
 		// init canvas
 		var canvas	= document.createElement( 'canvas' );
 		var context	= canvas.getContext( '2d' );

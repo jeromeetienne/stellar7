@@ -15,9 +15,9 @@ THREEx.Stellar7Map	= function(){
 		}
 		return collided
 	}
-	this.collideWithShoot	= function(shoot){
-		var position	= shoot.model.object3d.position
-		var sphere	= shoot.collisionSphere
+	this.collideWithBullet	= function(bullet){
+		var position	= bullet.model.object3d.position
+		var sphere	= bullet.collisionSphere
 		var maxRadius	= this.radius - sphere.radius
 		var collided	= false
 		if( position.length() > maxRadius ){

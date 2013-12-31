@@ -20,10 +20,10 @@ THREEx.Stellar7Game	= function(scene){
 		})
 	})
 
-	var shoots	= []
+	var bullets	= []
 	onRenderFcts.push(function(delta, now){
-		shoots.forEach(function(shoot){
-			shoot.update(delta, now)
+		bullets.forEach(function(bullet){
+			bullet.update(delta, now)
 		})
 	})
 	
@@ -110,26 +110,26 @@ THREEx.Stellar7Game	= function(scene){
 	})
 
 	//////////////////////////////////////////////////////////////////////////////////
-	//		handle shoot-tank collision					//
+	//		handle bullet-tank collision					//
 	//////////////////////////////////////////////////////////////////////////////////
 	
 	onRenderFcts.push(function(delta, now){
 		for(var playerIdx = 0; playerIdx < players.length; playerIdx++){
 			var player	= players[playerIdx]
 			var spherePlayer= player.collisionSphere
-			for(var shootIdx = 0; shootIdx < shoots.length; shootIdx++){
-				var shoot	= shoots[shootIdx]
-				var sphereShoot	= shoot.collisionSphere
-				// if this shoot is from this player, ignore it
-				if( shoot.fromPlayer === player )	continue
+			for(var bulletIdx = 0; bulletIdx < bullets.length; bulletIdx++){
+				var bullet	= bullets[bulletIdx]
+				var sphereBullet	= bullet.collisionSphere
+				// if this bullet is from this player, ignore it
+				if( bullet.fromPlayer === player )	continue
 				// test if sphere collide
-				var colliding	= sphereShoot.intersectsSphere(spherePlayer)
+				var colliding	= sphereBullet.intersectsSphere(spherePlayer)
 				// notify players if colliding
 				if( colliding ){
 					Stellar7.sounds.play('explosion')
 					player.onHitByBullet()
-					shoot.fromPlayer.score	+= 100
-					shoot.die()
+					bullet.fromPlayer.score	+= 100
+					bullet.die()
 				}
 			}
 			
@@ -149,13 +149,13 @@ THREEx.Stellar7Game	= function(scene){
 			if( collided )	player.onMapCollision()
 		})
 	})
-	// shoots colliding with map
+	// bullets colliding with map
 	onRenderFcts.push(function(delta, now){
-		shoots.forEach(function(shoot){
-			var collided	= map.collideWithShoot(shoot)
+		bullets.forEach(function(bullet){
+			var collided	= map.collideWithBullet(bullet)
 			if( collided ){
 				Stellar7.sounds.play('contactFence')
-				shoot.die()
+				bullet.die()
 			}
 		})
 	})
@@ -176,20 +176,20 @@ THREEx.Stellar7Game	= function(scene){
 			if( Date.now() - lastFire < 500 )	return;
 			lastFire	= Date.now()
 			
-			var shoot	= new THREEx.Stellar7ShootBody.fromPlayer(player)
-			scene.add( shoot.model.object3d )
-			shoot.model.object3d.rotation.y	= player.turretAngleY()
+			var bullet	= new THREEx.Stellar7BulletBody.fromPlayer(player)
+			scene.add( bullet.model.object3d )
+			bullet.model.object3d.rotation.y	= player.turretAngleY()
 
-			shoots.push(shoot)
+			bullets.push(bullet)
 			
-			shoot.addEventListener('die', function(){
-				scene.remove( shoot.model.object3d )
-				shoots.splice(shoots.indexOf(shoot),1)
+			bullet.addEventListener('die', function(){
+				scene.remove( bullet.model.object3d )
+				bullets.splice(bullets.indexOf(bullet),1)
 			})
 
 
 
-			Stellar7.sounds.play('shootTank')
+			Stellar7.sounds.play('bulletTank')
 		})
 	}
 

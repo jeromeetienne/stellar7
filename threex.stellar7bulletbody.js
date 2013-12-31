@@ -1,6 +1,6 @@
 var THREEx	= THREEx	|| {}
 
-THREEx.Stellar7ShootBody	= function(){
+THREEx.Stellar7BulletBody	= function(){
 	// add EventDispatcher in this object
 	THREE.EventDispatcher.prototype.apply(this)
 	// internal render function
@@ -19,7 +19,7 @@ THREEx.Stellar7ShootBody	= function(){
 	}
 
 	// get the model
-	var model	= new THREEx.Stellar7ShootModel()
+	var model	= new THREEx.Stellar7BulletModel()
 	this.model	= model
 
 	// Attach a light to the model	
@@ -64,10 +64,10 @@ THREEx.Stellar7ShootBody	= function(){
 /**
  * create a shoot as if it were originated by this tank
  */
-THREEx.Stellar7ShootBody.fromPlayer	= function(player){
+THREEx.Stellar7BulletBody.fromPlayer	= function(player){
 	var playerModel	= player.model;
 	// create object
-	var shoot	= new THREEx.Stellar7ShootBody()
+	var shoot	= new THREEx.Stellar7BulletBody()
 	shoot.fromPlayer= player
 	// setup position
 	shoot.model.object3d.position
