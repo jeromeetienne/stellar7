@@ -8,15 +8,70 @@
 <script src='../threex.stellar7tankcontrols.js'></script>
 <script src='../threex.stellar7tankcontrolskeyboard.js'></script>
 <script src='../threex.stellar7tankcontrolsqueue.js'></script>
-<script src='../threex.stellar7tankplayer.js'></script>
+<script src='../threex.stellar7tankbody.js'></script>
 <script src='../threex.stellar7shootmodel.js'></script>
-<script src='../threex.stellar7shoot.js'></script>
+<script src='../threex.stellar7shootbody.js'></script>
 <script src='../threex.stellar7game.js'></script>
 <script src='../threex.stellar7map.js'></script>
 <script src='webaudiox.gamesounds.js'></script>
 <script src='threex.lightpool.js'></script>
 
-<body style='margin: 0px; background-color: #000000; overflow: hidden;'><script>
+<body style='margin: 0px; background-color: #000000; overflow: hidden;'>
+<style>
+@font-face {	/* for mute button which is part of awesome font */
+	font-family: 'FontAwesome';
+	src: url('vendor/Font-Awesome/font/fontawesome-webfont.eot?v=3.2.1');
+	src: url('vendor/Font-Awesome/font/fontawesome-webfont.eot?#iefix&v=3.2.1') format('embedded-opentype'), url('vendor/Font-Awesome/font/fontawesome-webfont.woff?v=3.2.1') format('woff'), url('vendor/Font-Awesome/font/fontawesome-webfont.ttf?v=3.2.1') format('truetype'), url('vendor/Font-Awesome/font/fontawesome-webfont.svg#fontawesomeregular?v=3.2.1') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+</style>
+<!-- include Score html -->	
+<style>
+.osdFont {
+	font-family	: arial, verdana, sans-serif;
+	font-size	: 500%;
+	font-weight	: bolder;
+
+	color		: #000;
+	text-shadow	: 0 0 0.2em #fbc, 0 0 0.2em #fbc, 0 0 0.2em #fbc;
+}
+</style>
+<style>
+#osdLeftColumn {
+	position	: absolute;
+	text-align	: left;
+
+	top		: 0;
+	left		: 0;
+	padding-left	: 10px;
+}
+#osdRightColumn {
+	position	: absolute;
+	text-align	: right;
+
+	top		: 0;
+	right		: 0;
+	padding-right	: 10px;
+}
+
+#muteOsd {
+	font-family: FontAwesome;
+}
+#muteOsd:before {
+	content: "\f028";	/* icon for non mute */
+}
+#muteOsd.muted:before {
+	content: "\f026";	/* icon for muted */
+}
+</style>
+<div id='osdLeftColumn'>
+	<div id="muteOsd" class='osdFont'></div>
+</div>
+<div id='osdRightColumn'>
+	<div id="score" class='osdFont'>00000</div>
+</div>
+<script>
 require([ 'bower_components/threex.grassground/package.require.js'
 	, 'bower_components/threex.keyboardstate/package.require.js'
 	, 'bower_components/threex.skymap/package.require.js'
@@ -30,7 +85,9 @@ require([ 'bower_components/threex.grassground/package.require.js'
 		throw 'WebGL Not Available'
 	}
 	// setup webgl renderer full page
-	var renderer	= new THREE.WebGLRenderer();
+	var renderer	= new THREE.WebGLRenderer({
+		antialias	: true
+	});
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( renderer.domElement );
 	// setup a scene and camera
@@ -92,26 +149,52 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	onRenderFcts.push(function(delta, now){
 		game.update(delta, now)
 	})
-	
-	
 
-	var player	= new THREEx.Stellar7TankPlayer()
+	var player	= new THREEx.Stellar7TankBody()
 	var humanPlayer	= player
+	Stellar7.humanPlayer	= player
 	player.model.object3d.position.x	+= 1
 	player.setControlsKeyboard()
 	game.addPlayer(player)
 	
-
-	
 ;(function(){
-	var player	= new THREEx.Stellar7TankPlayer()
+	var player	= new THREEx.Stellar7TankBody()
 	player.setControlsQueue()
 	player.controls.addEventListener('idle', function(){
-		// player.controls.push('turnRight', 1)
-		// 		.push('moveAhead', 1)		
+		player.controls.push('turnRight', 1)
+				.push('moveAhead', 1)		
 	})
 	game.addPlayer(player)
 })()
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
+	;(function(){
+		// the domElement to update
+		var domElement	= document.querySelector('#score')
+		// the lastRendered value is cached for efficiency
+		var lastRendered= null
+		// function to refreshScore if needed
+		function refreshScore(){
+			var score	= humanPlayer.score
+			if( score === lastRendered )	return
+			
+			var str		= stringPadder(score, 5, '0')
+			domElement.innerHTML	= str
+
+			function stringPadder(value, width, padChar){
+				var maxPadded	= Array(width+1).join(padChar) + value;
+				return maxPadded.substr(maxPadded.length-width);
+			}	
+		}
+		// init first one
+		refreshScore()
+		// update periodically
+		onRenderFcts.push(function(delta, now){
+			refreshScore();
+		})
+	})()
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		add mars							//
@@ -159,6 +242,22 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	sounds.add('contactFence', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
 	sounds.add('shootTank', 'sounds/151022__bubaproducer__laser-shot-silenced.wav')
 	sounds.add('explosion', 'sounds/211339__rjonesxlr8__explosion-04.wav')
+
+	// handle mute UI
+	document.querySelector('#muteOsd').addEventListener('click', function(event){
+		// change sounds
+		sounds.lineOut.toggleMute()
+		// change display
+		var element	= event.target
+		element.classList.toggle("muted");
+		// save 
+		localStorage.setItem('isMuted', sounds.lineOut.isMuted ? 'muted' : 'no' )
+	})
+	if( localStorage.getItem('isMuted') === 'muted' ){
+		var element	= document.querySelector('#muteOsd')
+		element.classList.toggle("muted");
+		sounds.lineOut.toggleMute()
+	}
 
 //////////////////////////////////////////////////////////////////////////////////
 //		experimentation on sound localisation				//

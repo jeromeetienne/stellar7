@@ -1,6 +1,6 @@
 var THREEx	= THREEx	|| {}
 
-THREEx.Stellar7Shoot	= function(){
+THREEx.Stellar7ShootBody	= function(){
 	// add EventDispatcher in this object
 	THREE.EventDispatcher.prototype.apply(this)
 	// internal render function
@@ -10,6 +10,8 @@ THREEx.Stellar7Shoot	= function(){
 			onRenderFct(delta, now)
 		})
 	}
+	// the tankBody who originated this shoot
+	this.fromPlayer	= null;
 	
 	this.die	= function(){
 		// notify onIdle event
@@ -62,10 +64,10 @@ THREEx.Stellar7Shoot	= function(){
 /**
  * create a shoot as if it were originated by this tank
  */
-THREEx.Stellar7Shoot.fromPlayer	= function(player){
+THREEx.Stellar7ShootBody.fromPlayer	= function(player){
 	var playerModel	= player.model;
 	// create object
-	var shoot	= new THREEx.Stellar7Shoot()
+	var shoot	= new THREEx.Stellar7ShootBody()
 	shoot.fromPlayer= player
 	// setup position
 	shoot.model.object3d.position
@@ -74,9 +76,12 @@ THREEx.Stellar7Shoot.fromPlayer	= function(player){
 	// setup velocity
 	var velocity	= new THREE.Vector3(0, 0, 10);
 	var rotationY	= playerModel.baseMesh.rotation.y + playerModel.cannonMesh.rotation.y
-	var matrix	= new THREE.Matrix4().makeRotationY(rotationY);
+	var matrix	= new THREE.Matrix4().makeRotationY(rotationY)
 	velocity.applyMatrix4( matrix );
 	shoot.velocity.copy(velocity)
 	// return just built shoot
 	return shoot
 }
+
+
+

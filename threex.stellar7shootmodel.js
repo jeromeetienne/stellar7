@@ -6,8 +6,7 @@ THREEx.Stellar7ShootModel	= function(){
 
 	// do the material	
 	var material	= new THREE.MeshBasicMaterial({
-		color		: 0xffaacc,
-		color		: 0x884422,
+		color		: 0x555511,
 		// opacity		: 0.8,
 		map		: texture,
 		side		: THREE.DoubleSide,
@@ -19,15 +18,14 @@ THREEx.Stellar7ShootModel	= function(){
 	var object3d	= new THREE.Object3D
 	this.object3d	= object3d
 	object3d.scale.multiplyScalar(1/2)
-	var nPlanes	= 4;
+	var nPlanes	= 8;
 	for(var i = 0; i < nPlanes; i++){
-		var geometry	= new THREE.PlaneGeometry(1,1)
+		var geometry	= new THREE.PlaneGeometry(1, 0.25)
 		var mesh	= new THREE.Mesh(geometry, material)
 		mesh.material	= material
-		mesh.rotateX(i*Math.PI/nPlanes)
+		mesh.rotateY(i*Math.PI/nPlanes)
 		object3d.add(mesh)
 	}
-	
 	
 	return
 		

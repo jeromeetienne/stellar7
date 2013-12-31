@@ -91,7 +91,6 @@ THREEx.Stellar7Game	= function(scene){
 				var position2	= player2.model.object3d.position
 				// test if sphere collide
 				var colliding	= sphere1.intersectsSphere(sphere2)
-				// console.log('texting', playerIdx1, 'colliding', playerIdx2, 'result', colliding)
 				// sphere bounce on each other
 				if( colliding ){
 					var delta	= position1.clone().sub(position2)
@@ -129,6 +128,7 @@ THREEx.Stellar7Game	= function(scene){
 				if( colliding ){
 					Stellar7.sounds.play('explosion')
 					player.onHitByBullet()
+					shoot.fromPlayer.score	+= 100
 					shoot.die()
 				}
 			}
@@ -176,11 +176,9 @@ THREEx.Stellar7Game	= function(scene){
 			if( Date.now() - lastFire < 500 )	return;
 			lastFire	= Date.now()
 			
-			var shoot	= new THREEx.Stellar7Shoot.fromPlayer(player)
+			var shoot	= new THREEx.Stellar7ShootBody.fromPlayer(player)
 			scene.add( shoot.model.object3d )
-			shoot.model.object3d.rotation.y	= player.model.cannonMesh.rotation.y 
-				+ player.model.baseMesh.rotation.y
-
+			shoot.model.object3d.rotation.y	= player.turretAngleY()
 
 			shoots.push(shoot)
 			

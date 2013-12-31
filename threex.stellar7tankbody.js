@@ -1,7 +1,7 @@
 var THREEx	= THREEx	|| {}
 
-THREEx.Stellar7TankPlayer	= function(){
-	this.id		= THREEx.Stellar7TankPlayer.id++
+THREEx.Stellar7TankBody	= function(){
+	this.id		= THREEx.Stellar7TankBody.id++
 
 	// add EventDispatcher in this object
 	THREE.EventDispatcher.prototype.apply(this)
@@ -14,6 +14,7 @@ THREEx.Stellar7TankPlayer	= function(){
 		})
 	}
 
+	this.score	= 0
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	//		model								//
@@ -21,6 +22,9 @@ THREEx.Stellar7TankPlayer	= function(){
 
 	var model	= new THREEx.Stellar7TankModel()
 	this.model	= model
+	this.turretAngleY	= function(){
+		return model.baseMesh.rotation.y + model.cannonMesh.rotation.y
+	} 
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		collision							//
@@ -49,7 +53,6 @@ THREEx.Stellar7TankPlayer	= function(){
 		model.cannonMesh.add(line)		
 	}
 
-
 	//////////////////////////////////////////////////////////////////////////////////
 	//		controls							//
 	//////////////////////////////////////////////////////////////////////////////////
@@ -63,7 +66,7 @@ THREEx.Stellar7TankPlayer	= function(){
 	var controls	= null;
 	this.setControlsKeyboard	= function(){
 		// TODO this should not be duplicated
-		// - maybe THREEx.Stellar7TankPlayer.createKeyboardControls with a better name
+		// - maybe THREEx.Stellar7TankBody.createKeyboardControls with a better name
 		var keyboard	= new THREEx.KeyboardState()
 
 		controls	= new THREEx.Stellar7TankControlsKeyboard(keyboard, tankControls)
@@ -102,12 +105,12 @@ THREEx.Stellar7TankPlayer	= function(){
 	}
 }
 
-THREEx.Stellar7TankPlayer.id	= 0
+THREEx.Stellar7TankBody.id	= 0
 
-THREEx.Stellar7TankPlayer.createKeyboard	= function(){
-	var player	= new THREEx.Stellar7TankPlayer()
+THREEx.Stellar7TankBody.createKeyboard	= function(){
+	var player	= new THREEx.Stellar7TankBody()
 	// TODO this should not be duplicated
-	// - maybe THREEx.Stellar7TankPlayer.createKeyboardControls with a better name
+	// - maybe THREEx.Stellar7TankBody.createKeyboardControls with a better name
 	var keyboard	= new THREEx.KeyboardState()
 
 	var controls	= new THREEx.Stellar7TankControlsKeyboard(keyboard, player.tankControls)

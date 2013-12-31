@@ -1,7 +1,7 @@
 TODO
 ====
-* make the map circle 
-* all collision are done with boundaryRadius
+* DONE make the map circle 
+* DONE all collision are done with boundaryRadius
   * it is present everywhere
 * to rename Shoot into Bullet
 * to rename shoot.js into ShootBody.js
