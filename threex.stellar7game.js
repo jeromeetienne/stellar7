@@ -126,6 +126,9 @@ THREEx.Stellar7Game	= function(scene){
 				var colliding	= sphereBullet.intersectsSphere(spherePlayer)
 				// notify players if colliding
 				if( colliding ){
+					if( player.isLocalPlayer() ){
+						document.dispatchEvent(new CustomEvent('BadTVJamming'));
+					}
 					Stellar7.sounds.play('explosion')
 					player.onHitByBullet()
 					bullet.fromPlayer.score	+= 100

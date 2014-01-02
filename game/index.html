@@ -4,6 +4,14 @@
 <script src="vendor/three.js/examples/js/Detector.js"></script>
 <script src="vendor/threex.windowresize.js"></script>
 
+<!-- include three.js postprocessing  -->
+<script src="vendor/three.js/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="vendor/three.js/examples/js/postprocessing/RenderPass.js"></script>
+<script src="vendor/three.js/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="vendor/three.js/examples/js/postprocessing/MaskPass.js"></script> 
+<script src="vendor/three.js/examples/js/shaders/CopyShader.js"></script>
+
+
 <script src='../threex.stellar7tankmodel.js'></script>
 <script src='../threex.stellar7tankcontrols.js'></script>
 <script src='../threex.stellar7tankcontrolskeyboard.js'></script>
@@ -78,6 +86,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	, 'bower_components/threex.spaceships/package.require.js'
 	, 'bower_components/threex.montainsarena/package.require.js'
 	, 'bower_components/webaudiox/build/webaudiox.js'
+	, 'bower_components/threex.badtvpproc/package.require.js'
 	], function(){
 	// detect WebGL
 	if( !Detector.webgl ){
@@ -309,14 +318,57 @@ if(false){
 		source.start(0)
 		return source						
 	})
-	
 }
+
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		badTVPasses							//
+	//////////////////////////////////////////////////////////////////////////////////
+	
+	var badTVPasses	= new THREEx.BadTVPasses();
+	onRenderFcts.push(function(delta, now){
+		badTVPasses.update(delta, now)		
+	})
+	badTVPasses.params.reset()
+	badTVPasses.onParamsChange();
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		composer 							//
+	//////////////////////////////////////////////////////////////////////////////////
+
+	var composer	= new THREE.EffectComposer(renderer);
+	var renderPass	= new THREE.RenderPass( scene, camera );
+	composer.addPass( renderPass );
+
+	// add badTVPasses to composer	
+	badTVPasses.addPassesTo(composer)
+
+	composer.passes[composer.passes.length -1 ].renderToScreen	= true;
+	
+	//////////////////////////////////////////////////////////////////////////////////
+	//		ping animation + sounds						//
+	//////////////////////////////////////////////////////////////////////////////////
+
+	window.AudioContext	= window.AudioContext || window.webkitAudioContext;
+	var context		= new AudioContext()
+	var badTVJamming	= new THREEx.BadTVJamming(badTVPasses, context)
+	// document.querySelector('canvas').addEventListener('click', function(){
+	// 	badTVJamming.trigger()
+	// })
+	document.addEventListener('BadTVJamming', function(){
+		badTVJamming.trigger()		
+	})
+
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		render the scene						//
 	//////////////////////////////////////////////////////////////////////////////////
-	onRenderFcts.push(function(){
-		renderer.render( scene, camera );		
+	onRenderFcts.push(function(delta, now){
+		// disable rendering directly thru renderer 
+		// renderer.render( scene, camera )
+		
+		// render thru composer
+		composer.render(delta)
 	})
 	
 	//////////////////////////////////////////////////////////////////////////////////

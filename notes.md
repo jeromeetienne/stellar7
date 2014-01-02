@@ -7,18 +7,6 @@ TODO
 * to rename shoot.js into ShootBody.js
   * rename tankPlayer into tankBody
 
-Collision
-=========
-## interbody collision
-* use bounding sphere
-* with visual helpers to debug
-
-## onScannedRobot 2
-* distance between bounding sphere center and line casted by gun
-* if distance lower than radius, then collision
-* Line3.closestPointToPoint seemes to give a point of a line the closest to another point
-* that plus the radius of bounding sphere this gives on scanned robot
-
 Misc
 ====
 * fightcode - how to do the security ?

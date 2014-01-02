@@ -64,6 +64,10 @@ THREEx.Stellar7TankBody	= function(){
 	})
 
 	var controls	= null;
+	this.isLocalPlayer	= function(){
+		var isKeyboard	= controls instanceof THREEx.Stellar7TankControlsKeyboard
+		return isKeyboard ? true : false
+	}
 	this.setControlsKeyboard	= function(){
 		// TODO this should not be duplicated
 		// - maybe THREEx.Stellar7TankBody.createKeyboardControls with a better name
