@@ -121,7 +121,7 @@ THREEx.Stellar7Game	= function(scene){
 				var bullet	= bullets[bulletIdx]
 				var sphereBullet	= bullet.collisionSphere
 				// if this bullet is from this player, ignore it
-				if( bullet.fromPlayer === player )	continue
+				if( bullet.fromPlayer === player )	continue 
 				// test if sphere collide
 				var colliding	= sphereBullet.intersectsSphere(spherePlayer)
 				// notify players if colliding
