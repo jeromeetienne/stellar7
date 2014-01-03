@@ -126,9 +126,6 @@ THREEx.Stellar7Game	= function(scene){
 				var colliding	= sphereBullet.intersectsSphere(spherePlayer)
 				// notify players if colliding
 				if( colliding ){
-					if( player.isLocalPlayer() ){
-						document.dispatchEvent(new CustomEvent('BadTVJamming'));
-					}
 					Stellar7.sounds.play('explosion')
 					player.onHitByBullet()
 					bullet.fromPlayer.score	+= 100
@@ -148,7 +145,7 @@ THREEx.Stellar7Game	= function(scene){
 	onRenderFcts.push(function(delta, now){
 		players.forEach(function(player){
 			var collided	= map.collideWithTank(player)
-			if( collided )	Stellar7.sounds.play('contactFence')
+			if( collided )	document.dispatchEvent(new CustomEvent('BadTVJamming'));
 			if( collided )	player.onMapCollision()
 		})
 	})
