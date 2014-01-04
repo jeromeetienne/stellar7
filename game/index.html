@@ -87,6 +87,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	, 'bower_components/threex.montainsarena/package.require.js'
 	, 'bower_components/webaudiox/build/webaudiox.js'
 	, 'bower_components/threex.badtvpproc/package.require.js'
+	, 'bower_components/threex.solidwireframe/threex.solidwireframe.js'
 	], function(){
 	// detect WebGL
 	if( !Detector.webgl ){
@@ -134,23 +135,6 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	Stellar7.lightPool	= lightPool
 
 	//////////////////////////////////////////////////////////////////////////////////
-	//		add the grass ground						//
-	//////////////////////////////////////////////////////////////////////////////////	
-	var mesh	= new THREEx.GrassGround({
-		width		: 10,
-		height		: 10,
-		repeatX		: 30,
-		repeatY		: 30,
-	})
-	mesh.material	= new THREE.MeshPhongMaterial({
-		map	: mesh.material.map,
-		color	: 0x44FF44,
-	})
-	mesh.scale.multiplyScalar(10)
-	console.dir(mesh)
-	scene.add(mesh)
-
-	//////////////////////////////////////////////////////////////////////////////////
 	//		add an object and make it move					//
 	//////////////////////////////////////////////////////////////////////////////////	
 
@@ -169,6 +153,9 @@ require([ 'bower_components/threex.grassground/package.require.js'
 ;(function(){
 	var player	= new THREEx.Stellar7TankBody()
 	player.setControlsQueue()
+	player.addEventListener('scannedTank', function(){
+		player.controls.fire()
+	})
 	player.controls.addEventListener('idle', function(){
 		player.controls.push('turnRight', 1)
 				.push('moveAhead', 1)		
@@ -206,20 +193,6 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	})()
 
 	//////////////////////////////////////////////////////////////////////////////////
-	//		add mars							//
-	//////////////////////////////////////////////////////////////////////////////////
-
-	// TODO put that in map.object3d	
-	var mesh	= THREEx.createSkymap('mars')
-	scene.add( mesh )
-
-	var mesh	= new THREEx.MontainsArena()
-	mesh.scale.x	*= 40
-	mesh.scale.z	*= 40
-	mesh.scale.y	*= 20
-	scene.add(mesh)
-
-	//////////////////////////////////////////////////////////////////////////////////
 	//		Camera Controls							//
 	//////////////////////////////////////////////////////////////////////////////////
 	// var mouse	= {x : 0, y : 0}
@@ -247,7 +220,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	//////////////////////////////////////////////////////////////////////////////////
 	var sounds	= new WebAudiox.GameSounds()
 	Stellar7.sounds	= sounds
-	sounds.lineOut.volume	= 0.2
+	sounds.lineOut.volume	= 0.0
 	sounds.add('contactFence', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
 	sounds.add('bulletTank', 'sounds/151022__bubaproducer__laser-shot-silenced.wav')
 	sounds.add('explosion', 'sounds/211339__rjonesxlr8__explosion-04.wav')
@@ -349,12 +322,9 @@ if(false){
 	//		ping animation + sounds						//
 	//////////////////////////////////////////////////////////////////////////////////
 
-	window.AudioContext	= window.AudioContext || window.webkitAudioContext;
-	var context		= new AudioContext()
-	var badTVJamming	= new THREEx.BadTVJamming(badTVPasses, context)
-	// document.querySelector('canvas').addEventListener('click', function(){
-	// 	badTVJamming.trigger()
-	// })
+	// window.AudioContext	= window.AudioContext || window.webkitAudioContext;
+	// var context		= new AudioContext()
+	var badTVJamming	= new THREEx.BadTVJamming(badTVPasses, sounds.context, sounds.lineOut.destination)
 	document.addEventListener('BadTVJamming', function(){
 		badTVJamming.trigger()		
 	})

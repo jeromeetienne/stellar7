@@ -25,7 +25,7 @@ THREEx.Stellar7BulletBody	= function(){
 	// Attach a light to the model	
 	var lightPool	= Stellar7.lightPool
 	if( lightPool.hasPointLight() ){
-		var light	= lightPool.getPointLight('cyan', 1)
+		var light	= lightPool.getPointLight('white', 4)
 		// var light	= new THREE.PointLight('red', 15, 20)
 
 		model.object3d.add(light)

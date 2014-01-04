@@ -62,6 +62,9 @@ THREEx.Stellar7TankBody	= function(){
 	onRenderFcts.push(function(delta, now){
 		tankControls.update(delta, now)
 	})
+	tankControls.addEventListener('fire', function(){
+		this.dispatchEvent({ type: 'fire' })
+	}.bind(this))
 
 	var controls	= null;
 	this.isLocalPlayer	= function(){
@@ -79,9 +82,6 @@ THREEx.Stellar7TankBody	= function(){
 			controls.update(delta, now)
 		})
 
-		controls.addEventListener('fire', function(){
-			this.dispatchEvent({ type: 'fire' })
-		}.bind(this))
 		return this
 	}
 	this.setControlsQueue	= function(){
@@ -102,7 +102,7 @@ THREEx.Stellar7TankBody	= function(){
 	}
 	this.onTankCollision	= function(event){}
 	this.onScannedTank	= function(event){
-		this.dispatchEvent({ type: 'fire' })		
+		this.dispatchEvent({ type: 'scannedTank' })		
 	}
 	this.onHitByBullet	= function(){
 		console.log('onHitByShoot')

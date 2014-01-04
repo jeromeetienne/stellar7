@@ -1,6 +1,8 @@
 var THREEx	= THREEx	|| {}
 
 THREEx.Stellar7TankControls	= function(tank){
+	// add EventDispatcher in this object
+	THREE.EventDispatcher.prototype.apply(this)
 	// internal render function
 	var onRenderFcts= []
 	this.update	= function(delta, now){
@@ -44,6 +46,7 @@ THREEx.Stellar7TankControls	= function(tank){
 		moveBack	: false,
 		gunRight	: false,
 		gunLeft		: false,
+		fire		: false
 	}
 	this.inputs	= inputs
 	onRenderFcts.push(function(delta, now){
@@ -58,6 +61,11 @@ THREEx.Stellar7TankControls	= function(tank){
 		if( inputs.gunRight )		gunSpeed	= -Math.PI/4
 		else if( inputs.gunLeft )	gunSpeed	= +Math.PI/4
 		else				gunSpeed	= 0
+			
+		if( inputs.fire ){
+			this.dispatchEvent({ type: 'fire' })
+			inputs.fire	= false
+		}
 	}.bind(this))
 
 	//////////////////////////////////////////////////////////////////////////////////
@@ -87,4 +95,7 @@ THREEx.Stellar7TankControls	= function(tank){
 	this.gunRight	= function(){ this.gun(+1)	}.bind(this)
 	this.gunLeft	= function(){ this.gun(-1)	}.bind(this)
 	this.gunStop	= function(){ this.gun( 0)	}.bind(this)
+	this.fire	= function(){
+		inputs.fire	= true
+	}
 }

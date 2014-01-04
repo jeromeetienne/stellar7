@@ -28,6 +28,7 @@ THREEx.Stellar7Game	= function(scene){
 	})
 	
 	var map		= new THREEx.Stellar7Map()
+	scene.add(map.object3d)
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		handle inter-tank collision					//

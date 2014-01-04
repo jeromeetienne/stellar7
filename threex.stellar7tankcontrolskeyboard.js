@@ -25,7 +25,8 @@ THREEx.Stellar7TankControlsKeyboard	= function(keyboard, tankControls){
 	keyboard.domElement.addEventListener('keydown', function(event){
 		if( keyboard.eventMatches(event, 'space') && !wasPressed['space'] ){
 			wasPressed['space']	= true;
-			this.dispatchEvent({ type: 'fire' })
+			var inputs	= tankControls.inputs
+			inputs.fire	= true
 		}
 	}.bind(this))	
 	// listen on keyup to maintain ```wasPressed``` array
