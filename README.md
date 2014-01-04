@@ -1,5 +1,5 @@
 threex.stella7
-===================
+==============
 
 threex.stellar7 is a three.js extension which provide stellar7 stuff. The models, the controls, the collision, all the bricks to actually do a stellar7 like game.
 

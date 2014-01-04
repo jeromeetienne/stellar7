@@ -15,7 +15,7 @@ THREEx.Stellar7TankControlsQueue	= function(tankControls){
 	//////////////////////////////////////////////////////////////////////////////////
 	
 	this.fire	= function(){
-		this.push('fire', 0)
+		tankControls['fire']()
 	}
 
 	this.push	= function(action, duration){
@@ -41,7 +41,6 @@ THREEx.Stellar7TankControlsQueue	= function(tankControls){
 		'gunRight'	: 'gunStop',
 		'gunLeft'	: 'gunStop',
 		'gunStop'	: 'gunStop',
-		'fire'		: '',
 	}
 	var legitActions= Object.keys(stopActions)
 	
@@ -63,13 +62,12 @@ THREEx.Stellar7TankControlsQueue	= function(tankControls){
 			timerId	= null
 		}
 		// run the command
+		console.log('runNextCommand', command.actions)
 		tankControls[command.action]()
 		// launch the timer to stop execution
 		timerId		= setTimeout(function(){
 			var stopAction	= stopActions[command.action]
-			if( stopAction ){
-				tankControls[stopAction]()			
-			}
+			tankControls[stopAction]()			
 			runNextCommand()
 		}, command.duration*1000)
 	}.bind(this)

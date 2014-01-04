@@ -38,7 +38,7 @@
 <style>
 .osdFont {
 	font-family	: arial, verdana, sans-serif;
-	font-size	: 500%;
+	font-size	: 300%;
 	font-weight	: bolder;
 
 	color		: #000;
@@ -62,7 +62,15 @@
 	right		: 0;
 	padding-right	: 10px;
 }
+#osdCenterColumn {
+	position	: absolute;
+	top		: 30%; 
 
+	text-align	: center;
+	width		: 100%;
+}
+</style>
+<style>
 #muteOsd {
 	font-family: FontAwesome;
 }
@@ -72,12 +80,24 @@
 #muteOsd.muted:before {
 	content: "\f026";	/* icon for muted */
 }
+
 </style>
 <div id='osdLeftColumn'>
-	<div id="muteOsd" class='osdFont'></div>
+	<div class='osdFont'>
+		Score: <span id="scoreDomElement">00000</span>
+	</div>
+	<div class='osdFont'>
+		Energy: <span id="energyDomElement">00000</span>
+	</div>
+	<div class='osdFont'>
+		Lives: <span id="livesDomElement">0</span>
+	</div>
 </div>
 <div id='osdRightColumn'>
-	<div id="score" class='osdFont'>00000</div>
+	<div id="muteOsd" class='osdFont'></div>
+</div>
+<div id='osdCenterColumn' class='osdFont'>
+	<div id="gameLostOsd" style='display:none'>Game Over</div>
 </div>
 <script>
 require([ 'bower_components/threex.grassground/package.require.js'
@@ -88,6 +108,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	, 'bower_components/webaudiox/build/webaudiox.js'
 	, 'bower_components/threex.badtvpproc/package.require.js'
 	, 'bower_components/threex.solidwireframe/threex.solidwireframe.js'
+	, 'vendor/gowiththeflow.js'
 	], function(){
 	// detect WebGL
 	if( !Detector.webgl ){
@@ -143,25 +164,33 @@ require([ 'bower_components/threex.grassground/package.require.js'
 		game.update(delta, now)
 	})
 
-	var player	= new THREEx.Stellar7TankBody()
-	player.setControlsKeyboard()
-	game.addPlayer(player)
 
-	var humanPlayer	= player
-	Stellar7.humanPlayer	= player
-	player.model.object3d.position.x	+= 1
+	var humanPlayer	= null
+;(function(){
+	var tankBody	= new THREEx.Stellar7TankBody()
+	tankBody.setControlsKeyboard()
+	game.addPlayer(tankBody)
+	tankBody.model.object3d.position.x	+= 1
+
+	humanPlayer	= tankBody
+	Stellar7.humanPlayer	= tankBody
+
+	tankBody.addEventListener('reallyDead', function(){
+		location.href	= '../'
+	})
+})()
 	
 ;(function(){
-	var player	= new THREEx.Stellar7TankBody()
-	player.setControlsQueue()
-	game.addPlayer(player)
+	var tankBody	= new THREEx.Stellar7TankBody()
+	tankBody.setControlsQueue()
+	game.addPlayer(tankBody)
 
-	player.addEventListener('scannedTank', function(){
-		player.controls.fire()
+	tankBody.addEventListener('scannedTank', function(){
+		tankBody.controls.fire()
 	})
-	player.controls.addEventListener('idle', function(){
-		player.controls.push('turnRight', 1)
-				.push('moveAhead', 1)		
+	tankBody.controls.addEventListener('idle', function(){
+		// tankBody.controls.push('turnRight', 1)
+		// 		.push('moveAhead', 1)		
 	})
 })()
 
@@ -170,7 +199,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	//////////////////////////////////////////////////////////////////////////////////
 	;(function(){
 		// the domElement to update
-		var domElement	= document.querySelector('#score')
+		var domElement	= document.querySelector('#scoreDomElement')
 		// the lastRendered value is cached for efficiency
 		var lastRendered= null
 		// function to refreshScore if needed
@@ -179,6 +208,64 @@ require([ 'bower_components/threex.grassground/package.require.js'
 			if( score === lastRendered )	return
 			
 			var str		= stringPadder(score, 5, '0')
+			domElement.innerHTML	= str
+
+			function stringPadder(value, width, padChar){
+				var maxPadded	= Array(width+1).join(padChar) + value;
+				return maxPadded.substr(maxPadded.length-width);
+			}	
+		}
+		// init first one
+		refreshScore()
+		// update periodically
+		onRenderFcts.push(function(delta, now){
+			refreshScore();
+		})
+	})()
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
+	;(function(){
+		// the domElement to update
+		var domElement	= document.querySelector('#energyDomElement')
+		// the lastRendered value is cached for efficiency
+		var lastRendered= null
+		// function to refreshScore if needed
+		function refreshScore(){
+			var energy	= humanPlayer.energy
+			if( energy === lastRendered )	return
+			
+			var str		= stringPadder(energy, 5, '0')
+			domElement.innerHTML	= str
+
+			function stringPadder(value, width, padChar){
+				var maxPadded	= Array(width+1).join(padChar) + value;
+				return maxPadded.substr(maxPadded.length-width);
+			}	
+		}
+		// init first one
+		refreshScore()
+		// update periodically
+		onRenderFcts.push(function(delta, now){
+			refreshScore();
+		})
+	})()
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
+	;(function(){
+		// the domElement to update
+		var domElement	= document.querySelector('#livesDomElement')
+		// the lastRendered value is cached for efficiency
+		var lastRendered= null
+		// function to refreshScore if needed
+		function refreshScore(){
+			var lives	= humanPlayer.lives
+			if( lives === lastRendered )	return
+			
+			var str		= stringPadder(lives, 5, '0')
 			domElement.innerHTML	= str
 
 			function stringPadder(value, width, padChar){

@@ -167,19 +167,27 @@ THREEx.Stellar7Game	= function(scene){
 	
 
 	
-	this.addPlayer	= function(player){
-		players.push(player)
-		scene.add(player.model.object3d)
+	this.addPlayer	= function(tankBody){
+		players.push(tankBody)
+		scene.add(tankBody.model.object3d)
+
+
+		tankBody.addEventListener('dead', function(){
+			if( tankBody.isLocalPlayer() === true ){
+				document.dispatchEvent(new CustomEvent('BadTVJamming'));			
+			}
+		})
 
 		var lastFire	= 0
-		player.addEventListener('fire', function(){
+		tankBody.addEventListener('fire', function(){
 			// handle cool down period
-			if( Date.now() - lastFire < 500 )	return;
-			lastFire	= Date.now()
+			var present	= Date.now()/1000
+			if( present - lastFire < 0.5 )	return
+			lastFire	= present
 			
-			var bullet	= new THREEx.Stellar7BulletBody.fromPlayer(player)
+			var bullet	= new THREEx.Stellar7BulletBody.fromPlayer(tankBody)
 			scene.add( bullet.model.object3d )
-			bullet.model.object3d.rotation.y	= player.turretAngleY()
+			bullet.model.object3d.rotation.y	= tankBody.turretAngleY()
 
 			bullets.push(bullet)
 			

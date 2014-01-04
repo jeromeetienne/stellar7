@@ -2,6 +2,9 @@ var THREEx	= THREEx	|| {}
 
 THREEx.Stellar7TankBody	= function(){
 	this.id		= THREEx.Stellar7TankBody.id++
+	this.maxEnergy	= 1000;
+	this.lives	= 1;
+	this.energy	= this.maxEnergy;
 
 	// add EventDispatcher in this object
 	THREE.EventDispatcher.prototype.apply(this)
@@ -99,31 +102,29 @@ THREEx.Stellar7TankBody	= function(){
 
 	this.onMapCollision	= function(){
 		console.log('mapCollision')
+		this.dispatchEvent({ type: 'mapCollision' })
 	}
-	this.onTankCollision	= function(event){}
+	this.onTankCollision	= function(event){
+		this.dispatchEvent({ type: 'tankCollision' })				
+	}
 	this.onScannedTank	= function(event){
-		this.dispatchEvent({ type: 'scannedTank' })		
+		// console.log('onScannedTank')
+		this.dispatchEvent({ type: 'scannedTank' })
 	}
 	this.onHitByBullet	= function(){
-		console.log('onHitByShoot')
+		this.energy	-= 250
+		if( this.energy < 0 ){
+			this.lives	+= -1
+			if( this.lives < 0 ){
+				this.dispatchEvent({ type: 'reallyDead' })
+				this.energy	= 0;
+			}else{
+				this.dispatchEvent({ type: 'dead' })
+				this.energy	= this.maxEnergy;			
+			}
+		}
+		this.dispatchEvent({ type: 'hitByBullet' })
 	}
 }
 
 THREEx.Stellar7TankBody.id	= 0
-
-THREEx.Stellar7TankBody.createKeyboard	= function(){
-	var player	= new THREEx.Stellar7TankBody()
-	// TODO this should not be duplicated
-	// - maybe THREEx.Stellar7TankBody.createKeyboardControls with a better name
-	var keyboard	= new THREEx.KeyboardState()
-
-	var controls	= new THREEx.Stellar7TankControlsKeyboard(keyboard, player.tankControls)
-	player.controls	= controls
-	onRenderFcts.push(function(delta, now){
-		controls.update(delta, now)
-	})
-	controls.addEventListener('fire', function(){
-		player.dispatchEvent({ type: 'fire' })
-	})
-	return player
-}
