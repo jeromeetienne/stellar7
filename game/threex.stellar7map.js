@@ -19,6 +19,17 @@ THREEx.Stellar7Map	= function(){
 	// skymap
 	var mesh	= THREEx.createSkymap('mars')
 	// object3d.add( mesh )
+	
+	
+	// add montains
+	var url		= 'bower_components/threex.planets/examples/images/galaxy_starfield.png'
+	var material	= new THREE.MeshBasicMaterial({
+		map	: THREE.ImageUtils.loadTexture(url),
+		side	: THREE.BackSide
+	})
+	var geometry	= new THREE.SphereGeometry(90, 32, 32)
+	var mesh	= new THREE.Mesh(geometry, material)
+	object3d.add(mesh)
 
 	// montain arena
 	var mesh	= new THREEx.MontainsArena()
