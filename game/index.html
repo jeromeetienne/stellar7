@@ -124,7 +124,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	document.body.appendChild( renderer.domElement );
 	// setup a scene and camera
 	var scene	= new THREE.Scene();
-	var camera	= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
+	var camera	= new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.01, 1000);
 	camera.position.z = 3;
 
 	// declare the rendering loop
@@ -237,7 +237,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 			var energy	= humanPlayer.energy
 			if( energy === lastRendered )	return
 			
-			var str		= stringPadder(energy, 5, '0')
+			var str		= stringPadder(energy, 5, ' ')
 			domElement.innerHTML	= str
 
 			function stringPadder(value, width, padChar){
@@ -266,7 +266,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 			var lives	= humanPlayer.lives
 			if( lives === lastRendered )	return
 			
-			var str		= stringPadder(lives, 5, '0')
+			var str		= stringPadder(lives, 1, '0')
 			domElement.innerHTML	= str
 
 			function stringPadder(value, width, padChar){
@@ -301,7 +301,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	//////////////////////////////////////////////////////////////////////////////////
 	
 	humanPlayer.model.cannonMesh.add(camera)
-	camera.position.set(0,0.75,-2)
+	camera.position.set(0,0.3,-0.9)
 	camera.lookAt(new THREE.Vector3(0,0,2))
 
 	
