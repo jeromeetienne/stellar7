@@ -1,7 +1,13 @@
 var THREEx	= THREEx	|| {}
 
 THREEx.Stellar7Map	= function(){
-	
+	// internal render function
+	var onRenderFcts= []
+	this.update	= function(delta, now){
+		onRenderFcts.forEach(function(onRenderFct){
+			onRenderFct(delta, now)
+		})
+	}
 	//////////////////////////////////////////////////////////////////////////////////
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
@@ -17,9 +23,60 @@ THREEx.Stellar7Map	= function(){
 	this.object3d	= object3d
 
 	// skymap
-	var mesh	= THREEx.createSkymap('mars')
+	// var mesh	= THREEx.createSkymap('mars')
 	// object3d.add( mesh )
+
+	var planetsContainer	= new THREE.Object3D()
+	object3d.add(planetsContainer)
+	onRenderFcts.push(function(delta, now){
+		var angle	= Math.PI*2*delta * -0.01
+		planetsContainer.rotateY(angle)
+	})			
 	
+	
+	var addPlanets	= function(mesh, angle, angularSpeed){
+		angularSpeed	= angularSpeed !== undefined ? angularSpeed : 0.05
+		mesh.position.x	= Math.cos(angle)*this.radius*2
+		mesh.position.y	= 10
+		mesh.position.z	= Math.sin(angle)*this.radius*2
+		mesh.scale.multiplyScalar(8)
+		planetsContainer.add(mesh)
+		onRenderFcts.push(function(delta, now){
+			var angle	= Math.PI*2*delta * angularSpeed
+			mesh.rotateY(angle)
+		})			
+	}.bind(this);
+	
+	addPlanets(THREEx.Planets.createSun()		, 0 * 2*Math.PI/11)
+	addPlanets(THREEx.Planets.createMercury()	, 1 * 2*Math.PI/11)
+	addPlanets(THREEx.Planets.createVenus()		, 2 * 2*Math.PI/11)
+	addPlanets(THREEx.Planets.createEarth()		, 3 * 2*Math.PI/11)
+	addPlanets(THREEx.Planets.createEarthCloud()	, 3 * 2*Math.PI/11, 0.1)
+	addPlanets(THREEx.Planets.createMoon()		, 4 * 2*Math.PI/11)
+	addPlanets(THREEx.Planets.createMars()		, 5 * 2*Math.PI/11)
+	addPlanets(THREEx.Planets.createJupiter()	, 6 * 2*Math.PI/11)
+	addPlanets(THREEx.Planets.createSaturn()	, 7 * 2*Math.PI/11)
+	addPlanets(THREEx.Planets.createSaturnRing()	, 7 * 2*Math.PI/11, 0)
+	addPlanets(THREEx.Planets.createUranus()	, 8 * 2*Math.PI/11)
+	addPlanets(THREEx.Planets.createUranusRing()	, 8 * 2*Math.PI/11, 0)
+	addPlanets(THREEx.Planets.createNeptune()	, 9 * 2*Math.PI/11)
+	addPlanets(THREEx.Planets.createPluto()		,10 * 2*Math.PI/11)
+
+
+
+// ;(function(){
+// 	var mesh	= THREEx.Planets.createMoon()
+// 	var angle	= Math.PI/2
+// 	mesh.position.x	= Math.cos(angle)*this.radius*2
+// 	mesh.position.y	= 10
+// 	mesh.position.z	= Math.sin(angle)*this.radius*2
+// 	mesh.scale.multiplyScalar(8)
+// 	object3d.add(mesh)
+// 	onRenderFcts.push(function(delta, now){
+// 		var angle	= Math.PI*2*delta * 0.1
+// 		mesh.rotateY(angle)
+// 	})	
+// }.bind(this))();
 	
 	// add montains
 	var url		= 'bower_components/threex.planets/examples/images/galaxy_starfield.png'

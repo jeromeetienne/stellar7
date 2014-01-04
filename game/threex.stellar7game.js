@@ -28,6 +28,9 @@ THREEx.Stellar7Game	= function(scene){
 	})
 	
 	var map		= new THREEx.Stellar7Map()
+	onRenderFcts.push(function(delta,now){
+		map.update(delta, now)
+	})
 	scene.add(map.object3d)
 
 	//////////////////////////////////////////////////////////////////////////////////
