@@ -1,0 +1,14 @@
+{
+  "name": "threex.badtvpproc",
+  "homepage": "https://github.com/jeromeetienne/threex.badtvpproc",
+  "_release": "b050a5306f",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "b050a5306f01b5c30113a571a8bd6ec1e26c3f83"
+  },
+  "_source": "git://github.com/jeromeetienne/threex.badtvpproc.git",
+  "_target": "*",
+  "_originalSource": "threex.badtvpproc",
+  "_direct": true
+}

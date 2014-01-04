@@ -9,8 +9,8 @@ THREEx.BadTVPasses	= function(){
 	THREE.EventDispatcher.prototype.apply(this)
 
 	//////////////////////////////////////////////////////////////////////////////////
-		//		comment								//
-		//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
 			
 	// create shaders passes
 	var badTVPass	= new THREE.ShaderPass( THREE.BadTVShader );
@@ -48,7 +48,7 @@ THREEx.BadTVPasses	= function(){
 			}
 			updateUniforms()	
 		}
-	}
+	}.bind(this)
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		comment								//
@@ -192,8 +192,8 @@ THREEx.BadTVPasses.Params	= function(){
 		badTV.distortion2	= 0.1;
 		badTV.speed		= 0;
 		badTV.rollSpeed		= 0;
-		rgb.angle		= 3*Math.PI/3;
-		rgb.amount		= 0.002;
-		staticNoise.amount	= 0;	
+		rgb.angle		= 0;
+		rgb.amount		= 0;
+		staticNoise.amount	= 0;		
 	}
 }

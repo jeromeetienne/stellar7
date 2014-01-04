@@ -10,6 +10,10 @@ THREEx.Stellar7TankControlsQueue	= function(tankControls){
 
 	var commands	= []; 
 
+	//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
+	
 	this.fire	= function(){
 		this.push('fire', 0)
 	}
@@ -22,6 +26,10 @@ THREEx.Stellar7TankControlsQueue	= function(tankControls){
 		})
 		return this
 	}
+	
+	//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
 	
 	var stopActions	= {
 		'turnRight'	: 'turnStop',
@@ -59,7 +67,9 @@ THREEx.Stellar7TankControlsQueue	= function(tankControls){
 		// launch the timer to stop execution
 		timerId		= setTimeout(function(){
 			var stopAction	= stopActions[command.action]
-			stopAction	&& tankControls[stopAction]()
+			if( stopAction ){
+				tankControls[stopAction]()			
+			}
 			runNextCommand()
 		}, command.duration*1000)
 	}.bind(this)

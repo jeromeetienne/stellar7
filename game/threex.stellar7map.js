@@ -37,29 +37,29 @@ THREEx.Stellar7Map	= function(){
 	object3d.add(mesh)
 
 	// grassground
-	var mesh	= new THREEx.GrassGround({
-		width		: 10,
-		height		: 10,
-		repeatX		: 30,
-		repeatY		: 30,
-	})
-	mesh.material	= new THREE.MeshPhongMaterial({
-		map	: mesh.material.map,
-		color	: 0x44FF44,
-	})
-	mesh.scale.multiplyScalar(10)
-	mesh.position.y	-= 0.01
+	// var mesh	= new THREEx.GrassGround({
+	// 	width		: 10,
+	// 	height		: 10,
+	// 	repeatX		: 30,
+	// 	repeatY		: 30,
+	// })
+	// mesh.material	= new THREE.MeshPhongMaterial({
+	// 	map	: mesh.material.map,
+	// 	color	: 0x44FF44,
+	// })
+	// mesh.scale.multiplyScalar(10)
+	// mesh.position.y	-= 0.01
 	// object3d.add(mesh)
 
-	var geometry	= new THREE.PlaneGeometry(40, 40, 20, 20)
-	var material	= new THREE.MeshBasicMaterial({
-		wireframe		: true,
-		wireframeLinewidth	: 3,
-		color			: 'blue',
-	})
-	var mesh	= new THREE.Mesh(geometry, material)
-	mesh.lookAt(new THREE.Vector3(0,1,0))
-	object3d.add(mesh)
+	// var geometry	= new THREE.PlaneGeometry(40, 40, 20, 20)
+	// var material	= new THREE.MeshBasicMaterial({
+	// 	wireframe		: true,
+	// 	wireframeLinewidth	: 3,
+	// 	color			: 'blue',
+	// })
+	// var mesh	= new THREE.Mesh(geometry, material)
+	// mesh.lookAt(new THREE.Vector3(0,1,0))
+	// object3d.add(mesh)
 
 
 	var texture	= THREE.ImageUtils.loadTexture('images/border-neon.jpg');
@@ -73,11 +73,11 @@ THREEx.Stellar7Map	= function(){
 	var material	= new THREE.MeshPhongMaterial({
 		map	: texture,
 		// color	: 0x44FF44,
-		color	: 0x222222,
-		specular: 'white',
-		emissive: 0x002200,
+		color	: 0x228822,
+		// specular: 'white',
+		// emissive: 0x002200,
 		// ambient	: 'red',
-		// shininess: 30,
+		shininess: 30,
 	})
 	var mesh	= new THREE.Mesh(geometry, material)
 	mesh.lookAt(new THREE.Vector3(0,1,0))

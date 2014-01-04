@@ -19,8 +19,8 @@
 <script src='../threex.stellar7tankbody.js'></script>
 <script src='../threex.stellar7bulletmodel.js'></script>
 <script src='../threex.stellar7bulletbody.js'></script>
-<script src='../threex.stellar7game.js'></script>
-<script src='../threex.stellar7map.js'></script>
+<script src='threex.stellar7game.js'></script>
+<script src='threex.stellar7map.js'></script>
 <script src='webaudiox.gamesounds.js'></script>
 <script src='threex.lightpool.js'></script>
 
@@ -144,15 +144,18 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	})
 
 	var player	= new THREEx.Stellar7TankBody()
+	player.setControlsKeyboard()
+	game.addPlayer(player)
+
 	var humanPlayer	= player
 	Stellar7.humanPlayer	= player
 	player.model.object3d.position.x	+= 1
-	player.setControlsKeyboard()
-	game.addPlayer(player)
 	
 ;(function(){
 	var player	= new THREEx.Stellar7TankBody()
 	player.setControlsQueue()
+	game.addPlayer(player)
+
 	player.addEventListener('scannedTank', function(){
 		player.controls.fire()
 	})
@@ -160,7 +163,6 @@ require([ 'bower_components/threex.grassground/package.require.js'
 		player.controls.push('turnRight', 1)
 				.push('moveAhead', 1)		
 	})
-	game.addPlayer(player)
 })()
 
 	//////////////////////////////////////////////////////////////////////////////////
@@ -220,7 +222,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	//////////////////////////////////////////////////////////////////////////////////
 	var sounds	= new WebAudiox.GameSounds()
 	Stellar7.sounds	= sounds
-	sounds.lineOut.volume	= 0.0
+	sounds.lineOut.volume	= 0.5
 	sounds.add('contactFence', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
 	sounds.add('bulletTank', 'sounds/151022__bubaproducer__laser-shot-silenced.wav')
 	sounds.add('explosion', 'sounds/211339__rjonesxlr8__explosion-04.wav')

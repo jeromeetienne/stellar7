@@ -19,7 +19,6 @@ THREEx.BadTVJamming	= function(badTVPasses, context, destination){
 		// prevent another trigger when a jamming is in progress
 		if( this.inProgress === true )	return
 		this.inProgress	= true
-console.log('trigger start')
 		// start the sound
 		badTVSound.play()
 		
@@ -28,17 +27,21 @@ console.log('trigger start')
 		badTVPasses.onParamsChange()
 		
 		// handle badTVPasses.params animation
-		badTVSound.tweenDelay	= 0.5
+		badTVPasses.tweenDelay	= 0.1
 		var nShakeSteps		= 10
 		badTVPasses.addEventListener('tweenCompleted', function callback(){
+			// if it is the last shake, return now
+			if( nShakeSteps === 0 )	return
+			// count this shake
 			nShakeSteps	-= 1;
 			if( nShakeSteps > 0 ){
+				// start the next shake
 				badTVPasses.params.randomize()			
 			}else{
+				// end all shake
 				badTVPasses.params.reset()
 				badTVPasses.removeEventListener('tweenCompleted', callback)
 				this.inProgress	= false
-console.log('trigger end')
 			}
 			badTVPasses.onParamsChange()		
 		}.bind(this))

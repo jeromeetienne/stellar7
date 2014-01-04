@@ -1,10 +1,18 @@
 TODO
 ====
+* handle energy + life in tankbody
+  * same die system as bullet
+* what happen when tankbody die ?
+  * respawn ? gameover ?
+* which 
+* add a skymap of star 
+
+
 * DONE make the map circle 
 * DONE all collision are done with boundaryRadius
   * it is present everywhere
-* to rename Shoot into Bullet
-* to rename shoot.js into ShootBody.js
+* DONE to rename Shoot into Bullet
+* DONE to rename shoot.js into ShootBody.js
   * rename tankPlayer into tankBody
 
 Misc

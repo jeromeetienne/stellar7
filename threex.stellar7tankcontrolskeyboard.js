@@ -11,10 +11,10 @@ THREEx.Stellar7TankControlsKeyboard	= function(keyboard, tankControls){
 	
 	this.update	= function(delta, now){
 		var inputs	= tankControls.inputs
-		inputs.turnLeft	= keyboard.pressed('a')
-		inputs.turnRight= keyboard.pressed('d')
-		inputs.moveAhead= keyboard.pressed('w')
-		inputs.moveBack	= keyboard.pressed('s')
+		inputs.turnLeft	= keyboard.pressed('a')	|| keyboard.pressed('left')
+		inputs.turnRight= keyboard.pressed('d')	|| keyboard.pressed('right')
+		inputs.moveAhead= keyboard.pressed('w')	|| keyboard.pressed('up')
+		inputs.moveBack	= keyboard.pressed('s') || keyboard.pressed('down')
 
 		inputs.gunLeft	= keyboard.pressed('q')
 		inputs.gunRight	= keyboard.pressed('e')
