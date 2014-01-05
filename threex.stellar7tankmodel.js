@@ -41,4 +41,20 @@ material.uniforms.faceColor.value.set('black')
 	cannonMesh.add(meshCylinder)
 	meshCylinder.lookAt(new THREE.Vector3(0,5,-1))
 	meshCylinder.position.set(0,0.05, 0.3)
+	
+	this.setLineColor	= function(color){
+		baseMesh.material.uniforms.lineColor.value.set(color)
+		cannonMesh.material.uniforms.lineColor.value.set(color)
+		meshCylinder.material.uniforms.lineColor.value.set(color)
+	}
+	this.setFaceColor	= function(color){
+		baseMesh.material.uniforms.faceColor.value.set(color)
+		cannonMesh.material.uniforms.faceColor.value.set(color)
+		meshCylinder.material.uniforms.faceColor.value.set(color)
+	}
+	this.setLineWidth	= function(width){
+		baseMesh.material.uniforms.lineWidth.value	= width
+		cannonMesh.material.uniforms.lineWidth.value	= width
+		meshCylinder.material.uniforms.lineWidth.value	= width
+	}
 }

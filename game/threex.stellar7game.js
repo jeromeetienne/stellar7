@@ -10,24 +10,29 @@ THREEx.Stellar7Game	= function(scene){
 	}
 	
 	//////////////////////////////////////////////////////////////////////////////////
-	//		comment								//
+	//		store bodies and update them					//
 	//////////////////////////////////////////////////////////////////////////////////
 	
-	var players	= []
+	var tankBodies	= []
 	onRenderFcts.push(function(delta, now){
-		players.forEach(function(player){
+		tankBodies.forEach(function(player){
 			player.update(delta, now)
 		})
 	})
 
-	var bullets	= []
+	var bulletBodies= []
 	onRenderFcts.push(function(delta, now){
-		bullets.forEach(function(bullet){
+		bulletBodies.forEach(function(bullet){
 			bullet.update(delta, now)
 		})
 	})
 	
+	//////////////////////////////////////////////////////////////////////////////////
+	//		map								//
+	//////////////////////////////////////////////////////////////////////////////////
+	
 	var map		= new THREEx.Stellar7Map()
+	this.map	= map
 	onRenderFcts.push(function(delta,now){
 		map.update(delta, now)
 	})
@@ -40,8 +45,8 @@ THREEx.Stellar7Game	= function(scene){
 	onRenderFcts.push(function(delta, now){
 		var lineOfSight	= new THREE.Line3()
 
-		for(var playerIdx1 = 0; playerIdx1 < players.length; playerIdx1++){
-			var player1	= players[playerIdx1]
+		for(var playerIdx1 = 0; playerIdx1 < tankBodies.length; playerIdx1++){
+			var player1	= tankBodies[playerIdx1]
 			var position1	= player1.model.object3d.position
 			lineOfSight.start.copy(position1)
 			var angle	= player1.model.cannonMesh.rotation.y 
@@ -52,11 +57,11 @@ THREEx.Stellar7Game	= function(scene){
 			lineOfSight.end.copy(position1).add(delta)
 			
 			
-			for(var playerIdx2 = 0; playerIdx2 < players.length; playerIdx2++){
-				var player2	= players[playerIdx2]
+			for(var playerIdx2 = 0; playerIdx2 < tankBodies.length; playerIdx2++){
+				var player2	= tankBodies[playerIdx2]
 				var sphere2	= player2.collisionSphere
 				var position2	= player2.model.object3d.position
-				// dont test other tanks
+				// dont test other tankBodies
 				if( playerIdx1 === playerIdx2 )	continue
 
 				// project position on the lineOfSight
@@ -85,12 +90,12 @@ THREEx.Stellar7Game	= function(scene){
 	//////////////////////////////////////////////////////////////////////////////////
 
 	onRenderFcts.push(function(delta, now){
-		for(var playerIdx1 = 0; playerIdx1 < players.length-1; playerIdx1++){
-			var player1	= players[playerIdx1]
+		for(var playerIdx1 = 0; playerIdx1 < tankBodies.length-1; playerIdx1++){
+			var player1	= tankBodies[playerIdx1]
 			var sphere1	= player1.collisionSphere
 			var position1	= player1.model.object3d.position
-			for(var playerIdx2 = playerIdx1+1; playerIdx2 < players.length; playerIdx2++){
-				var player2	= players[playerIdx2]
+			for(var playerIdx2 = playerIdx1+1; playerIdx2 < tankBodies.length; playerIdx2++){
+				var player2	= tankBodies[playerIdx2]
 				var sphere2	= player2.collisionSphere
 				var position2	= player2.model.object3d.position
 				// test if sphere collide
@@ -103,7 +108,7 @@ THREEx.Stellar7Game	= function(scene){
 					position1.sub(delta)
 					position2.add(delta)
 				}
-				// notify players if colliding
+				// notify tankBodies if colliding
 				if( colliding ){
 					player1.onTankCollision()
 					player2.onTankCollision()
@@ -118,19 +123,18 @@ THREEx.Stellar7Game	= function(scene){
 	//////////////////////////////////////////////////////////////////////////////////
 	
 	onRenderFcts.push(function(delta, now){
-		for(var playerIdx = 0; playerIdx < players.length; playerIdx++){
-			var player	= players[playerIdx]
+		for(var playerIdx = 0; playerIdx < tankBodies.length; playerIdx++){
+			var player	= tankBodies[playerIdx]
 			var spherePlayer= player.collisionSphere
-			for(var bulletIdx = 0; bulletIdx < bullets.length; bulletIdx++){
-				var bullet	= bullets[bulletIdx]
+			for(var bulletIdx = 0; bulletIdx < bulletBodies.length; bulletIdx++){
+				var bullet	= bulletBodies[bulletIdx]
 				var sphereBullet	= bullet.collisionSphere
 				// if this bullet is from this player, ignore it
 				if( bullet.fromPlayer === player )	continue 
 				// test if sphere collide
 				var colliding	= sphereBullet.intersectsSphere(spherePlayer)
-				// notify players if colliding
+				// notify tankBodies if colliding
 				if( colliding ){
-					Stellar7.sounds.play('explosion')
 					player.onHitByBullet()
 					bullet.fromPlayer.score	+= 100
 					bullet.die()
@@ -147,15 +151,14 @@ THREEx.Stellar7Game	= function(scene){
 
 	// player colliding with map
 	onRenderFcts.push(function(delta, now){
-		players.forEach(function(player){
-			var collided	= map.collideWithTank(player)
-			if( collided )	document.dispatchEvent(new CustomEvent('BadTVJamming'));
-			if( collided )	player.onMapCollision()
+		tankBodies.forEach(function(tankBody){
+			var collided	= map.collideWithTank(tankBody)
+			if( collided )	tankBody.onMapCollision()
 		})
 	})
-	// bullets colliding with map
+	// bulletBodies colliding with map
 	onRenderFcts.push(function(delta, now){
-		bullets.forEach(function(bullet){
+		bulletBodies.forEach(function(bullet){
 			var collided	= map.collideWithBullet(bullet)
 			if( collided ){
 				Stellar7.sounds.play('contactFence')
@@ -167,19 +170,69 @@ THREEx.Stellar7Game	= function(scene){
 	//////////////////////////////////////////////////////////////////////////////////
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
-	
-
-	
 	this.addPlayer	= function(tankBody){
-		players.push(tankBody)
+		tankBodies.push(tankBody)
 		scene.add(tankBody.model.object3d)
 
-
-		tankBody.addEventListener('dead', function(){
-			if( tankBody.isLocalPlayer() === true ){
-				document.dispatchEvent(new CustomEvent('BadTVJamming'));			
-			}
+		tankBody.addEventListener('hitByBullet', function(){
+			Stellar7.sounds.play('hitByBullet')
 		})
+		tankBody.addEventListener('tankCollision', function(){
+			if( tankBody.isLocalPlayer() === false )	return
+			Stellar7.sounds.play('intertank.collision')			
+		})
+		tankBody.addEventListener('mapCollision', function(){
+			if( tankBody.isLocalPlayer() === false )	return
+			Stellar7.sounds.play('localtankmap.collision')			
+		})
+
+		// if local player die
+		tankBody.addEventListener('dead', function(){
+			if( tankBody.isLocalPlayer() === false )	return
+			document.dispatchEvent(new CustomEvent('killPlayer'));
+			var element	= document.querySelector('#killPlayerOsd')
+
+			Flow().seq(function(next){
+				document.dispatchEvent(new CustomEvent('BadTVJamming'));
+				// make osd appears
+				// element.style.display    = 'block'
+				element.classList.add("osdVisible");
+				element.classList.remove("osdHidden");
+				next()
+			}).seq(function(next){
+				setTimeout(function(){
+					next()
+				}, 1000*1.1)
+			}).seq(function(next){
+				// make osd appears
+				// element.style.display    = 'none'
+				element.classList.remove("osdVisible");
+				element.classList.add("osdHidden");
+
+				tankBody.resetPosition(map)
+
+				next()
+			})
+		})
+
+		// if non local player die
+		tankBody.addEventListener('dead', function(){
+			if( tankBody.isLocalPlayer() === true )	return
+			console.log('bot dead')
+
+			Stellar7.sounds.play('enemyDead')
+		
+			tankBody.resetPosition(map)
+		})
+
+		// if a non local player becomes reallyDead
+		tankBody.addEventListener('reallyDead', function(){
+			Stellar7.sounds.play('enemyDead')
+			tankBodies.splice(tankBodies.indexOf(tankBody),1)
+			scene.remove(tankBody.model.object3d)
+		})		
+
+
 
 		var lastFire	= 0
 		tankBody.addEventListener('fire', function(){
@@ -192,14 +245,12 @@ THREEx.Stellar7Game	= function(scene){
 			scene.add( bullet.model.object3d )
 			bullet.model.object3d.rotation.y	= tankBody.turretAngleY()
 
-			bullets.push(bullet)
+			bulletBodies.push(bullet)
 			
 			bullet.addEventListener('die', function(){
 				scene.remove( bullet.model.object3d )
-				bullets.splice(bullets.indexOf(bullet),1)
+				bulletBodies.splice(bulletBodies.indexOf(bullet),1)
 			})
-
-
 
 			Stellar7.sounds.play('bulletTank')
 		})

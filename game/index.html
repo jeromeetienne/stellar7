@@ -41,8 +41,17 @@
 	font-size	: 300%;
 	font-weight	: bolder;
 
+	transition		: opacity 0.5s ease;
+	-webkit-transition	: opacity 0.5s ease;
+
 	color		: #000;
 	text-shadow	: 0 0 0.2em #fbc, 0 0 0.2em #fbc, 0 0 0.2em #fbc;
+}
+.osdVisible {
+	opacity: 1
+}
+.osdHidden {
+	opacity: 0
 }
 </style>
 <style>
@@ -96,8 +105,9 @@
 <div id='osdRightColumn'>
 	<div id="muteOsd" class='osdFont'></div>
 </div>
-<div id='osdCenterColumn' class='osdFont'>
-	<div id="gameLostOsd" style='display:none'>Game Over</div>
+<div id='osdCenterColumn'>
+	<div id="killPlayerOsd" class='osdFont osdHidden'>You Die!</div>
+	<div id="gameOverOsd" class='osdFont osdHidden'>Game Over!</div>
 </div>
 <script>
 require([ 'bower_components/threex.grassground/package.require.js'
@@ -107,6 +117,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	, 'bower_components/threex.planets/package.require.js'
 	, 'bower_components/threex.montainsarena/package.require.js'
 	, 'bower_components/webaudiox/build/webaudiox.js'
+	, 'bower_components/threex.claramaterials/package.require.js'
 	, 'bower_components/threex.badtvpproc/package.require.js'
 	, 'bower_components/threex.solidwireframe/threex.solidwireframe.js'
 	, 'vendor/gowiththeflow.js'
@@ -171,6 +182,8 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	var tankBody	= new THREEx.Stellar7TankBody()
 	tankBody.setControlsKeyboard()
 	game.addPlayer(tankBody)
+	tankBody.resetPosition(game.map)
+	tankBody.maxEnergy	= tankBody.energy	= 3000
 	tankBody.model.object3d.position.x	+= 1
 
 	humanPlayer	= tankBody
@@ -180,21 +193,34 @@ require([ 'bower_components/threex.grassground/package.require.js'
 		location.href	= '../'
 	})
 })()
-	
-;(function(){
-	var tankBody	= new THREEx.Stellar7TankBody()
-	tankBody.setControlsQueue()
-	game.addPlayer(tankBody)
 
-	tankBody.addEventListener('scannedTank', function(){
-		tankBody.controls.fire()
-	})
-	tankBody.controls.addEventListener('idle', function(){
-		// tankBody.controls.push('turnRight', 1)
-		// 		.push('moveAhead', 1)		
-	})
-})()
+	//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
+					
+	for(var i = 0; i < 1; i++){
+		;(function(){
+			var tankBody	= new THREEx.Stellar7TankBody()
+			tankBody.setControlsQueue()
 
+			tankBody.lives	= 9999	// infinite lives
+			tankBody.model.setFaceColor('darkred')
+			tankBody.model.setLineColor('pink')
+			tankBody.model.setLineWidth(2)
+			
+			game.addPlayer(tankBody)
+
+			tankBody.resetPosition(game.map)
+			
+			tankBody.addEventListener('scannedTank', function(){
+				tankBody.controls.fire()
+			})
+			tankBody.controls.addEventListener('idle', function(){
+				// tankBody.controls.push('turnRight', 1)
+				// 		.push('moveAhead', 1)		
+			})
+		})()
+	}
 	//////////////////////////////////////////////////////////////////////////////////
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
@@ -311,9 +337,13 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	var sounds	= new WebAudiox.GameSounds()
 	Stellar7.sounds	= sounds
 	sounds.lineOut.volume	= 0.5
-	sounds.add('contactFence', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
+	sounds.add('contactFence', 'sounds/169689__beman87__impact-zap-2.wav')
 	sounds.add('bulletTank', 'sounds/151022__bubaproducer__laser-shot-silenced.wav')
 	sounds.add('explosion', 'sounds/211339__rjonesxlr8__explosion-04.wav')
+	sounds.add('enemyDead', 'sounds/196841__omarstone__hahahaha-cartoon-monster.wav')
+	sounds.add('hitByBullet', 'sounds/95078__sandyrb__the-crash.wav')
+	sounds.add('intertank.collision', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
+	sounds.add('localtankmap.collision', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
 
 	// handle mute UI
 	document.querySelector('#muteOsd').addEventListener('click', function(event){
@@ -330,59 +360,32 @@ require([ 'bower_components/threex.grassground/package.require.js'
 		element.classList.toggle("muted");
 		sounds.lineOut.toggleMute()
 	}
+	
+	
+	//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
+	
 
-//////////////////////////////////////////////////////////////////////////////////
-//		experimentation on sound localisation				//
-//////////////////////////////////////////////////////////////////////////////////
 
-if(false){
-	// put a ListenerObject3DUpdater
-	;(function(){
-		var object3d		= new THREE.Object3D()
-		humanPlayer.model.cannonMesh.add(object3d)
-		object3d.rotation.y	= -Math.PI
-		var listenerUpdater	= new WebAudiox.ListenerObject3DUpdater(sounds.context, object3d)
-		onRenderFcts.push(function(delta, now){
-			listenerUpdater.update(delta, now)
-		})	
-	})()
+	document.addEventListener('dead', function(){
+		var element	= document.querySelector('#killPlayerOsd')
 
-	var geometry	= new THREE.CubeGeometry(0.5,0.5,0.5);
-	var material	= new THREE.MeshNormalMaterial();
-	var audioMesh	= new THREE.Mesh( geometry, material );
-	scene.add(audioMesh)
-
-	var soundUrl	= 'sounds/151022__bubaproducer__laser-shot-silenced.wav'
-	sounds.add('shootTest', soundUrl, function(sound){
-		var context	= sound.gameSounds.context
-		var destination	= sound.gameSounds.lineOut.destination
-		
-		// init AudioPannerNode
-		var panner	= context.createPanner()
-		// panner.coneOuterGain	= 0.1
-		// panner.coneOuterAngle	= Math.PI *180/Math.PI
-		// panner.coneInnerAngle	= 0 *180/Math.PI
-		panner.connect(destination)
-		destination	= panner
-		
-		// put a PannerObject3DUpdater
-		var pannerUpdater	= new WebAudiox.PannerObject3DUpdater(panner, audioMesh)
-		onRenderFcts.push(function(delta, now){
-			pannerUpdater.update(delta, now)
+		Flow().seq(function(next){
+			document.dispatchEvent(new CustomEvent('BadTVJamming'));
+			element.classList.add("osdVisible");
+			element.classList.remove("osdHidden");
+			next()
+		}).seq(function(next){
+			setTimeout(function(){
+				next()
+			}, 1000*1.1)
+		}).seq(function(next){
+			element.classList.remove("osdVisible");
+			element.classList.add("osdHidden");
+			next()
 		})
-
-		// init AudioBufferSourceNode
-		var source	= context.createBufferSource()
-		source.buffer	= sound.buffer
-		source.loop	= true
-		source.connect(destination)
-
-		// start the sound now
-		source.start(0)
-		return source						
 	})
-}
-
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		badTVPasses							//

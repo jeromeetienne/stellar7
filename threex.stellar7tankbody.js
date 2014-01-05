@@ -2,10 +2,11 @@ var THREEx	= THREEx	|| {}
 
 THREEx.Stellar7TankBody	= function(){
 	this.id		= THREEx.Stellar7TankBody.id++
-	this.maxEnergy	= 1000;
-	this.lives	= 1;
-	this.energy	= this.maxEnergy;
 
+	//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
+	
 	// add EventDispatcher in this object
 	THREE.EventDispatcher.prototype.apply(this)
 
@@ -17,7 +18,18 @@ THREEx.Stellar7TankBody	= function(){
 		})
 	}
 
+	//////////////////////////////////////////////////////////////////////////////////
+	//		comment								//
+	//////////////////////////////////////////////////////////////////////////////////
+	
+	this.maxEnergy	= 1000;
+	this.lives	= 3;
+	this.energy	= this.maxEnergy;
 	this.score	= 0
+	
+	this.isAlive	= function(){
+		return this.lives >= 0
+	}
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	//		model								//
@@ -27,7 +39,18 @@ THREEx.Stellar7TankBody	= function(){
 	this.model	= model
 	this.turretAngleY	= function(){
 		return model.baseMesh.rotation.y + model.cannonMesh.rotation.y
-	} 
+	}
+	
+	this.resetPosition	= function(map){
+		var object3d	= model.object3d
+		var angle	= Math.random()*Math.PI*2
+		var radius	= Math.random()*(map.radius - collisionSphere.radius)
+		object3d.position.x	= Math.cos(angle)*radius
+		object3d.position.z	= Math.sin(angle)*radius
+		
+		model.cannonMesh.rotation.y	= 0
+		model.baseMesh.rotation.y	= Math.random()*Math.PI*2
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		collision							//
@@ -113,7 +136,7 @@ THREEx.Stellar7TankBody	= function(){
 	}
 	this.onHitByBullet	= function(){
 		this.energy	-= 250
-		if( this.energy < 0 ){
+		if( this.energy <= 0 ){
 			this.lives	+= -1
 			if( this.lives < 0 ){
 				this.dispatchEvent({ type: 'reallyDead' })

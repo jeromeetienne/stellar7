@@ -22,9 +22,9 @@ THREEx.Stellar7Map	= function(){
 	var object3d	= new THREE.Object3D()
 	this.object3d	= object3d
 
-	// skymap
-	// var mesh	= THREEx.createSkymap('mars')
-	// object3d.add( mesh )
+	//////////////////////////////////////////////////////////////////////////////////
+	//		planets								//
+	//////////////////////////////////////////////////////////////////////////////////
 
 	var planetsContainer	= new THREE.Object3D()
 	object3d.add(planetsContainer)
@@ -39,7 +39,7 @@ THREEx.Stellar7Map	= function(){
 		mesh.position.x	= Math.cos(angle)*this.radius*2
 		mesh.position.y	= 10
 		mesh.position.z	= Math.sin(angle)*this.radius*2
-		mesh.scale.multiplyScalar(8)
+		mesh.scale.multiplyScalar(8) 
 		planetsContainer.add(mesh)
 		onRenderFcts.push(function(delta, now){
 			var angle	= Math.PI*2*delta * angularSpeed
@@ -62,23 +62,10 @@ THREEx.Stellar7Map	= function(){
 	addPlanets(THREEx.Planets.createNeptune()	, 9 * 2*Math.PI/11)
 	addPlanets(THREEx.Planets.createPluto()		,10 * 2*Math.PI/11)
 
-
-
-// ;(function(){
-// 	var mesh	= THREEx.Planets.createMoon()
-// 	var angle	= Math.PI/2
-// 	mesh.position.x	= Math.cos(angle)*this.radius*2
-// 	mesh.position.y	= 10
-// 	mesh.position.z	= Math.sin(angle)*this.radius*2
-// 	mesh.scale.multiplyScalar(8)
-// 	object3d.add(mesh)
-// 	onRenderFcts.push(function(delta, now){
-// 		var angle	= Math.PI*2*delta * 0.1
-// 		mesh.rotateY(angle)
-// 	})	
-// }.bind(this))();
+	//////////////////////////////////////////////////////////////////////////////////
+	//		starfield							//
+	//////////////////////////////////////////////////////////////////////////////////
 	
-	// add montains
 	var url		= 'bower_components/threex.planets/examples/images/galaxy_starfield.png'
 	var material	= new THREE.MeshBasicMaterial({
 		map	: THREE.ImageUtils.loadTexture(url),
@@ -88,11 +75,15 @@ THREEx.Stellar7Map	= function(){
 	var mesh	= new THREE.Mesh(geometry, material)
 	object3d.add(mesh)
 
-	// montain arena
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		montain arena							//
+	//////////////////////////////////////////////////////////////////////////////////
+	
 	var mesh	= new THREEx.MontainsArena()
-	mesh.scale.x	*= 40
-	mesh.scale.z	*= 40
-	mesh.scale.y	*= 20
+	mesh.scale.x	*= this.radius*2.5
+	mesh.scale.z	*= this.radius*2.5
+	mesh.scale.y	*= this.radius*1.5
 	mesh.children.forEach(function(montain){
 		var geometry	= montain.geometry
 		var material	= new THREEx.SolidWireframeMaterial(geometry)
@@ -104,38 +95,15 @@ THREEx.Stellar7Map	= function(){
 	})
 	object3d.add(mesh)
 
-	// grassground
-	// var mesh	= new THREEx.GrassGround({
-	// 	width		: 10,
-	// 	height		: 10,
-	// 	repeatX		: 30,
-	// 	repeatY		: 30,
-	// })
-	// mesh.material	= new THREE.MeshPhongMaterial({
-	// 	map	: mesh.material.map,
-	// 	color	: 0x44FF44,
-	// })
-	// mesh.scale.multiplyScalar(10)
-	// mesh.position.y	-= 0.01
-	// object3d.add(mesh)
-
-	// var geometry	= new THREE.PlaneGeometry(40, 40, 20, 20)
-	// var material	= new THREE.MeshBasicMaterial({
-	// 	wireframe		: true,
-	// 	wireframeLinewidth	: 3,
-	// 	color			: 'blue',
-	// })
-	// var mesh	= new THREE.Mesh(geometry, material)
-	// mesh.lookAt(new THREE.Vector3(0,1,0))
-	// object3d.add(mesh)
-
-
+	//////////////////////////////////////////////////////////////////////////////////
+	//		ground								//
+	//////////////////////////////////////////////////////////////////////////////////
+	
 	var texture	= THREE.ImageUtils.loadTexture('images/border-neon.jpg');
 	texture.wrapS	= THREE.RepeatWrapping;
 	texture.wrapT	= THREE.RepeatWrapping;
 	texture.repeat.set(20,20)
 	texture.anisotropy = 16; 
-
 
 	var geometry	= new THREE.PlaneGeometry(40, 40)
 	var material	= new THREE.MeshPhongMaterial({
@@ -147,12 +115,20 @@ THREEx.Stellar7Map	= function(){
 		// ambient	: 'red',
 		shininess: 30,
 	})
-	var mesh	= new THREE.Mesh(geometry, material)
+
+ // 	var material	= THREEx.ClaraioMaterials.createBrushedMetal()
+	// THREEx.ClaraioMaterials.textures(material).forEach(function(texture){
+	// 	texture.wrapS	= THREE.RepeatWrapping;
+	// 	texture.wrapT	= THREE.RepeatWrapping;
+	// 	texture.repeat.set(30,30)
+	// 	texture.anisotropy = 16; 	
+	// })
+
+ 	var mesh	= new THREE.Mesh(geometry, material)
 	mesh.lookAt(new THREE.Vector3(0,1,0))
 	mesh.position.y	-= 0.01
 	object3d.add(mesh)
 
-		
 	//////////////////////////////////////////////////////////////////////////////////
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
