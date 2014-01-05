@@ -135,6 +135,11 @@ THREEx.Stellar7Game	= function(scene){
 				var colliding	= sphereBullet.intersectsSphere(spherePlayer)
 				// notify tankBodies if colliding
 				if( colliding ){
+					document.dispatchEvent(new CustomEvent('emitSphericalBlast', {detail:{
+						position	: bullet.model.object3d.position,
+						color		: 'red',
+						maxRadius	: 2,
+					}}))
 					player.onHitByBullet()
 					bullet.fromPlayer.score	+= 100
 					bullet.die()
@@ -161,6 +166,11 @@ THREEx.Stellar7Game	= function(scene){
 		bulletBodies.forEach(function(bullet){
 			var collided	= map.collideWithBullet(bullet)
 			if( collided ){
+				document.dispatchEvent(new CustomEvent('emitSphericalBlast', {detail:{
+					position	: bullet.model.object3d.position,
+					color		: 'pink',
+					maxRadius	: 1,
+				}}))
 				Stellar7.sounds.play('contactFence')
 				bullet.die()
 			}

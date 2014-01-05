@@ -116,13 +116,13 @@ THREEx.Stellar7Map	= function(){
 		shininess: 30,
 	})
 
- // 	var material	= THREEx.ClaraioMaterials.createBrushedMetal()
-	// THREEx.ClaraioMaterials.textures(material).forEach(function(texture){
-	// 	texture.wrapS	= THREE.RepeatWrapping;
-	// 	texture.wrapT	= THREE.RepeatWrapping;
-	// 	texture.repeat.set(30,30)
-	// 	texture.anisotropy = 16; 	
-	// })
+ 	// var material	= THREEx.ClaraioMaterials.createMetal()
+	THREEx.ClaraioMaterials.textures(material).forEach(function(texture){
+		texture.wrapS	= THREE.RepeatWrapping;
+		texture.wrapT	= THREE.RepeatWrapping;
+		texture.repeat.set(30,30)
+		texture.anisotropy = 16; 	
+	})
 
  	var mesh	= new THREE.Mesh(geometry, material)
 	mesh.lookAt(new THREE.Vector3(0,1,0))

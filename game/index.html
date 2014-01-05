@@ -23,6 +23,7 @@
 <script src='threex.stellar7map.js'></script>
 <script src='webaudiox.gamesounds.js'></script>
 <script src='threex.lightpool.js'></script>
+<script src='threex.sphericalblastemitter.js'></script>
 
 <body style='margin: 0px; background-color: #000000; overflow: hidden;'>
 <style>
@@ -120,6 +121,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	, 'bower_components/threex.claramaterials/package.require.js'
 	, 'bower_components/threex.badtvpproc/package.require.js'
 	, 'bower_components/threex.solidwireframe/threex.solidwireframe.js'
+	, 'bower_components/threex.geometricglow/package.require.js'
 	, 'vendor/gowiththeflow.js'
 	], function(){
 	// detect WebGL
@@ -182,7 +184,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	var tankBody	= new THREEx.Stellar7TankBody()
 	tankBody.setControlsKeyboard()
 	game.addPlayer(tankBody)
-	tankBody.resetPosition(game.map)
+	// tankBody.resetPosition(game.map)
 	tankBody.maxEnergy	= tankBody.energy	= 3000
 	tankBody.model.object3d.position.x	+= 1
 
@@ -193,6 +195,27 @@ require([ 'bower_components/threex.grassground/package.require.js'
 		location.href	= '../'
 	})
 })()
+
+;(function(){
+	// emit 3 puff every seconds
+	var emitter	= new THREEx.SphericalBlastEmitter(scene);
+	onRenderFcts.push(function(delta, now){
+		emitter.update(delta, now)
+	})
+	var position	= new THREE.Vector3(0,2,4)
+	emitter.emit(position);
+
+	document.addEventListener('emitSphericalBlast', function(event){
+		var position	= event.detail.position
+		var color	= event.detail.color
+		var maxRadius	= event.detail.maxRadius
+		// var colors	= Object.keys(THREE.ColorKeywords)
+		// var color	= colors[Math.floor(Math.random()*colors.length)]
+		emitter.emit(position, color, maxRadius);
+	})
+})()
+
+
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		comment								//
@@ -217,7 +240,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 			})
 			tankBody.controls.addEventListener('idle', function(){
 				// tankBody.controls.push('turnRight', 1)
-				// 		.push('moveAhead', 1)		
+				// 		.push('moveAhead', 1)
 			})
 		})()
 	}
