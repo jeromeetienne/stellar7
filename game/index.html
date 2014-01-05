@@ -111,14 +111,11 @@
 	<div id="gameOverOsd" class='osdFont osdHidden'>Game Over!</div>
 </div>
 <script>
-require([ 'bower_components/threex.grassground/package.require.js'
-	, 'bower_components/threex.keyboardstate/package.require.js'
-	, 'bower_components/threex.skymap/package.require.js'
+require([ 'bower_components/threex.keyboardstate/package.require.js'
 	, 'bower_components/threex.spaceships/package.require.js'
 	, 'bower_components/threex.planets/package.require.js'
 	, 'bower_components/threex.montainsarena/package.require.js'
 	, 'bower_components/webaudiox/build/webaudiox.js'
-	, 'bower_components/threex.claramaterials/package.require.js'
 	, 'bower_components/threex.badtvpproc/package.require.js'
 	, 'bower_components/threex.solidwireframe/threex.solidwireframe.js'
 	, 'bower_components/threex.geometricglow/package.require.js'
@@ -185,7 +182,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	tankBody.setControlsKeyboard()
 	game.addPlayer(tankBody)
 	// tankBody.resetPosition(game.map)
-	tankBody.maxEnergy	= tankBody.energy	= 3000
+	// tankBody.maxEnergy	= tankBody.energy	= 3000
 	tankBody.model.object3d.position.x	+= 1
 
 	humanPlayer	= tankBody
@@ -216,7 +213,7 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
 					
-	for(var i = 0; i < 1; i++){
+	for(var i = 0; i < 5; i++){
 		;(function(){
 			var tankBody	= new THREEx.Stellar7TankBody()
 			tankBody.setControlsQueue()
@@ -234,8 +231,8 @@ require([ 'bower_components/threex.grassground/package.require.js'
 				tankBody.controls.fire()
 			})
 			tankBody.controls.addEventListener('idle', function(){
-				// tankBody.controls.push('turnRight', 1)
-				// 		.push('moveAhead', 1)
+				tankBody.controls.push('turnRight', 1)
+						.push('moveAhead', 1)
 			})
 		})()
 	}

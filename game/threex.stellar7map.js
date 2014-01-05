@@ -66,13 +66,7 @@ THREEx.Stellar7Map	= function(){
 	//		starfield							//
 	//////////////////////////////////////////////////////////////////////////////////
 	
-	var url		= 'bower_components/threex.planets/examples/images/galaxy_starfield.png'
-	var material	= new THREE.MeshBasicMaterial({
-		map	: THREE.ImageUtils.loadTexture(url),
-		side	: THREE.BackSide
-	})
-	var geometry	= new THREE.SphereGeometry(90, 32, 32)
-	var mesh	= new THREE.Mesh(geometry, material)
+	var mesh	= THREEx.Planets.createStarfield()
 	object3d.add(mesh)
 
 
@@ -116,13 +110,13 @@ THREEx.Stellar7Map	= function(){
 		shininess: 30,
 	})
 
- 	// var material	= THREEx.ClaraioMaterials.createMetal()
-	THREEx.ClaraioMaterials.textures(material).forEach(function(texture){
-		texture.wrapS	= THREE.RepeatWrapping;
-		texture.wrapT	= THREE.RepeatWrapping;
-		texture.repeat.set(30,30)
-		texture.anisotropy = 16; 	
-	})
+ // 	// var material	= THREEx.ClaraioMaterials.createMetal()
+	// THREEx.ClaraioMaterials.textures(material).forEach(function(texture){
+	// 	texture.wrapS	= THREE.RepeatWrapping;
+	// 	texture.wrapT	= THREE.RepeatWrapping;
+	// 	texture.repeat.set(30,30)
+	// 	texture.anisotropy = 16; 	
+	// })
 
  	var mesh	= new THREE.Mesh(geometry, material)
 	mesh.lookAt(new THREE.Vector3(0,1,0))
