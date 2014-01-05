@@ -168,7 +168,7 @@ THREEx.Stellar7Game	= function(scene){
 			if( collided ){
 				document.dispatchEvent(new CustomEvent('emitSphericalBlast', {detail:{
 					position	: bullet.model.object3d.position,
-					color		: 'pink',
+					color		: 'yellow',
 					maxRadius	: 1,
 				}}))
 				Stellar7.sounds.play('contactFence')

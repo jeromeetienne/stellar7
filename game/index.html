@@ -202,15 +202,10 @@ require([ 'bower_components/threex.grassground/package.require.js'
 	onRenderFcts.push(function(delta, now){
 		emitter.update(delta, now)
 	})
-	var position	= new THREE.Vector3(0,2,4)
-	emitter.emit(position);
-
 	document.addEventListener('emitSphericalBlast', function(event){
 		var position	= event.detail.position
 		var color	= event.detail.color
 		var maxRadius	= event.detail.maxRadius
-		// var colors	= Object.keys(THREE.ColorKeywords)
-		// var color	= colors[Math.floor(Math.random()*colors.length)]
 		emitter.emit(position, color, maxRadius);
 	})
 })()

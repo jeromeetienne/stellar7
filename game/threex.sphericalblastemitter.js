@@ -29,7 +29,7 @@ THREEx.SphericalBlastEmitter	= function(container){
 			opacity		: 0.4,
 			transparent	: true,
 			// blending	: THREE.AdditiveBlending,
-			color		: 'red'
+			color		: color
 		})
 		var mesh	= new THREE.Mesh(geometry, material)
 		// var mesh	= new THREE.Object3D()
