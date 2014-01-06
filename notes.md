@@ -1,11 +1,18 @@
 TODO
 ====
-* handle energy + life in tankbody
+* put 1 enemy only
+* work on UI cinematic for all stage
+* then work on fightcode 
+  * with event notification
+* later put a fightcode system in webworker
+* publish that in chrome store
+
+
+* DONE handle energy + life in tankbody
   * same die system as bullet
-* what happen when tankbody die ?
+* DONE what happen when tankbody die ?
   * respawn ? gameover ?
-* which 
-* add a skymap of star 
+* DONE add a skymap of star 
 
 
 * DONE make the map circle 
