@@ -294,8 +294,8 @@ THREEx.Stellar7Game	= function(scene){
 					color		: 'yellow',
 					maxRadius	: 2,
 					maxAge		: 2
-				}}))
-				Stellar7.sounds.play('hitByBullet')
+				}})) 
+				Stellar7.sounds.play('enemyExplode')
 
 				position.y	= srcPosition.y
 				tankBody.resetPosition(map)

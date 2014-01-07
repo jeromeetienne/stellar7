@@ -183,14 +183,14 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	var tankBody	= new THREEx.Stellar7TankBody()
 	tankBody.setControlsKeyboard()
 	game.addPlayer(tankBody)
-	// tankBody.resetPosition(game.map)
+	tankBody.resetPosition(game.map)
 	tankBody.model.object3d.position.x	+= 1
 
 	humanPlayer		= tankBody
 	Stellar7.humanPlayer	= tankBody
 
 	tankBody.addEventListener('reallyDead', function(){
-		// location.href	= '../'
+		location.href	= '../'
 	})
 })()
 
@@ -220,7 +220,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
 					
-	for(var i = 0; i < 1; i++){
+	for(var i = 0; i < 5; i++){
 		;(function(){
 			var tankBody	= new THREEx.Stellar7TankBody()
 			tankBody.setControlsQueue()
@@ -232,15 +232,15 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 			
 			game.addPlayer(tankBody)
 
-			// tankBody.resetPosition(game.map)
+			tankBody.resetPosition(game.map)
 			
 			tankBody.addEventListener('scannedTank', function(){
 				tankBody.controls.fire()
 			})
 			tankBody.controls.addEventListener('idle', function(){
-				// tankBody.controls
-				// 		.push('turnRight', 1)
-				// 		.push('moveAhead', 1)
+				tankBody.controls
+						.push('turnRight', 1)
+						.push('moveAhead', 1)
 			})
 		})()
 	}
@@ -357,6 +357,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	//////////////////////////////////////////////////////////////////////////////////
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
+// TODO pass that as document.event
 	var sounds	= new WebAudiox.GameSounds()
 	Stellar7.sounds	= sounds
 	sounds.lineOut.volume	= 0.5
@@ -364,10 +365,12 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	sounds.add('bulletTank', 'sounds/151022__bubaproducer__laser-shot-silenced.wav')
 	sounds.add('explosion', 'sounds/211339__rjonesxlr8__explosion-04.wav')
 	sounds.add('enemyDead', 'sounds/196841__omarstone__hahahaha-cartoon-monster.wav')
-	sounds.add('hitByBullet', 'sounds/95078__sandyrb__the-crash.wav')
+	//sounds.add('hitByBullet', 'sounds/95078__sandyrb__the-crash.wav')
+	sounds.add('hitByBullet', 'sounds/211234__rjonesxlr8__explosion-14.wav')
 	sounds.add('intertank.collision', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
 	sounds.add('localtankmap.collision', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
 	sounds.add('gameOver', 'sounds/gameover-macsay.wav')
+	sounds.add('enemyExplode', 'sounds/153445__lukechalaudio__8bit-robot-sound.wav')
 
 	// handle mute UI
 	document.querySelector('#muteOsd').addEventListener('click', function(event){

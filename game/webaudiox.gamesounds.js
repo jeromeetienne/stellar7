@@ -63,9 +63,7 @@ WebAudiox.GameSounds	= function(){
 WebAudiox.GameSound	= function(gameSounds, url, playFn){
 	this.gameSounds	= gameSounds
 	// handle default arguments
-	playFn		= playFn || function(sound){
-		var context	= sound.gameSounds.context
-		var destination	= sound.gameSounds.lineOut.destination
+	playFn		= playFn || function(sound, context, destination){
 		var source	= context.createBufferSource()
 		source.buffer	= sound.buffer
 		source.connect(destination)
@@ -85,7 +83,9 @@ WebAudiox.GameSound	= function(gameSounds, url, playFn){
 	this.play	= function(){
 		// if not yet loaded, do nothing
 		if( this.buffer === null )	return;
-		return playFn(this)
+		var context	= gameSounds.context
+		var destination	= gameSounds.lineOut.destination
+		return playFn(this, context, destination)
 	}
 	
 
