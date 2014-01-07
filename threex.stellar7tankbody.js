@@ -124,7 +124,6 @@ THREEx.Stellar7TankBody	= function(){
 	//////////////////////////////////////////////////////////////////////////////////
 
 	this.onMapCollision	= function(){
-		console.log('mapCollision')
 		this.dispatchEvent({ type: 'mapCollision' })
 	}
 	this.onTankCollision	= function(event){

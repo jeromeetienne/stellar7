@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <script src='vendor/three.js/build/three.js'></script>
+<script src='vendor/three.js/examples/js/libs/tween.min.js'></script>
 <script src="vendor/require.js/require.js"></script>
 <script src="vendor/three.js/examples/js/Detector.js"></script>
 <script src="vendor/threex.windowresize.js"></script>
@@ -90,17 +91,16 @@
 #muteOsd.muted:before {
 	content: "\f026";	/* icon for muted */
 }
-
 </style>
 <div id='osdLeftColumn'>
 	<div class='osdFont'>
 		Score: <span id="scoreDomElement">00000</span>
 	</div>
 	<div class='osdFont'>
-		Energy: <span id="energyDomElement">00000</span>
+		Energy: <span id="energyDomElement">1000</span>
 	</div>
 	<div class='osdFont'>
-		Lives: <span id="livesDomElement">0</span>
+		Lives: <span id="livesDomElement">3</span>
 	</div>
 </div>
 <div id='osdRightColumn'>
@@ -109,6 +109,7 @@
 <div id='osdCenterColumn'>
 	<div id="killPlayerOsd" class='osdFont osdHidden'>You Die!</div>
 	<div id="gameOverOsd" class='osdFont osdHidden'>Game Over!</div>
+	<div id="hitByBulletOsd" class='osdFont osdHidden'>Ouch</div>
 </div>
 <script>
 require([ 'bower_components/threex.keyboardstate/package.require.js'
@@ -174,6 +175,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	onRenderFcts.push(function(delta, now){
 		game.update(delta, now)
 	})
+	Stellar7.game	= game
 
 
 	var humanPlayer	= null
@@ -182,19 +184,17 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	tankBody.setControlsKeyboard()
 	game.addPlayer(tankBody)
 	// tankBody.resetPosition(game.map)
-	// tankBody.maxEnergy	= tankBody.energy	= 3000
 	tankBody.model.object3d.position.x	+= 1
 
-	humanPlayer	= tankBody
+	humanPlayer		= tankBody
 	Stellar7.humanPlayer	= tankBody
 
 	tankBody.addEventListener('reallyDead', function(){
-		location.href	= '../'
+		// location.href	= '../'
 	})
 })()
 
 ;(function(){
-	// emit 3 puff every seconds
 	var emitter	= new THREEx.SphericalBlastEmitter(scene);
 	onRenderFcts.push(function(delta, now){
 		emitter.update(delta, now)
@@ -203,17 +203,24 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 		var position	= event.detail.position
 		var color	= event.detail.color
 		var maxRadius	= event.detail.maxRadius
-		emitter.emit(position, color, maxRadius);
+		var maxAge	= event.detail.maxAge
+		emitter.emit(position, color, maxRadius, maxAge);
 	})
 })()
 
-
+	//////////////////////////////////////////////////////////////////////////////////
+	//		tween.js update							//
+	//////////////////////////////////////////////////////////////////////////////////
+	
+	onRenderFcts.push(function(delta, now){
+		TWEEN.update();
+	})
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
 					
-	for(var i = 0; i < 5; i++){
+	for(var i = 0; i < 1; i++){
 		;(function(){
 			var tankBody	= new THREEx.Stellar7TankBody()
 			tankBody.setControlsQueue()
@@ -225,14 +232,15 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 			
 			game.addPlayer(tankBody)
 
-			tankBody.resetPosition(game.map)
+			// tankBody.resetPosition(game.map)
 			
 			tankBody.addEventListener('scannedTank', function(){
 				tankBody.controls.fire()
 			})
 			tankBody.controls.addEventListener('idle', function(){
-				tankBody.controls.push('turnRight', 1)
-						.push('moveAhead', 1)
+				// tankBody.controls
+				// 		.push('turnRight', 1)
+				// 		.push('moveAhead', 1)
 			})
 		})()
 	}
@@ -359,6 +367,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	sounds.add('hitByBullet', 'sounds/95078__sandyrb__the-crash.wav')
 	sounds.add('intertank.collision', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
 	sounds.add('localtankmap.collision', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
+	sounds.add('gameOver', 'sounds/gameover-macsay.wav')
 
 	// handle mute UI
 	document.querySelector('#muteOsd').addEventListener('click', function(event){

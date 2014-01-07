@@ -2,7 +2,6 @@ var THREEx	= THREEx	|| {}
 
 THREEx.SphericalBlastEmitter	= function(container){
 	// load the texture
-	var texture	= THREE.ImageUtils.loadTexture('images/water.png')
 	var geometry	= new THREE.SphereGeometry(0.5, 16, 32)
 
 	var material	= THREEx.createAtmosphereMaterial()
@@ -20,10 +19,11 @@ THREEx.SphericalBlastEmitter	= function(container){
 
 
 	var updateFcts	= []
-	this.emit	= function(position, color, maxRadius){
+	this.emit	= function(position, color, maxRadius, maxAge){
 		position	= position	|| new THREE.Vector3(0,0,0)
 		color		= color		|| 'red'
 		maxRadius	= maxRadius	|| 0.5
+		maxAge		= maxAge	|| 1
 		// build mesh
 		var material	= new THREE.MeshBasicMaterial({
 			opacity		: 0.4,
@@ -55,8 +55,6 @@ THREEx.SphericalBlastEmitter	= function(container){
 		outsideMesh.scale.multiplyScalar(1.1)
 		mesh.add( outsideMesh );
 			
-		
-		var maxAge	= 1
 		// init scale
 		var age2Scale	= (function(){
 			var tweenFn	= createTweenMidi(maxAge, 0.1*maxAge, 0.4*maxAge)

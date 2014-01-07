@@ -62,7 +62,6 @@ THREEx.Stellar7TankControlsQueue	= function(tankControls){
 			timerId	= null
 		}
 		// run the command
-		console.log('runNextCommand', command.actions)
 		tankControls[command.action]()
 		// launch the timer to stop execution
 		timerId		= setTimeout(function(){
