@@ -107,9 +107,11 @@
 	<div id="muteOsd" class='osdFont'></div>
 </div>
 <div id='osdCenterColumn'>
-	<div id="killPlayerOsd" class='osdFont osdHidden'>You Die!</div>
+	<div id="gameStartOsd" class='osdFont osdHidden'>Ready ?</div>
 	<div id="gameOverOsd" class='osdFont osdHidden'>Game Over!</div>
 	<div id="hitByBulletOsd" class='osdFont osdHidden'>Ouch</div>
+	<div id="spawnPlayerOsd" class='osdFont osdHidden'>GO!</div>
+	<div id="killPlayerOsd" class='osdFont osdHidden'>You Die!</div>
 </div>
 <script>
 require([ 'bower_components/threex.keyboardstate/package.require.js'
@@ -220,7 +222,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
 					
-	for(var i = 0; i < 5; i++){
+	for(var i = 0; i < 1; i++){
 		;(function(){
 			var tankBody	= new THREEx.Stellar7TankBody()
 			tankBody.setControlsQueue()
@@ -232,15 +234,15 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 			
 			game.addPlayer(tankBody)
 
-			tankBody.resetPosition(game.map)
+			// tankBody.resetPosition(game.map)
 			
 			tankBody.addEventListener('scannedTank', function(){
 				tankBody.controls.fire()
 			})
 			tankBody.controls.addEventListener('idle', function(){
-				tankBody.controls
-						.push('turnRight', 1)
-						.push('moveAhead', 1)
+				// tankBody.controls
+				// 		.push('turnRight', 1)
+				// 		.push('moveAhead', 1)
 			})
 		})()
 	}
@@ -392,24 +394,81 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	//////////////////////////////////////////////////////////////////////////////////
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
-	
 
-
-	document.addEventListener('dead', function(){
-		var element	= document.querySelector('#killPlayerOsd')
-
+	document.addEventListener('gameStart', function(){
+		var position	= humanPlayer.model.object3d.position
+		position.y	= 3;
+		game.frozen	= true
+		
+		var osdElement	= document.querySelector('#gameStartOsd')
 		Flow().seq(function(next){
-			document.dispatchEvent(new CustomEvent('BadTVJamming'));
-			element.classList.add("osdVisible");
-			element.classList.remove("osdHidden");
+			osdElement.classList.add("osdVisible");
+			osdElement.classList.remove("osdHidden");
+			next()
+		}).seq(function(next){
+			setTimeout(function(){
+				next()
+			}, 1000*2)
+		}).seq(function(next){
+			osdElement.classList.remove("osdVisible");
+			osdElement.classList.add("osdHidden");
+			next()
+		}).seq(function(next){
+			document.dispatchEvent(new CustomEvent('spawnPlayer'))
+			next()	
+		})
+	})
+
+	document.addEventListener('spawnPlayer', function(){
+		var tankBody	= humanPlayer;
+		var position	= tankBody.model.object3d.position
+		position.y	= 3;
+		game.frozen	= true
+
+		// cinematic
+		var osdElement	= document.querySelector('#spawnPlayerOsd')
+		Flow().seq(function(next){
+			osdElement.classList.add("osdVisible");
+			osdElement.classList.remove("osdHidden");
+			next()
+		}).seq(function(next){
+			var tween	= new TWEEN.Tween(position)
+				.to({
+					y	: 0,
+				}, 2*1000)
+				.easing(TWEEN.Easing.Exponential.InOut)
+				.onComplete(function(){ next() })
+				.start()
+		}).seq(function(next){
+			osdElement.classList.remove("osdVisible");
+			osdElement.classList.add("osdHidden");
+			game.frozen	= false
+			next()
+		})
+	})
+
+	document.addEventListener('killPlayer', function(event){
+		var tankBody	= humanPlayer;
+		game.frozen	= true
+		document.dispatchEvent(new CustomEvent('BadTVJamming'));
+
+		// cinematic
+		var osdElement	= document.querySelector('#killPlayerOsd')
+		Flow().seq(function(next){
+			osdElement.classList.add("osdVisible");
+			osdElement.classList.remove("osdHidden");
 			next()
 		}).seq(function(next){
 			setTimeout(function(){
 				next()
 			}, 1000*1.1)
 		}).seq(function(next){
-			element.classList.remove("osdVisible");
-			element.classList.add("osdHidden");
+			osdElement.classList.remove("osdVisible");
+			osdElement.classList.add("osdHidden");
+			next()
+		}).seq(function(next){
+			tankBody.resetPosition(game.map)
+			document.dispatchEvent(new CustomEvent('spawnPlayer'))
 			next()
 		})
 	})
@@ -449,6 +508,11 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 		badTVJamming.trigger()		
 	})
 
+	//////////////////////////////////////////////////////////////////////////////////
+	//		launch the gameStart event					//
+	//////////////////////////////////////////////////////////////////////////////////
+
+	document.dispatchEvent(new CustomEvent('gameStart'))
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		render the scene						//

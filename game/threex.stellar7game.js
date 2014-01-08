@@ -221,30 +221,7 @@ THREEx.Stellar7Game	= function(scene){
 		// if local player die
 		tankBody.addEventListener('dead', function(){
 			if( tankBody.isLocalPlayer() === false )	return
-			document.dispatchEvent(new CustomEvent('killPlayer'));
-			var osdElement	= document.querySelector('#killPlayerOsd')
-
-			Flow().seq(function(next){
-				document.dispatchEvent(new CustomEvent('BadTVJamming'));
-				// make osd appears
-				// osdElement.style.display    = 'block'
-				osdElement.classList.add("osdVisible");
-				osdElement.classList.remove("osdHidden");
-				next()
-			}).seq(function(next){
-				setTimeout(function(){
-					next()
-				}, 1000*1.1)
-			}).seq(function(next){
-				// make osd appears
-				// osdElement.style.display    = 'none'
-				osdElement.classList.remove("osdVisible");
-				osdElement.classList.add("osdHidden");
-
-				tankBody.resetPosition(map)
-
-				next()
-			})
+			document.dispatchEvent(new CustomEvent('killPlayer'))
 		})
 
 		// if non local player die
@@ -301,7 +278,6 @@ THREEx.Stellar7Game	= function(scene){
 				tankBody.resetPosition(map)
 				next()
 			})
-		
 		})
 
 		// if a non local player becomes reallyDead
@@ -324,13 +300,13 @@ THREEx.Stellar7Game	= function(scene){
 			var present	= Date.now()/1000
 			if( present - lastFire < 1.0 )	return
 			lastFire	= present
-			
+
 			var bullet	= new THREEx.Stellar7BulletBody.fromPlayer(tankBody)
 			scene.add( bullet.model.object3d )
 			bullet.model.object3d.rotation.y	= tankBody.turretAngleY()
 
 			bulletBodies.push(bullet)
-			
+
 			bullet.addEventListener('die', function(){
 				scene.remove( bullet.model.object3d )
 				bulletBodies.splice(bulletBodies.indexOf(bullet),1)
@@ -339,6 +315,4 @@ THREEx.Stellar7Game	= function(scene){
 			Stellar7.sounds.play('bulletTank')
 		})
 	}
-
-
 }

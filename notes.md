@@ -8,19 +8,30 @@ TODO
 * publish that in chrome store
 
 
-* DONE handle energy + life in tankbody
-  * same die system as bullet
-* DONE what happen when tankbody die ?
-  * respawn ? gameover ?
-* DONE add a skymap of star 
+Finite State Automata
+=====================
+* keep it as simple as possible
 
+### Attempts
 
-* DONE make the map circle 
-* DONE all collision are done with boundaryRadius
-  * it is present everywhere
-* DONE to rename Shoot into Bullet
-* DONE to rename shoot.js into ShootBody.js
-  * rename tankPlayer into tankBody
+* gameInitialisation
+  * When the game actually begin.
+  * not between lives in a given game
+  * goto spawnPlayer
+* playerSpawned
+  * put the player in the game
+  * enable controls
+* playerKilled
+  * triggered when a given player live is out
+  * cinematic of explosion
+* gameCompleted(result)
+  * display 'You Win!' or 'You Lose!' depending on result
+  * goto homepage
+
+### Analysis
+
+* Not consistent in which part of the code send the event
+* reducing numbers of events by using parameters seems definitly good
 
 Misc
 ====
@@ -38,6 +49,17 @@ Misc
   * for shoot/wall collision http://www.freesound.org/people/BigKahuna360/sounds/160421/
 
 
+* DONE handle energy + life in tankbody
+  * same die system as bullet
+* DONE what happen when tankbody die ?
+  * respawn ? gameover ?
+* DONE add a skymap of star 
+* DONE make the map circle 
+* DONE all collision are done with boundaryRadius
+  * it is present everywhere
+* DONE to rename Shoot into Bullet
+* DONE to rename shoot.js into ShootBody.js
+  * rename tankPlayer into tankBody
 
 What about code orga
 ====================

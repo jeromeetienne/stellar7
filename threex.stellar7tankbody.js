@@ -22,14 +22,16 @@ THREEx.Stellar7TankBody	= function(){
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
 	
-	this.maxEnergy	= 1000;
-	this.lives	= 3;
-	this.energy	= this.maxEnergy;
-	this.score	= 0
-	
+	this.maxLives	= 3
+	this.lives	= this.maxLives
 	this.isAlive	= function(){
 		return this.lives >= 0
 	}
+
+	this.maxEnergy	= 1000
+	this.energy	= this.maxEnergy
+
+	this.score	= 0
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	//		model								//
