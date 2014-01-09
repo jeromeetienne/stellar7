@@ -23,7 +23,7 @@ THREEx.Stellar7MiniMap	= function(game){
 	onRenderFcts.push(function(delta, now){
 		// later do a circle
 		context.clearRect(0,0, canvas.width, canvas.height)
-		context.fillStyle	= "rgba(0,0,0,0.5)";
+		context.fillStyle	= "rgba(0,127,0,0.5)";
 		// context.fillRect(0,0, canvas.width, canvas.height)
 	
 		context.beginPath();

@@ -47,9 +47,9 @@ WebAudiox.GameSounds	= function(){
 		console.assert(sounds[label] !== undefined)
 		return sounds[label]
 	}
-	this.add	= function(label, url, playFn){
+	this.add	= function(label, url, playFn, onLoad, onError){
 		console.assert(sounds[label] === undefined)
-		sounds[label]	= new WebAudiox.GameSound(this, url, playFn)
+		sounds[label]	= new WebAudiox.GameSound(this, url, playFn, onLoad, onError)
 	}
 	this.remove	= function(label){
 		delete sounds[label]
@@ -60,7 +60,7 @@ WebAudiox.GameSounds	= function(){
 	}
 }
 
-WebAudiox.GameSound	= function(gameSounds, url, playFn){
+WebAudiox.GameSound	= function(gameSounds, url, playFn, onLoad, onError){
 	this.gameSounds	= gameSounds
 	// handle default arguments
 	playFn		= playFn || function(sound, context, destination){
@@ -74,7 +74,8 @@ WebAudiox.GameSound	= function(gameSounds, url, playFn){
 	this.buffer= null
 	WebAudiox.loadBuffer(gameSounds.context, url, function(decodedBuffer){
 		this.buffer	= decodedBuffer;
-	}.bind(this))
+		onLoad	&& onLoad()
+	}.bind(this), onError)
 	
 	this.isReady	= function(){
 		return this.buffer !== null

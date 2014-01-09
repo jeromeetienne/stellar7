@@ -189,19 +189,15 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	tankBody.setControlsKeyboard()
 	game.addPlayer(tankBody)
 	
-	tankBody.maxEnergy	= 250
-	tankBody.energy		= tankBody.maxEnergy
-	tankBody.maxLives	= 0
-	tankBody.lives		= 0
-	// tankBody.resetPosition(game.map)
+	// tankBody.maxEnergy	= 250
+	// tankBody.energy		= tankBody.maxEnergy
+	// tankBody.maxLives	= 0
+	// tankBody.lives		= 0
+	tankBody.resetPosition(game.map)
 	tankBody.model.object3d.position.x	+= 2
 
 	humanPlayer		= tankBody
 	Stellar7.humanPlayer	= tankBody
-
-	// tankBody.addEventListener('reallyDead', function(){
-	// 	location.href	= '../'
-	// })
 })()
 
 ;(function(){
@@ -230,7 +226,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
 					
-	for(var i = 0; i < 1; i++){
+	for(var i = 0; i < 5; i++){
 		;(function(){
 			var tankBody	= new THREEx.Stellar7TankBody()
 			tankBody.setControlsQueue()
@@ -242,15 +238,15 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 			
 			game.addPlayer(tankBody)
 
-			// tankBody.resetPosition(game.map)
+			tankBody.resetPosition(game.map)
 			
 			tankBody.addEventListener('scannedTank', function(){
 				tankBody.controls.fire()
 			})
 			tankBody.controls.addEventListener('idle', function(){
-				// tankBody.controls
-				// 		.push('turnRight', 1)
-				// 		.push('moveAhead', 1)
+				tankBody.controls
+						.push('turnRight', 1)
+						.push('moveAhead', 1)
 			})
 		})()
 	}
@@ -390,13 +386,38 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	sounds.add('explosion', 'sounds/211339__rjonesxlr8__explosion-04.wav')
 	sounds.add('enemyDead', 'sounds/196841__omarstone__hahahaha-cartoon-monster.wav')
 	//sounds.add('hitByBullet', 'sounds/95078__sandyrb__the-crash.wav')
-	sounds.add('hitByBullet', 'sounds/211234__rjonesxlr8__explosion-14.wav')
+	sounds.add('hitByBullet', 'sounds/211234__rjonesxlr8__explosion-14.wav', function(sound, context, destination){
+		var gain	= context.createGain();
+		gain.gain.value	= 0.3
+		gain.connect(destination)
+		destination	= gain
+		
+		var source	= context.createBufferSource()
+		source.buffer	= sound.buffer
+		source.connect(destination)
+		source.start(0)
+		return source		
+	})
 	sounds.add('intertank.collision', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
 	sounds.add('localtankmap.collision', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
 	sounds.add('gameOver', 'sounds/macsay-gameover.wav')
 	sounds.add('gameOver2', 'sounds/159408__noirenex__lifelost.wav')
 	sounds.add('gameStart', 'sounds/macsay-areyouready.wav')
 	sounds.add('enemyExplode', 'sounds/153445__lukechalaudio__8bit-robot-sound.wav')
+	sounds.add('soundTrack', 'sounds/51239__rutgermuller__8-bit-electrohouse.wav', function(sound, context, destination){
+		var gain	= context.createGain();
+		gain.gain.value	= 0.3
+		gain.connect(destination)
+		destination	= gain
+		
+		var source	= context.createBufferSource()
+		source.buffer	= sound.buffer
+		source.connect(destination)
+		source.start(0)
+		return source		
+	}, function(){
+		sounds.play('soundTrack')
+	})
 
 	// handle mute UI
 	document.querySelector('#muteOsd').addEventListener('click', function(event){
@@ -483,8 +504,8 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 			setTimeout(function(){
 				Stellar7.sounds.play('gameOver2')
 				next()
-			}, 1000*3)
-		}).seq(function(next){
+			}, 1000*2)
+		}).seq(function(next){ 
 			setTimeout(function(){
 				next()
 			}, 1000*1)
