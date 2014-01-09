@@ -64,18 +64,21 @@ THREEx.Stellar7BulletBody	= function(){
 /**
  * create a shoot as if it were originated by this tank
  */
-THREEx.Stellar7BulletBody.fromPlayer	= function(player){
-	var playerModel	= player.model;
+THREEx.Stellar7BulletBody.fromPlayer	= function(tankBody){
+	var tankModel	= tankBody.model;
 	// create object
 	var shoot	= new THREEx.Stellar7BulletBody()
-	shoot.fromPlayer= player
+	shoot.fromPlayer= tankBody
+	// get position of cannon
+	var object3d	= tankModel.cannonMesh
+	object3d.updateMatrixWorld();
+	var worldMatrix	= object3d.matrixWorld;
+	var position	= new THREE.Vector3().getPositionFromMatrix(worldMatrix);
 	// setup position
-	shoot.model.object3d.position
-		.copy(playerModel.object3d.position)
-		.add(new THREE.Vector3(0,0.3, 0))
+	shoot.model.object3d.position.copy(position)
 	// setup velocity
 	var velocity	= new THREE.Vector3(0, 0, 10);
-	var rotationY	= playerModel.baseMesh.rotation.y + playerModel.cannonMesh.rotation.y
+	var rotationY	= tankModel.baseMesh.rotation.y + tankModel.cannonMesh.rotation.y
 	var matrix	= new THREE.Matrix4().makeRotationY(rotationY)
 	velocity.applyMatrix4( matrix );
 	shoot.velocity.copy(velocity)
