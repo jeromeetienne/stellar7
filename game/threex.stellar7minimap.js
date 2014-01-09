@@ -23,7 +23,7 @@ THREEx.Stellar7MiniMap	= function(game){
 	onRenderFcts.push(function(delta, now){
 		// later do a circle
 		context.clearRect(0,0, canvas.width, canvas.height)
-		context.fillStyle	= "rgba(0,127,0,0.5)";
+		context.fillStyle	= "rgba(0,127,0,1.0)";
 		// context.fillRect(0,0, canvas.width, canvas.height)
 	
 		context.beginPath();
@@ -50,9 +50,9 @@ THREEx.Stellar7MiniMap	= function(game){
 			
 			context.save()
 			if( tankBody.isLocalPlayer() ){
-				context.fillStyle	= "rgba(0,255,255,0.5)"			
+				context.fillStyle	= "rgba(0,255,255,1.0)"			
 			}else{
-				context.fillStyle	= "rgba(255,0,0,0.5)"			
+				context.fillStyle	= "rgba(255,0,0,1.0)"			
 			}
 			context.translate(canvas.width/2, canvas.height/2)
 			context.rotate(localRotationY);
@@ -83,7 +83,7 @@ THREEx.Stellar7MiniMap	= function(game){
 			var canvasY	= (-position.z / mapRadius) * (0.9*canvas.height/2)
 			
 			context.save()
-			context.fillStyle	= "rgba(255,255,0,0.5)"
+			context.fillStyle	= "rgba(255,255,0,1.0)"
 			context.translate(canvas.width/2, canvas.height/2)			
 			context.rotate(localRotationY);
 			context.translate(canvasX, canvasY)			
