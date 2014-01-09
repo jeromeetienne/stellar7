@@ -17,6 +17,7 @@ THREEx.Stellar7Game	= function(scene){
 	//////////////////////////////////////////////////////////////////////////////////
 	
 	var tankBodies	= []
+	this.tankBodies	= tankBodies
 	onRenderFcts.push(function(delta, now){
 		tankBodies.forEach(function(tankBody){
 			tankBody.update(delta, now)
@@ -24,6 +25,7 @@ THREEx.Stellar7Game	= function(scene){
 	})
 
 	var bulletBodies= []
+	this.bulletBodies	= bulletBodies
 	onRenderFcts.push(function(delta, now){
 		bulletBodies.forEach(function(bulletBody){
 			bulletBody.update(delta, now)
@@ -40,6 +42,7 @@ THREEx.Stellar7Game	= function(scene){
 		map.update(delta, now)
 	})
 	scene.add(map.object3d)
+	
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		handle inter-tank collision					//
@@ -186,6 +189,10 @@ THREEx.Stellar7Game	= function(scene){
 	this.addPlayer	= function(tankBody){
 		tankBodies.push(tankBody)
 		scene.add(tankBody.model.object3d)
+
+		if( tankBody.isLocalPlayer() ){
+			this.localPlayer	= tankBody
+		}
 
 		tankBody.addEventListener('hitByBullet', function(){
 			Stellar7.sounds.play('hitByBullet')

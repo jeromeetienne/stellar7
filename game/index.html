@@ -23,6 +23,7 @@
 <script src='../threex.stellar7bulletbody.js'></script>
 <script src='threex.stellar7game.js'></script>
 <script src='threex.stellar7map.js'></script>
+<script src='threex.stellar7minimap.js'></script>
 <script src='webaudiox.gamesounds.js'></script>
 <script src='threex.lightpool.js'></script>
 <script src='threex.sphericalblastemitter.js'></script>
@@ -186,7 +187,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	var tankBody	= new THREEx.Stellar7TankBody()
 	tankBody.setControlsKeyboard()
 	game.addPlayer(tankBody)
-	tankBody.resetPosition(game.map)
+	// tankBody.resetPosition(game.map)
 	tankBody.model.object3d.position.x	+= 1
 
 	humanPlayer		= tankBody
@@ -356,6 +357,20 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	camera.position.set(0,0.3,-0.9)
 	camera.lookAt(new THREE.Vector3(0,0,2))
 
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		map								//
+	//////////////////////////////////////////////////////////////////////////////////
+	
+	var miniMap	= new THREEx.Stellar7MiniMap(game)
+	onRenderFcts.push(function(delta,now){
+		miniMap.update(delta, now)
+	})
+	document.body.appendChild(miniMap.domElement)
+	miniMap.domElement.style.position	= 'absolute'
+	miniMap.domElement.style.left		= '1em'
+	miniMap.domElement.style.bottom		= '1em'
+	
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	//		comment								//
