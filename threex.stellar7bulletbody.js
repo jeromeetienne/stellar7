@@ -71,9 +71,9 @@ THREEx.Stellar7BulletBody.fromPlayer	= function(tankBody){
 	shoot.fromPlayer= tankBody
 	// get position of cannon
 	var object3d	= tankModel.cannonMesh
-	object3d.updateMatrixWorld();
-	var worldMatrix	= object3d.matrixWorld;
-	var position	= new THREE.Vector3().getPositionFromMatrix(worldMatrix);
+	object3d.updateMatrixWorld()
+	var worldMatrix	= object3d.matrixWorld
+	var position	= new THREE.Vector3().getPositionFromMatrix(worldMatrix)
 	// setup position
 	shoot.model.object3d.position.copy(position)
 	// setup velocity
