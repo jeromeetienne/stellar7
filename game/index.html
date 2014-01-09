@@ -122,8 +122,9 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	, 'bower_components/threex.montainsarena/package.require.js'
 	, 'bower_components/webaudiox/build/webaudiox.js'
 	, 'bower_components/threex.badtvpproc/package.require.js'
-	, 'bower_components/threex.solidwireframe/threex.solidwireframe.js'
 	, 'bower_components/threex.geometricglow/package.require.js'
+	, 'bower_components/threex.solidwireframe/threex.solidwireframe.js'
+	, 'bower_components/threex.coloradjust/package.require.js'
 	, 'vendor/gowiththeflow.js'
 	], function(){
 	// detect WebGL
@@ -224,7 +225,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
 					
-	for(var i = 0; i < 1; i++){
+	for(var i = 0; i < 5; i++){
 		;(function(){
 			var tankBody	= new THREEx.Stellar7TankBody()
 			tankBody.setControlsQueue()
@@ -236,15 +237,15 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 			
 			game.addPlayer(tankBody)
 
-			// tankBody.resetPosition(game.map)
+			tankBody.resetPosition(game.map)
 			
 			tankBody.addEventListener('scannedTank', function(){
 				tankBody.controls.fire()
 			})
 			tankBody.controls.addEventListener('idle', function(){
-				// tankBody.controls
-				// 		.push('turnRight', 1)
-				// 		.push('moveAhead', 1)
+				tankBody.controls
+						.push('turnRight', 1)
+						.push('moveAhead', 1)
 			})
 		})()
 	}
@@ -505,6 +506,25 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	// THREEx.addBadTVPasses2DatGui(badTVPasses)
 
 	//////////////////////////////////////////////////////////////////////////////////
+	//		colorPasses							//
+	//////////////////////////////////////////////////////////////////////////////////
+
+	var colorPasses	= new THREEx.ColorAdjust.Passes();
+	onRenderFcts.push(function(delta, now){
+		colorPasses.update(delta, now)
+	});
+	//////////////////////////////////////////////////////////////////////////////////
+	//		switch color cube randomly every 2 seconds			//
+	//////////////////////////////////////////////////////////////////////////////////
+	
+	setInterval(function(){
+		var values	= Object.keys(THREEx.ColorAdjust.colorCubes)
+		var index	= Math.floor(Math.random()*values.length)
+		var value	= values[index]
+		colorPasses.setColorCube(value)
+	}, 2*1000)
+
+	//////////////////////////////////////////////////////////////////////////////////
 	//		composer 							//
 	//////////////////////////////////////////////////////////////////////////////////
 
@@ -512,6 +532,8 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	var renderPass	= new THREE.RenderPass( scene, camera );
 	composer.addPass( renderPass );
 
+	// add colorPasses to composer	
+	colorPasses.addPassesTo(composer)
 	// add badTVPasses to composer	
 	badTVPasses.addPassesTo(composer)
 

@@ -1,0 +1,14 @@
+{
+  "name": "threex.coloradjust",
+  "homepage": "https://github.com/jeromeetienne/threex.coloradjust",
+  "_release": "d5a693f083",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "d5a693f08353a1a9675bf6885fac967960c07f1f"
+  },
+  "_source": "git://github.com/jeromeetienne/threex.coloradjust.git",
+  "_target": "*",
+  "_originalSource": "threex.coloradjust",
+  "_direct": true
+}
