@@ -202,6 +202,9 @@ THREEx.Stellar7Game	= function(scene){
 			document.dispatchEvent(new CustomEvent('BadTVJamming', { detail: {
 				presetLabel	: 'lightNoScroll'
 			}}));
+			document.dispatchEvent(new CustomEvent('colorAdjust', { detail: {
+				colorCube	: 'thermal'
+			}}));
 
 			var osdElement	= document.querySelector('#hitByBulletOsd')
 			// make osd appears
@@ -216,7 +219,12 @@ THREEx.Stellar7Game	= function(scene){
 				// make osd appears
 				osdElement.classList.remove("osdVisible");
 				osdElement.classList.add("osdHidden");
-				// game.frozen	= false
+				next()
+			}).seq(function(next){
+				// restore the default colorAdjust
+				document.dispatchEvent(new CustomEvent('colorAdjust', { detail: {
+					colorCube	: 'default'
+				}}));
 				next()
 			})
 		})
@@ -301,7 +309,7 @@ THREEx.Stellar7Game	= function(scene){
 
 		tankBody.addEventListener('reallyDead', function(){
 			if( tankBody.isLocalPlayer() === false )	return
-			Stellar7.sounds.play('gameOver')
+			document.dispatchEvent(new CustomEvent('gameLost'))
 		})		
 
 
