@@ -192,6 +192,10 @@ THREEx.Stellar7Game	= function(scene){
 
 			if( tankBody.isLocalPlayer() === false )	return
 
+			document.dispatchEvent(new CustomEvent('BadTVJamming', { detail: {
+				presetLabel	: 'lightNoScroll'
+			}}));
+
 			var osdElement	= document.querySelector('#hitByBulletOsd')
 			// make osd appears
 			osdElement.classList.add("osdVisible");

@@ -12,6 +12,7 @@
 <script src="vendor/three.js/examples/js/postprocessing/MaskPass.js"></script> 
 <script src="vendor/three.js/examples/js/shaders/CopyShader.js"></script>
 
+<script src="vendor/three.js/examples/js/libs/dat.gui.min.js"></script>
 
 <script src='../threex.stellar7tankmodel.js'></script>
 <script src='../threex.stellar7tankcontrols.js'></script>
@@ -450,7 +451,9 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	document.addEventListener('killPlayer', function(event){
 		var tankBody	= humanPlayer;
 		game.frozen	= true
-		document.dispatchEvent(new CustomEvent('BadTVJamming'));
+		document.dispatchEvent(new CustomEvent('BadTVJamming', { detail: {
+			presetLabel	: 'strongScrolly'
+		}}));
 
 		// cinematic
 		var osdElement	= document.querySelector('#killPlayerOsd')
@@ -481,8 +484,10 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	onRenderFcts.push(function(delta, now){
 		badTVPasses.update(delta, now)		
 	})
-	badTVPasses.params.reset()
+	badTVPasses.params.preset('resetInterlace')
 	badTVPasses.onParamsChange();
+
+	// THREEx.addBadTVPasses2DatGui(badTVPasses)
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		composer 							//
@@ -496,6 +501,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	badTVPasses.addPassesTo(composer)
 
 	composer.passes[composer.passes.length -1 ].renderToScreen	= true;
+
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	//		ping animation + sounds						//
@@ -504,10 +510,10 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	// window.AudioContext	= window.AudioContext || window.webkitAudioContext;
 	// var context		= new AudioContext()
 	var badTVJamming	= new THREEx.BadTVJamming(badTVPasses, sounds.context, sounds.lineOut.destination)
-	document.addEventListener('BadTVJamming', function(){
-		badTVJamming.trigger()		
+	document.addEventListener('BadTVJamming', function(event){
+		var presetLabel	= event.detail.presetLabel
+		badTVJamming.preset(presetLabel)		
 	})
-
 	//////////////////////////////////////////////////////////////////////////////////
 	//		launch the gameStart event					//
 	//////////////////////////////////////////////////////////////////////////////////
