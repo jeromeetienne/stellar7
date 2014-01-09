@@ -404,18 +404,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	sounds.add('gameOver2', 'sounds/159408__noirenex__lifelost.wav')
 	sounds.add('gameStart', 'sounds/macsay-areyouready.wav')
 	sounds.add('enemyExplode', 'sounds/153445__lukechalaudio__8bit-robot-sound.wav')
-	sounds.add('soundTrack', 'sounds/51239__rutgermuller__8-bit-electrohouse.wav', function(sound, context, destination){
-		var gain	= context.createGain();
-		gain.gain.value	= 0.3
-		gain.connect(destination)
-		destination	= gain
-		
-		var source	= context.createBufferSource()
-		source.buffer	= sound.buffer
-		source.connect(destination)
-		source.start(0)
-		return source		
-	}, function(){
+	sounds.add('soundTrack', 'sounds/rezoner-7DFPS-2013-2.mp3', undefined, function(){
 		sounds.play('soundTrack')
 	})
 
