@@ -50,13 +50,14 @@ WebAudiox.GameSounds	= function(){
 	this.add	= function(label, url, playFn, onLoad, onError){
 		console.assert(sounds[label] === undefined)
 		sounds[label]	= new WebAudiox.GameSound(this, url, playFn, onLoad, onError)
+		return sounds[label]
 	}
 	this.remove	= function(label){
 		delete sounds[label]
 	}
 	this.play	= function(label){
 		console.assert(sounds[label] !== undefined)
-		sounds[label].play()
+		return sounds[label].play()
 	}
 }
 
@@ -89,7 +90,10 @@ WebAudiox.GameSound	= function(gameSounds, url, playFn, onLoad, onError){
 		return playFn(this, context, destination)
 	}
 	
-
+	// - volume
+	// - set static position/orientation 
+	// - set dynamic position/orientation/velocity
+	//   - unhook with onended
 	
 	// possible three.js api
 	// sound.at(position).play(3)

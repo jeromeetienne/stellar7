@@ -193,8 +193,9 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	// tankBody.energy		= tankBody.maxEnergy
 	// tankBody.maxLives	= 0
 	// tankBody.lives		= 0
+	// tankBody.model.object3d.position.x	+= 2
+
 	tankBody.resetPosition(game.map)
-	tankBody.model.object3d.position.x	+= 2
 
 	humanPlayer		= tankBody
 	Stellar7.humanPlayer	= tankBody
@@ -238,7 +239,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 			
 			game.addPlayer(tankBody)
 
-			tankBody.resetPosition(game.map)
+			tankBody.rewsetPosition(game.map)
 			
 			tankBody.addEventListener('scannedTank', function(){
 				tankBody.controls.fire()
@@ -666,4 +667,16 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 		})
 	})
 })
-</script></body>
+</script>
+
+<!-- google analytic -->
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-4037844-22', 'jeromeetienne.github.io');
+  ga('send', 'pageview');
+</script>
+
+</body>
