@@ -207,7 +207,7 @@ THREEx.BadTVPasses.Params	= function(){
 			// badTV.speed		= Math.random()*.4;
 			// badTV.rollSpeed		= Math.random()*.2;
 			rgb.angle		= Math.random()*10/180*Math.PI*2;
-			rgb.amount		= Math.random()*0.02+0.02;
+			rgb.amount		= Math.random()*0.02+0.0;
 			// staticNoise.amount	= Math.random()*0.2;
 		},
 		'strong'	: function(){
