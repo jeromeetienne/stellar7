@@ -189,13 +189,13 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	tankBody.setControlsKeyboard()
 	game.addPlayer(tankBody)
 	
-	// tankBody.maxEnergy	= 250
-	// tankBody.energy		= tankBody.maxEnergy
-	// tankBody.maxLives	= 0
-	// tankBody.lives		= 0
-	// tankBody.model.object3d.position.x	+= 2
+// tankBody.maxEnergy	= 250
+// tankBody.energy		= tankBody.maxEnergy
+// tankBody.maxLives	= 0
+// tankBody.lives		= 0
+tankBody.model.object3d.position.x	+= 2
 
-	tankBody.resetPosition(game.map)
+	// tankBody.resetPosition(game.map)
 
 	humanPlayer		= tankBody
 	Stellar7.humanPlayer	= tankBody
@@ -215,6 +215,15 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	})
 })()
 
+	setInterval(function(){
+		document.dispatchEvent(new CustomEvent('emitSphericalBlast', {detail:{
+			position	: new THREE.Vector3(0,0,0),
+			color		: 'red',
+			maxRadius	: 1.2,
+			maxAge		: 1.5,
+		}}))
+	}, 1000*2)
+
 	//////////////////////////////////////////////////////////////////////////////////
 	//		tween.js update							//
 	//////////////////////////////////////////////////////////////////////////////////
@@ -227,7 +236,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
 					
-	for(var i = 0; i < 5; i++){
+	for(var i = 0; i < 2; i++){
 		;(function(){
 			var tankBody	= new THREEx.Stellar7TankBody()
 			tankBody.setControlsQueue()
