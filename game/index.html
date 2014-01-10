@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <script src='vendor/three.js/build/three.js'></script>
+<script src='vendor/three.js/examples/js/libs/stats.min.js'></script>
 <script src='vendor/three.js/examples/js/libs/tween.min.js'></script>
 <script src="vendor/require.js/require.js"></script>
 <script src="vendor/three.js/examples/js/Detector.js"></script>
@@ -136,6 +137,9 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	var renderer	= new THREE.WebGLRenderer({
 		antialias	: true
 	});
+
+	renderer.devicePixelRatio	= 1/1
+
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	document.body.appendChild( renderer.domElement );
 	// setup a scene and camera
@@ -195,7 +199,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 // tankBody.lives		= 0
 tankBody.model.object3d.position.x	+= 2
 
-	// tankBody.resetPosition(game.map)
+	tankBody.resetPosition(game.map)
 
 	humanPlayer		= tankBody
 	Stellar7.humanPlayer	= tankBody
@@ -215,14 +219,14 @@ tankBody.model.object3d.position.x	+= 2
 	})
 })()
 
-	setInterval(function(){
-		document.dispatchEvent(new CustomEvent('emitSphericalBlast', {detail:{
-			position	: new THREE.Vector3(0,0,0),
-			color		: 'red',
-			maxRadius	: 1.2,
-			maxAge		: 1.5,
-		}}))
-	}, 1000*2)
+	// setInterval(function(){
+	// 	document.dispatchEvent(new CustomEvent('emitSphericalBlast', {detail:{
+	// 		position	: new THREE.Vector3(0,0,0),
+	// 		color		: 'red',
+	// 		maxRadius	: 1.2,
+	// 		maxAge		: 1.5,
+	// 	}}))
+	// }, 1000*2)
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		tween.js update							//
@@ -647,6 +651,20 @@ tankBody.model.object3d.position.x	+= 2
 	//////////////////////////////////////////////////////////////////////////////////
 
 	document.dispatchEvent(new CustomEvent('gameStart'))
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		stats.js							//
+	//////////////////////////////////////////////////////////////////////////////////
+	
+	var stats	= new Stats()
+	stats.domElement.style.position	= 'absolute'
+	stats.domElement.style.bottom	= '0px'
+	stats.domElement.style.right	= '0px'
+	// stats.domElement.style.zoom	= '400%'
+	document.body.appendChild(stats.domElement)
+	onRenderFcts.push(function(delta, now){
+		stats.update();		
+	})
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		render the scene						//

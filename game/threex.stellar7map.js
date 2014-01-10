@@ -102,38 +102,31 @@ THREEx.Stellar7Map	= function(){
 	var texture	= THREEx.Stellar7Map._buildTexture()
 	texture.wrapS	= THREE.RepeatWrapping;
 	texture.wrapT	= THREE.RepeatWrapping;
-	texture.repeat.set(12,12)
-	texture.anisotropy = 16; 
+	texture.repeat.set(40,40)
+	// texture.anisotropy = 16; 
 
 	var geometry	= new THREE.PlaneGeometry(40, 40)
 	var material	= new THREE.MeshPhongMaterial({
 		map		: texture,
 		bumpMap		: texture,
 		bumpScale	: 0.02,
-		// color	: 0x44FF44,
-		// color	: 0x228822,
+		emissive	: '#888',
 		specular	: 'white',
-		// emissive: 0x002200,
-		// ambient	: 'red',
-		shininess	: 100,
-		transparent	: true,
+		shininess	: 200,
+		alphaTest	: 0.1
 	})
-
- // 	// var material	= THREEx.ClaraioMaterials.createMetal()
-	// THREEx.ClaraioMaterials.textures(material).forEach(function(texture){
-	// 	texture.wrapS	= THREE.RepeatWrapping;
-	// 	texture.wrapT	= THREE.RepeatWrapping;
-	// 	texture.repeat.set(30,30)
-	// 	texture.anisotropy = 16; 	
-	// })
 
  	var mesh	= new THREE.Mesh(geometry, material)
 	mesh.lookAt(new THREE.Vector3(0,1,0))
 	object3d.add(mesh)
 	
-	for(var i = 0; i < 4; i ++){
+	// to add sub layer to the ground
+	for(var i = 0; i < 0; i ++){
 		var meshLayer	= mesh.clone()
-		mesh.position.y	= -0.1*(i+1)
+		meshLayer.material	= mesh.material.clone()
+		meshLayer.position.y	= -0.05*(i+1)
+		meshLayer.material.color.setRGB(1/(i/2+1), 1/(i/2+1), 1/(i/2+1))
+		// meshLayer.material.color.setRGB(1/2,1/2,1/2)
 		object3d.add(meshLayer)
 	}
 	//////////////////////////////////////////////////////////////////////////////////
@@ -190,13 +183,13 @@ THREEx.Stellar7Map._buildCanvas	= function(){
 	var context	= canvas.getContext('2d')
 	context.clearRect(0,0,canvas.width, canvas.height)
 	
-	context.fillStyle	= 'rgba(48, 103, 84, 0.4)'
+	// context.fillStyle	= 'rgba(48, 103, 84, 0.5)'
 	// context.fillStyle	= 'black'
-	context.fillStyle	= 'rgba(0, 0, 0, 0.3)'
+	context.fillStyle	= 'rgba(0, 0, 0, 0)'
 	context.fillRect(0,0,canvas.width, canvas.height)
 	
 	
-	context.lineWidth = canvas.width / 10;
+	context.lineWidth = canvas.width / 20;
 
 	var offsetX	= canvas.width  * 0.1
 	var offsetY	= canvas.height * 0.1

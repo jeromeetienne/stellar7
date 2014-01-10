@@ -231,10 +231,16 @@ THREEx.Stellar7Game	= function(scene){
 		tankBody.addEventListener('tankCollision', function(){
 			if( tankBody.isLocalPlayer() === false )	return
 			Stellar7.sounds.play('intertank.collision')			
+			document.dispatchEvent(new CustomEvent('BadTVJamming', { detail: {
+				presetLabel	: 'lightNoScroll'
+			}}));		
 		})
 		tankBody.addEventListener('mapCollision', function(){
 			if( tankBody.isLocalPlayer() === false )	return
-			Stellar7.sounds.play('localtankmap.collision')			
+			Stellar7.sounds.play('localtankmap.collision')	
+			document.dispatchEvent(new CustomEvent('BadTVJamming', { detail: {
+				presetLabel	: 'lightNoScroll'
+			}}));		
 		})
 
 		// if local player die
