@@ -47,20 +47,15 @@ THREEx.Stellar7Map	= function(){
 		})			
 	}.bind(this);
 	
-	addPlanets(THREEx.Planets.createSun()		, 0 * 2*Math.PI/11)
-	addPlanets(THREEx.Planets.createMercury()	, 1 * 2*Math.PI/11)
-	addPlanets(THREEx.Planets.createVenus()		, 2 * 2*Math.PI/11)
-	addPlanets(THREEx.Planets.createEarth()		, 3 * 2*Math.PI/11)
-	addPlanets(THREEx.Planets.createEarthCloud()	, 3 * 2*Math.PI/11, 0.1)
-	addPlanets(THREEx.Planets.createMoon()		, 4 * 2*Math.PI/11)
-	addPlanets(THREEx.Planets.createMars()		, 5 * 2*Math.PI/11)
-	addPlanets(THREEx.Planets.createJupiter()	, 6 * 2*Math.PI/11)
-	addPlanets(THREEx.Planets.createSaturn()	, 7 * 2*Math.PI/11)
-	addPlanets(THREEx.Planets.createSaturnRing()	, 7 * 2*Math.PI/11, 0)
-	addPlanets(THREEx.Planets.createUranus()	, 8 * 2*Math.PI/11)
-	addPlanets(THREEx.Planets.createUranusRing()	, 8 * 2*Math.PI/11, 0)
-	addPlanets(THREEx.Planets.createNeptune()	, 9 * 2*Math.PI/11)
-	addPlanets(THREEx.Planets.createPluto()		,10 * 2*Math.PI/11)
+	addPlanets(THREEx.Planets.createVenus()		, 0 * 2*Math.PI/6)
+	addPlanets(THREEx.Planets.createEarth()		, 1 * 2*Math.PI/6)
+	addPlanets(THREEx.Planets.createEarthCloud()	, 1 * 2*Math.PI/6, 0.1)
+	addPlanets(THREEx.Planets.createSaturn()	, 2 * 2*Math.PI/6)
+	addPlanets(THREEx.Planets.createSaturnRing()	, 2 * 2*Math.PI/6, 0)
+	addPlanets(THREEx.Planets.createMoon()		, 3 * 2*Math.PI/6)
+	addPlanets(THREEx.Planets.createJupiter()	, 4 * 2*Math.PI/6)
+	addPlanets(THREEx.Planets.createUranus()	, 5 * 2*Math.PI/6)
+	addPlanets(THREEx.Planets.createUranusRing()	, 5 * 2*Math.PI/6, 0)
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		starfield							//
@@ -110,9 +105,8 @@ THREEx.Stellar7Map	= function(){
 		map		: texture,
 		bumpMap		: texture,
 		bumpScale	: 0.02,
-		emissive	: '#888',
-		specular	: 'white',
-		shininess	: 200,
+		emissive	: '#444',
+		specular	: '#fff',
 		alphaTest	: 0.1
 	})
 
@@ -189,7 +183,7 @@ THREEx.Stellar7Map._buildCanvas	= function(){
 	context.fillRect(0,0,canvas.width, canvas.height)
 	
 	
-	context.lineWidth = canvas.width / 20;
+	context.lineWidth = canvas.width / 10;
 
 	var offsetX	= canvas.width  * 0.1
 	var offsetY	= canvas.height * 0.1
@@ -200,6 +194,7 @@ THREEx.Stellar7Map._buildCanvas	= function(){
 	// 	, canvas.width - 2*offsetX, canvas.height - 2*offsetY
 	// 	, cornerRadius, true, false)
 	context.strokeStyle	= 'lightgreen'
+	context.strokeStyle	= 'lime'
 	roundedRect(context, offsetX, offsetY
 		, canvas.width - 2*offsetX, canvas.height - 2*offsetY
 		, cornerRadius, false, true)

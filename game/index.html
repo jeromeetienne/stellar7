@@ -190,16 +190,19 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	var humanPlayer	= null
 ;(function(){
 	var tankBody	= new THREEx.Stellar7TankBody()
-	tankBody.setControlsKeyboard()
-	game.addPlayer(tankBody)
+	game.addTankKeyboard(tankBody)
 	
-// tankBody.maxEnergy	= 250
-// tankBody.energy		= tankBody.maxEnergy
-// tankBody.maxLives	= 0
-// tankBody.lives		= 0
-tankBody.model.object3d.position.x	+= 2
+	// tankBody.maxEnergy	= 250
+	// tankBody.energy		= tankBody.maxEnergy
+	// tankBody.maxLives	= 0
+	// tankBody.lives		= 0
+	tankBody.model.object3d.position.x	+= 2
 
-	tankBody.resetPosition(game.map)
+	// tankBody.resetPosition(game.map)
+
+	tankBody.model.setFaceColor('black')
+	tankBody.model.setLineColor('cyan')
+	tankBody.model.setLineWidth(10)
 
 	humanPlayer		= tankBody
 	Stellar7.humanPlayer	= tankBody
@@ -239,18 +242,19 @@ tankBody.model.object3d.position.x	+= 2
 	//////////////////////////////////////////////////////////////////////////////////
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
-					
-	for(var i = 0; i < 2; i++){
+			
+	var nBots	= 4		
+	// var nBots	= 0
+	for(var i = 0; i < nBots; i++){
 		;(function(){
 			var tankBody	= new THREEx.Stellar7TankBody()
-			tankBody.setControlsQueue()
 
 			tankBody.lives	= 9999	// infinite lives
 			tankBody.model.setFaceColor('darkred')
 			tankBody.model.setLineColor('pink')
 			tankBody.model.setLineWidth(2)
 			
-			game.addPlayer(tankBody)
+			game.addTankQueue(tankBody)
 
 			tankBody.resetPosition(game.map)
 			

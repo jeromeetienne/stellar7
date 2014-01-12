@@ -25,6 +25,7 @@ THREEx.createAtmosphereMaterial	= function(){
 		'uniform vec3	glowColor;',
 		'uniform float	coeficient;',
 		'uniform float	power;',
+		'uniform float	opacity;',
 
 		'varying vec3	vVertexNormal;',
 		'varying vec3	vVertexWorldPosition;',
@@ -36,7 +37,7 @@ THREEx.createAtmosphereMaterial	= function(){
 		'	vec3 viewCameraToVertex	= (viewMatrix * vec4(worldCameraToVertex, 0.0)).xyz;',
 		'	viewCameraToVertex	= normalize(viewCameraToVertex);',
 		'	float intensity		= pow(coeficient + dot(vVertexNormal, viewCameraToVertex), power);',
-		'	gl_FragColor		= vec4(glowColor, intensity);',
+		'	gl_FragColor		= vec4(glowColor*opacity, intensity);',
 		'}',
 	].join('\n')
 
@@ -51,6 +52,10 @@ THREEx.createAtmosphereMaterial	= function(){
 			power		: {
 				type	: "f",
 				value	: 2
+			},
+			opacity		: {
+				type	: "f",
+				value	: 1
 			},
 			glowColor	: {
 				type	: "c",

@@ -45,7 +45,7 @@ THREEx.Stellar7Game	= function(scene){
 	
 
 	//////////////////////////////////////////////////////////////////////////////////
-	//		handle inter-tank collision					//
+	//		handle other tanks scanning					//
 	//////////////////////////////////////////////////////////////////////////////////
 
 	onRenderFcts.push(function(delta, now){
@@ -80,10 +80,10 @@ THREEx.Stellar7Game	= function(scene){
 				// if the distance is larger than tankPlayer.collisionSphere, the tank isnt seen
 				if( distance > sphere2.radius )	continue
 
-				// here there is a collision
-				// console.log('collision between', tankIdx1, tankIdx2)
 				// notify the event
-				tank1.onScannedTank()
+				tank1.onScannedTank({
+					otherTank	: tank2,
+				})
 				// no need to scan more 
 				break;
 			}
@@ -108,16 +108,25 @@ THREEx.Stellar7Game	= function(scene){
 				var colliding	= sphere1.intersectsSphere(sphere2)
 				// sphere bounce on each other
 				if( colliding ){
+					// fix tanks position
 					var delta	= position1.clone().sub(position2)
 					delta.setLength(delta.length() - sphere1.radius - sphere2.radius)
 					delta.multiplyScalar(1/2)
 					position1.sub(delta)
 					position2.add(delta)
-				}
-				// notify tankBodies if colliding
-				if( colliding ){
-					player1.onTankCollision()
-					player2.onTankCollision()
+					// compute contactPoint
+					var contactPoint= position1.clone()
+								.add(position2)
+								.multiplyScalar(1/2)
+					// notify tankBodies if colliding
+					player1.onTankCollision({
+						otherTank	: player2,
+						contactPoint	: contactPoint,
+					})
+					player2.onTankCollision({
+						otherTank	: player1,
+						contactPoint	: contactPoint,
+					})
 				}
 			}
 		}
@@ -140,14 +149,10 @@ THREEx.Stellar7Game	= function(scene){
 				var colliding	= sphereBullet.intersectsSphere(spherePlayer)
 				// notify tankBodies if colliding
 				if( colliding ){
-					document.dispatchEvent(new CustomEvent('emitSphericalBlast', {detail:{
-						position	: bullet.model.object3d.position,
-						color		: 'red',
-						maxRadius	: 1.2,
-						maxAge		: 1.5,
-					}}))
-					player.onHitByBullet()
-					bullet.fromPlayer.score	+= 100
+					player.onHitByBullet({
+						fromTank	: bullet.fromPlayer,
+						contactPoint	: bullet.model.object3d.position,
+					})
 					bullet.die()
 				}
 			}
@@ -171,22 +176,24 @@ THREEx.Stellar7Game	= function(scene){
 	onRenderFcts.push(function(delta, now){
 		bulletBodies.forEach(function(bullet){
 			var collided	= map.collideWithBullet(bullet)
-			if( collided ){
-				document.dispatchEvent(new CustomEvent('emitSphericalBlast', {detail:{
-					position	: bullet.model.object3d.position,
-					color		: 'yellow',
-					maxRadius	: 1,
-				}}))
-				Stellar7.sounds.play('contactFence')
-				bullet.die()
-			}
+			if( collided === false )	return
+			document.dispatchEvent(new CustomEvent('emitSphericalBlast', {detail:{
+				position	: bullet.model.object3d.position,
+				color		: 'yellow',
+				maxRadius	: 1,
+			}}))
+			Stellar7.sounds.play('contactFence')
+			bullet.die()
 		})
 	})
+	
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
-	this.addPlayer	= function(tankBody){
+	
+
+	this._addPlayer	= function(tankBody){
 		tankBodies.push(tankBody)
 		scene.add(tankBody.model.object3d)
 
@@ -194,23 +201,62 @@ THREEx.Stellar7Game	= function(scene){
 			this.localPlayer	= tankBody
 		}
 
-		tankBody.addEventListener('hitByBullet', function(){
+		tankBody.addEventListener('hitByBullet', function(event){
 			Stellar7.sounds.play('hitByBullet')
 
-			if( tankBody.isLocalPlayer() === false )	return
+			event.data.fromTank.score	+= 100
+			document.dispatchEvent(new CustomEvent('emitSphericalBlast', {detail:{
+				position	: event.data.contactPoint,
+				color		: 'red',
+				maxRadius	: 1.2,
+				maxAge		: 1.5,
+			}}))
+		})
 
+		var lastFire	= 0
+		tankBody.addEventListener('fire', function(){
+			// handle cool down period
+			var present	= Date.now()/1000
+			if( present - lastFire < 1.0 )	return
+			lastFire	= present
+
+			var bullet	= new THREEx.Stellar7BulletBody.fromPlayer(tankBody)
+			scene.add( bullet.model.object3d )
+			bullet.model.object3d.rotation.y	= tankBody.turretAngleY()
+
+			bulletBodies.push(bullet)
+
+			bullet.addEventListener('die', function(){
+				scene.remove( bullet.model.object3d )
+				bulletBodies.splice(bulletBodies.indexOf(bullet),1)
+			})
+
+			Stellar7.sounds.play('bulletTank')
+		})
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		addTankKeyboard							//
+	//////////////////////////////////////////////////////////////////////////////////
+
+	this.addTankKeyboard	= function(tankBody){
+		tankBody.setControlsKeyboard()
+		this._addPlayer(tankBody)
+		// hitByBullet		
+		tankBody.addEventListener('hitByBullet', function(event){
+			// trigger BadTVJamming
 			document.dispatchEvent(new CustomEvent('BadTVJamming', { detail: {
 				presetLabel	: 'lightNoScroll'
-			}}));
+			}}))
+			// trigger colorAdjust thermal
 			document.dispatchEvent(new CustomEvent('colorAdjust', { detail: {
 				colorCube	: 'thermal'
-			}}));
+			}}))
 
-			var osdElement	= document.querySelector('#hitByBulletOsd')
 			// make osd appears
+			var osdElement	= document.querySelector('#hitByBulletOsd')
 			osdElement.classList.add("osdVisible");
-			osdElement.classList.remove("osdHidden");
-	
+			osdElement.classList.remove("osdHidden");	
 			Flow().seq(function(next){
 				setTimeout(function(){
 					next()
@@ -228,33 +274,40 @@ THREEx.Stellar7Game	= function(scene){
 				next()
 			})
 		})
-		tankBody.addEventListener('tankCollision', function(){
-			if( tankBody.isLocalPlayer() === false )	return
-			Stellar7.sounds.play('intertank.collision')			
+		// tankCollision
+		tankBody.addEventListener('tankCollision', function(event){
+			Stellar7.sounds.play('intertank.collision')		
 			document.dispatchEvent(new CustomEvent('BadTVJamming', { detail: {
 				presetLabel	: 'lightNoScroll'
 			}}));		
 		})
+		// mapCollision
 		tankBody.addEventListener('mapCollision', function(){
-			if( tankBody.isLocalPlayer() === false )	return
 			Stellar7.sounds.play('localtankmap.collision')	
 			document.dispatchEvent(new CustomEvent('BadTVJamming', { detail: {
 				presetLabel	: 'lightNoScroll'
 			}}));		
 		})
-
-		// if local player die
+		// dead
 		tankBody.addEventListener('dead', function(){
-			if( tankBody.isLocalPlayer() === false )	return
 			document.dispatchEvent(new CustomEvent('killPlayer'))
 		})
+		// reallyDead
+		tankBody.addEventListener('reallyDead', function(){
+			document.dispatchEvent(new CustomEvent('gameLost'))
+		})
+	}
 
-		// if non local player die
+	//////////////////////////////////////////////////////////////////////////////////
+	//		addTankQueue							//
+	//////////////////////////////////////////////////////////////////////////////////
+			
+	this.addTankQueue	= function(tankBody){
+		tankBody.setControlsQueue()
+		this._addPlayer(tankBody)
+		
+		// dead
 		tankBody.addEventListener('dead', function(){
-			if( tankBody.isLocalPlayer() === true )	return
-			console.log('bot dead')
-
-			Stellar7.sounds.play('enemyDead')
 			
 			var position	= tankBody.model.object3d.position
 			var srcPosition	= position.clone()
@@ -304,40 +357,11 @@ THREEx.Stellar7Game	= function(scene){
 				next()
 			})
 		})
-
-		// if a non local player becomes reallyDead
+		// reallyDead
 		tankBody.addEventListener('reallyDead', function(){
-			if( tankBody.isLocalPlayer() === true )	return
 			Stellar7.sounds.play('enemyDead')
 			tankBodies.splice(tankBodies.indexOf(tankBody),1)
 			scene.remove(tankBody.model.object3d)
 		})		
-
-		tankBody.addEventListener('reallyDead', function(){
-			if( tankBody.isLocalPlayer() === false )	return
-			document.dispatchEvent(new CustomEvent('gameLost'))
-		})		
-
-
-		var lastFire	= 0
-		tankBody.addEventListener('fire', function(){
-			// handle cool down period
-			var present	= Date.now()/1000
-			if( present - lastFire < 1.0 )	return
-			lastFire	= present
-
-			var bullet	= new THREEx.Stellar7BulletBody.fromPlayer(tankBody)
-			scene.add( bullet.model.object3d )
-			bullet.model.object3d.rotation.y	= tankBody.turretAngleY()
-
-			bulletBodies.push(bullet)
-
-			bullet.addEventListener('die', function(){
-				scene.remove( bullet.model.object3d )
-				bulletBodies.splice(bulletBodies.indexOf(bullet),1)
-			})
-
-			Stellar7.sounds.play('bulletTank')
-		})
 	}
 }

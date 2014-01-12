@@ -126,16 +126,16 @@ THREEx.Stellar7TankBody	= function(){
 	//////////////////////////////////////////////////////////////////////////////////
 
 	this.onMapCollision	= function(){
-		this.dispatchEvent({ type: 'mapCollision' })
+		this.dispatchEvent({ type: 'mapCollision', data: event })
 	}
 	this.onTankCollision	= function(event){
-		this.dispatchEvent({ type: 'tankCollision' })				
+		this.dispatchEvent({ type: 'tankCollision', data: event })	
 	}
 	this.onScannedTank	= function(event){
 		// console.log('onScannedTank')
-		this.dispatchEvent({ type: 'scannedTank' })
+		this.dispatchEvent({ type: 'scannedTank', data: event  })
 	}
-	this.onHitByBullet	= function(){
+	this.onHitByBullet	= function(event){
 		this.energy	-= 250
 		if( this.energy <= 0 ){
 			this.lives	+= -1
@@ -147,7 +147,7 @@ THREEx.Stellar7TankBody	= function(){
 				this.energy	= this.maxEnergy;			
 			}
 		}
-		this.dispatchEvent({ type: 'hitByBullet' })
+		this.dispatchEvent({ type: 'hitByBullet', data: event })
 	}
 }
 
