@@ -44,7 +44,8 @@ THREEx.Stellar7Map	= function(){
 		onRenderFcts.push(function(delta, now){
 			var angle	= Math.PI*2*delta * angularSpeed
 			mesh.rotateY(angle)
-		})			
+		})
+		return mesh
 	}.bind(this);
 	
 	addPlanets(THREEx.Planets.createVenus()		, 0 * 2*Math.PI/6)
@@ -52,11 +53,19 @@ THREEx.Stellar7Map	= function(){
 	addPlanets(THREEx.Planets.createEarthCloud()	, 1 * 2*Math.PI/6, 0.1)
 	addPlanets(THREEx.Planets.createSaturn()	, 2 * 2*Math.PI/6)
 	addPlanets(THREEx.Planets.createSaturnRing()	, 2 * 2*Math.PI/6, 0)
-	addPlanets(THREEx.Planets.createMoon()		, 3 * 2*Math.PI/6)
+	var moon	= addPlanets(THREEx.Planets.createMoon()		, 3 * 2*Math.PI/6)
+	var nyanCat	= new THREEx.NyanCat()
+	nyanCat.container.scale.multiplyScalar(1/100)
+	nyanCat.container.position.set(0,0,0.55)
+	nyanCat.container.lookAt(new THREE.Vector3(0,0,1))
+	moon.add( nyanCat.container )
+
 	addPlanets(THREEx.Planets.createJupiter()	, 4 * 2*Math.PI/6)
 	addPlanets(THREEx.Planets.createUranus()	, 5 * 2*Math.PI/6)
 	addPlanets(THREEx.Planets.createUranusRing()	, 5 * 2*Math.PI/6, 0)
 
+
+	
 	//////////////////////////////////////////////////////////////////////////////////
 	//		starfield							//
 	//////////////////////////////////////////////////////////////////////////////////
