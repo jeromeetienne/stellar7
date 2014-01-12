@@ -262,9 +262,17 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 				tankBody.controls.fire()
 			})
 			tankBody.controls.addEventListener('idle', function(){
-				tankBody.controls
-						.push('turnRight', 1)
-						.push('moveAhead', 1)
+				if( Math.random() < 0.5 ){
+					tankBody.controls.push('turnRight', 1)		
+				}else{
+					tankBody.controls.push('turnLeft', 1)
+				}
+				if( Math.random() < 0.5 ){
+					tankBody.controls.push('moveAhead', 1)
+				}
+				if( Math.random() < 0.25 ){
+					tankBody.controls.push('moveAhead', 1)
+				}
 			})
 		})()
 	}
