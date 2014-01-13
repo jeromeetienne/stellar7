@@ -206,7 +206,7 @@ THREEx.Stellar7Map._buildCanvas	= function(){
 	context.strokeStyle	= 'lime'
 	roundedRect(context, offsetX, offsetY
 		, canvas.width - 2*offsetX, canvas.height - 2*offsetY
-		, cornerRadius, false, true)
+		, cornerRadius, false)
 
 	return canvas
 	/**

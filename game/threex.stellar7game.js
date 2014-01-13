@@ -309,6 +309,7 @@ THREEx.Stellar7Game	= function(scene){
 		// dead
 		tankBody.addEventListener('dead', function(){
 			
+// tankBody.model.baseMesh.material.
 			var position	= tankBody.model.object3d.position
 			var srcPosition	= position.clone()
 			Flow().par(function(next){
