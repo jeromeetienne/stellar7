@@ -56,6 +56,7 @@ WebAudiox.GameSounds	= function(){
 		delete sounds[label]
 	}
 	this.play	= function(label){
+if( sounds[label] === undefined )	return
 		console.assert(sounds[label] !== undefined)
 		return sounds[label].play()
 	}

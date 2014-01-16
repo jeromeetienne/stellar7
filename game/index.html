@@ -17,6 +17,7 @@
 
 <script src='../threex.stellar7tankmodel.js'></script>
 <script src='../threex.stellar7tankcontrols.js'></script>
+<script src='../threex.stellar7tankcontrolsvirtualjoystick.js'></script>
 <script src='../threex.stellar7tankcontrolskeyboard.js'></script>
 <script src='../threex.stellar7tankcontrolsqueue.js'></script>
 <script src='../threex.stellar7tankbody.js'></script>
@@ -130,6 +131,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	, 'bower_components/threex.solidwireframe/threex.solidwireframe.js'
 	, 'bower_components/threex.coloradjust/package.require.js'
 	, 'vendor/gowiththeflow.js'
+	, 'bower_components/virtualjoystick.js/virtualjoystick.js'
 	], function(){
 	// detect WebGL
 	if( !Detector.webgl ){
@@ -141,9 +143,11 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 		antialias	: true
 	});
 
-	renderer.devicePixelRatio	= 1/1
+	var onMobile	= 'ontouchstart' in window ? true : false
+	if( onMobile )	renderer.devicePixelRatio	= 1/2
 
 	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.domElement.style.zIndex	= -1
 	document.body.appendChild( renderer.domElement );
 	// setup a scene and camera
 	var scene	= new THREE.Scene();
@@ -209,6 +213,8 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 
 	humanPlayer		= tankBody
 	Stellar7.humanPlayer	= tankBody
+	
+	
 })()
 
 ;(function(){
@@ -409,33 +415,71 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 // TODO pass that as document.event
 	var sounds	= new WebAudiox.GameSounds()
 	Stellar7.sounds	= sounds
-	sounds.lineOut.volume	= 0.5
-	sounds.add('contactFence', 'sounds/169689__beman87__impact-zap-2.wav')
-	sounds.add('bulletTank', 'sounds/151022__bubaproducer__laser-shot-silenced.wav')
-	sounds.add('explosion', 'sounds/211339__rjonesxlr8__explosion-04.wav')
-	sounds.add('enemyDead', 'sounds/196841__omarstone__hahahaha-cartoon-monster.wav')
-	//sounds.add('hitByBullet', 'sounds/95078__sandyrb__the-crash.wav')
-	sounds.add('hitByBullet', 'sounds/211234__rjonesxlr8__explosion-14.wav', function(sound, context, destination){
+	sounds.lineOut.volume	= 0.2
+	// sounds.add('contactFence', 'sounds/169689__beman87__impact-zap-2.wav')
+	// sounds.add('bulletTank', 'sounds/151022__bubaproducer__laser-shot-silenced.wav')
+	// sounds.add('explosion', 'sounds/211339__rjonesxlr8__explosion-04.wav')
+	// sounds.add('enemyDead', 'sounds/196841__omarstone__hahahaha-cartoon-monster.wav')
+	// //sounds.add('hitByBullet', 'sounds/95078__sandyrb__the-crash.wav')
+	// sounds.add('hitByBullet', 'sounds/211234__rjonesxlr8__explosion-14.wav', function(sound, context, destination){
+	// 	var gain	= context.createGain();
+	// 	gain.gain.value	= 0.3
+	// 	gain.connect(destination)
+	// 	destination	= gain
+		
+	// 	var source	= context.createBufferSource()
+	// 	source.buffer	= sound.buffer
+	// 	source.connect(destination)
+	// 	source.start(0)
+	// 	return source		
+	// })
+	// sounds.add('intertank.collision', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
+	// sounds.add('localtankmap.collision', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
+	sounds.add('gameOver', 'sounds/macsay-gameover.wav')
+	// sounds.add('gameOver2', 'sounds/159408__noirenex__lifelost.wav')
+	// sounds.add('gameStart', 'sounds/macsay-areyouready.wav')
+	// sounds.add('enemyExplode', 'sounds/153445__lukechalaudio__8bit-robot-sound.wav')
+	// sounds.add('soundTrack', 'sounds/rezoner-7DFPS-2013-2.mp3', undefined, function(){
+	// 	sounds.play('soundTrack')
+	// })  
+
+	document.addEventListener('playSound', function(event){
+		var name	= event.detail.name
+		sounds.play(name)
+	})
+
+document.dispatchEvent(new CustomEvent('playSoundAt', {detail:{
+	name	: 'gameOver',
+	position: new THREE.Vector3(10,0,0),
+}}))
+
+	document.addEventListener('playSoundAt', function(event){
+		var name	= event.detail.name
+		var position	= event.detail.position
+		var sound	= sounds.get(name)
+		if( sound.isReady() === false )	return
+	console.log('ddd')
+		var context	= sounds.context
+		var destination	= sounds.lineOut.destination
+
+		var panner	= context.createPanner()
+		panner.setPosition(position.x, position.y, position.z)
+		panner.connect(destination)
+		destination	= panner
+
 		var gain	= context.createGain();
-		gain.gain.value	= 0.3
+		gain.gain.value	= 10
 		gain.connect(destination)
 		destination	= gain
 		
 		var source	= context.createBufferSource()
+		// source.loop	= true;
 		source.buffer	= sound.buffer
 		source.connect(destination)
 		source.start(0)
 		return source		
 	})
-	sounds.add('intertank.collision', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
-	sounds.add('localtankmap.collision', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
-	sounds.add('gameOver', 'sounds/macsay-gameover.wav')
-	sounds.add('gameOver2', 'sounds/159408__noirenex__lifelost.wav')
-	sounds.add('gameStart', 'sounds/macsay-areyouready.wav')
-	sounds.add('enemyExplode', 'sounds/153445__lukechalaudio__8bit-robot-sound.wav')
-	sounds.add('soundTrack', 'sounds/rezoner-7DFPS-2013-2.mp3', undefined, function(){
-		sounds.play('soundTrack')
-	})  
+
 
 	// handle mute UI
 	document.querySelector('#muteOsd').addEventListener('click', function(event){
@@ -453,6 +497,12 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 		sounds.lineOut.toggleMute()
 	}
 	
+	// put a ListenerObject3DUpdater
+	var listenerUpdater	= new WebAudiox.ListenerObject3DUpdater(sounds.context, humanPlayer.model.object3d)
+	onRenderFcts.push(function(delta, now){
+		listenerUpdater.update(delta, now)
+	})
+
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	//		comment								//
@@ -686,7 +736,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	//////////////////////////////////////////////////////////////////////////////////
 	onRenderFcts.push(function(delta, now){
 		// disable rendering directly thru renderer 
-		// renderer.render( scene, camera )
+		//renderer.render( scene, camera )
 		
 		// render thru composer
 		composer.render(delta)

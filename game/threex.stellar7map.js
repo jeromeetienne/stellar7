@@ -12,8 +12,7 @@ THREEx.Stellar7Map	= function(){
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
 	
-	this.radius	= 16
-	
+	this.radius	= 16	
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	//		comment								//
@@ -53,18 +52,17 @@ THREEx.Stellar7Map	= function(){
 	addPlanets(THREEx.Planets.createEarthCloud()	, 1 * 2*Math.PI/6, 0.1)
 	addPlanets(THREEx.Planets.createSaturn()	, 2 * 2*Math.PI/6)
 	addPlanets(THREEx.Planets.createSaturnRing()	, 2 * 2*Math.PI/6, 0)
-	var moon	= addPlanets(THREEx.Planets.createMoon()		, 3 * 2*Math.PI/6)
+	addPlanets(THREEx.Planets.createJupiter()	, 3 * 2*Math.PI/6)
+	addPlanets(THREEx.Planets.createUranus()	, 4 * 2*Math.PI/6)
+	addPlanets(THREEx.Planets.createUranusRing()	, 4 * 2*Math.PI/6, 0)
+
+
+	var moon	= addPlanets(THREEx.Planets.createMoon(), 5 * 2*Math.PI/6)
 	var nyanCat	= new THREEx.NyanCat()
 	nyanCat.container.scale.multiplyScalar(1/100)
 	nyanCat.container.position.set(0,0,0.55)
 	nyanCat.container.lookAt(new THREE.Vector3(0,0,1))
 	moon.add( nyanCat.container )
-
-	addPlanets(THREEx.Planets.createJupiter()	, 4 * 2*Math.PI/6)
-	addPlanets(THREEx.Planets.createUranus()	, 5 * 2*Math.PI/6)
-	addPlanets(THREEx.Planets.createUranusRing()	, 5 * 2*Math.PI/6, 0)
-
-
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	//		starfield							//
@@ -72,7 +70,6 @@ THREEx.Stellar7Map	= function(){
 	
 	var mesh	= THREEx.Planets.createStarfield()
 	object3d.add(mesh)
-
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		montain arena							//

@@ -96,8 +96,13 @@ THREEx.Stellar7TankBody	= function(){
 
 	var controls	= null;
 	this.isLocalPlayer	= function(){
+		// isKeyboard
 		var isKeyboard	= controls instanceof THREEx.Stellar7TankControlsKeyboard
-		return isKeyboard ? true : false
+		if( isKeyboard )	return true
+	 	// isVirtualJoystick
+		var isVirtualJoystick	= controls instanceof THREEx.Stellar7TankControlsVirtualJoystick
+		if( isVirtualJoystick )	return true
+		return false
 	}
 	this.setControlsKeyboard	= function(){
 		// TODO this should not be duplicated
@@ -110,6 +115,14 @@ THREEx.Stellar7TankBody	= function(){
 			controls.update(delta, now)
 		})
 
+		return this
+	}
+	this.setControlsVirtualJoystick	= function(){
+		controls	= new THREEx.Stellar7TankControlsVirtualJoystick(tankControls)
+		this.controls	= controls
+		onRenderFcts.push(function(delta, now){
+			controls.update(delta, now)
+		})
 		return this
 	}
 	this.setControlsQueue	= function(){
