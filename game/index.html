@@ -32,7 +32,17 @@
 
 <link rel='canonical' href="http://jeromeetienne.github.io/stellar7/"/>
 
-<body style='margin: 0px; background-color: #000000; overflow: hidden;'>
+<!-- to disable zoom on mobile -->
+<meta content='width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0' name='viewport' />
+<meta name="viewport" content="width=device-width" />
+
+<style>
+body{
+	-webkit-user-select	: none;
+	-moz-user-select	: none;	
+}
+</style>
+<body style='margin: 0; padding: 0; overflow: hidden; background-color: #000000;'>
 <style>
 @font-face {	/* for mute button which is part of awesome font */
 	font-family: 'FontAwesome';
@@ -46,7 +56,7 @@
 <style>
 .osdFont {
 	font-family	: arial, verdana, sans-serif;
-	font-size	: 300%;
+	font-size	: 200%;
 	font-weight	: bolder;
 
 	transition		: opacity 0.5s ease;
@@ -133,18 +143,51 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	, 'vendor/gowiththeflow.js'
 	, 'bower_components/virtualjoystick.js/virtualjoystick.js'
 	], function(){
+		
+	//////////////////////////////////////////////////////////////////////////////////
+	//		renderingProfile						//
+	//////////////////////////////////////////////////////////////////////////////////
+	
+	var renderingProfiles	= []
+	renderingProfiles['desktop']	= {
+		devicePixelRatio	: 1,
+		miniMapEnabled		: true,
+		displayPlanets		: true,
+		displayStarfield	: true,
+		displayMontainArena	: true,
+		groundMaterial		: 'phong',
+		postProcessing		: true,
+	}
+	renderingProfiles['mobile']	= {
+		devicePixelRatio	: 1/2,
+		miniMapEnabled		: false,
+		displayPlanets		: false,
+		displayStarfield	: false,
+		displayMontainArena	: false,
+		groundMaterial		: 'lambert',
+		postProcessing		: true,
+	}
+	// pick a renderingProfile
+	var onMobile	= 'ontouchstart' in window ? true : false
+	if( onMobile ){
+		window.renderingProfile	= renderingProfiles['mobile']		
+	}else{
+		window.renderingProfile	= renderingProfiles['desktop']
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		three.js init							//
+	//////////////////////////////////////////////////////////////////////////////////
+	
 	// detect WebGL
 	if( !Detector.webgl ){
 		Detector.addGetWebGLMessage();
 		throw 'WebGL Not Available'
 	}
 	// setup webgl renderer full page
-	var renderer	= new THREE.WebGLRenderer({
-		antialias	: true
-	});
+	var renderer	= new THREE.WebGLRenderer();
 
-	var onMobile	= 'ontouchstart' in window ? true : false
-	if( onMobile )	renderer.devicePixelRatio	= 1/2
+	renderer.devicePixelRatio	= renderingProfile.devicePixelRatio
 
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	renderer.domElement.style.zIndex	= -1
@@ -399,14 +442,16 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	//		map								//
 	//////////////////////////////////////////////////////////////////////////////////
 	
-	var miniMap	= new THREEx.Stellar7MiniMap(game)
-	onRenderFcts.push(function(delta,now){
-		miniMap.update(delta, now)
-	})
-	document.body.appendChild(miniMap.domElement)
-	miniMap.domElement.style.position	= 'absolute'
-	miniMap.domElement.style.left		= '1em'
-	miniMap.domElement.style.bottom		= '1em'
+	if( renderingProfile.miniMapEnabled ){
+		var miniMap	= new THREEx.Stellar7MiniMap(game)
+		onRenderFcts.push(function(delta,now){
+			miniMap.update(delta, now)
+		})
+		document.body.appendChild(miniMap.domElement)
+		miniMap.domElement.style.position	= 'absolute'
+		miniMap.domElement.style.left		= '1em'
+		miniMap.domElement.style.bottom		= '1em'		
+	}
 	
 	
 	//////////////////////////////////////////////////////////////////////////////////
@@ -704,8 +749,6 @@ document.dispatchEvent(new CustomEvent('playSoundAt', {detail:{
 	//		ping animation + sounds						//
 	//////////////////////////////////////////////////////////////////////////////////
 
-	// window.AudioContext	= window.AudioContext || window.webkitAudioContext;
-	// var context		= new AudioContext()
 	var badTVJamming	= new THREEx.BadTVJamming(badTVPasses, sounds.context, sounds.lineOut.destination)
 	document.addEventListener('BadTVJamming', function(event){
 		var presetLabel	= event.detail.presetLabel
@@ -735,11 +778,13 @@ document.dispatchEvent(new CustomEvent('playSoundAt', {detail:{
 	//		render the scene						//
 	//////////////////////////////////////////////////////////////////////////////////
 	onRenderFcts.push(function(delta, now){
-		// disable rendering directly thru renderer 
-		//renderer.render( scene, camera )
-		
-		// render thru composer
-		composer.render(delta)
+		if( renderingProfile.postProcessing ){
+			// render thru composer
+			composer.render(delta)
+		}else{
+			// disable rendering directly thru renderer 
+			renderer.render(scene, camera)		
+		}
 	})
 	
 	//////////////////////////////////////////////////////////////////////////////////
@@ -767,7 +812,7 @@ document.dispatchEvent(new CustomEvent('playSoundAt', {detail:{
 <!-- twitter, google plus -->
 <div style='position: absolute; top: 180px; left: 10px;'>
 	<!-- twitter -->
-	<a href="https://twitter.com/share" class="twitter-share-button" data-via="jerome_etienne">Tweet</a>
+	<a href="https://twitter.com/share" class="twitter-share-button" data-via="jerome_etienne" data-text='Come Play Stellar7! A free 3d tank game where you kill other tanks. So Fun!'>Tweet</a>
 	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
 
 	<br/>

@@ -241,8 +241,8 @@ THREEx.Stellar7Game	= function(scene){
 
 	this.addTankKeyboard	= function(tankBody){
 		var onMobile	= 'ontouchstart' in window ? true : false
-		if( onMobile )	tankBody.setControlsVirtualJoystick()
-		else		tankBody.setControlsKeyboard()
+		if( onMobile === false)	tankBody.setControlsKeyboard()
+		else			tankBody.setControlsVirtualJoystick()			
 		
 		this._addPlayer(tankBody)
 		// hitByBullet		

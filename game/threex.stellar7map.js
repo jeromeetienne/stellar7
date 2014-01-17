@@ -25,70 +25,74 @@ THREEx.Stellar7Map	= function(){
 	//		planets								//
 	//////////////////////////////////////////////////////////////////////////////////
 
-	var planetsContainer	= new THREE.Object3D()
-	object3d.add(planetsContainer)
-	onRenderFcts.push(function(delta, now){
-		var angle	= Math.PI*2*delta * -0.01
-		planetsContainer.rotateY(angle)
-	})			
-	
-	
-	var addPlanets	= function(mesh, angle, angularSpeed){
-		angularSpeed	= angularSpeed !== undefined ? angularSpeed : 0.05
-		mesh.position.x	= Math.cos(angle)*this.radius*2
-		mesh.position.y	= 10
-		mesh.position.z	= Math.sin(angle)*this.radius*2
-		mesh.scale.multiplyScalar(8) 
-		planetsContainer.add(mesh)
+	if( renderingProfile.displayPlanets ){
+		var planetsContainer	= new THREE.Object3D()
+		object3d.add(planetsContainer)
 		onRenderFcts.push(function(delta, now){
-			var angle	= Math.PI*2*delta * angularSpeed
-			mesh.rotateY(angle)
-		})
-		return mesh
-	}.bind(this);
-	
-	addPlanets(THREEx.Planets.createVenus()		, 0 * 2*Math.PI/6)
-	addPlanets(THREEx.Planets.createEarth()		, 1 * 2*Math.PI/6)
-	addPlanets(THREEx.Planets.createEarthCloud()	, 1 * 2*Math.PI/6, 0.1)
-	addPlanets(THREEx.Planets.createSaturn()	, 2 * 2*Math.PI/6)
-	addPlanets(THREEx.Planets.createSaturnRing()	, 2 * 2*Math.PI/6, 0)
-	addPlanets(THREEx.Planets.createJupiter()	, 3 * 2*Math.PI/6)
-	addPlanets(THREEx.Planets.createUranus()	, 4 * 2*Math.PI/6)
-	addPlanets(THREEx.Planets.createUranusRing()	, 4 * 2*Math.PI/6, 0)
+			var angle	= Math.PI*2*delta * -0.01
+			planetsContainer.rotateY(angle)
+		})			
+		
+		
+		var addPlanets	= function(mesh, angle, angularSpeed){
+			angularSpeed	= angularSpeed !== undefined ? angularSpeed : 0.05
+			mesh.position.x	= Math.cos(angle)*this.radius*2
+			mesh.position.y	= 10
+			mesh.position.z	= Math.sin(angle)*this.radius*2
+			mesh.scale.multiplyScalar(8) 
+			planetsContainer.add(mesh)
+			onRenderFcts.push(function(delta, now){
+				var angle	= Math.PI*2*delta * angularSpeed
+				mesh.rotateY(angle)
+			})
+			return mesh
+		}.bind(this);
+		
+		addPlanets(THREEx.Planets.createVenus()		, 0 * 2*Math.PI/6)
+		addPlanets(THREEx.Planets.createEarth()		, 1 * 2*Math.PI/6)
+		addPlanets(THREEx.Planets.createEarthCloud()	, 1 * 2*Math.PI/6, 0.1)
+		addPlanets(THREEx.Planets.createSaturn()	, 2 * 2*Math.PI/6)
+		addPlanets(THREEx.Planets.createSaturnRing()	, 2 * 2*Math.PI/6, 0)
+		addPlanets(THREEx.Planets.createJupiter()	, 3 * 2*Math.PI/6)
+		addPlanets(THREEx.Planets.createUranus()	, 4 * 2*Math.PI/6)
+		addPlanets(THREEx.Planets.createUranusRing()	, 4 * 2*Math.PI/6, 0)
 
 
-	var moon	= addPlanets(THREEx.Planets.createMoon(), 5 * 2*Math.PI/6)
-	var nyanCat	= new THREEx.NyanCat()
-	nyanCat.container.scale.multiplyScalar(1/100)
-	nyanCat.container.position.set(0,0,0.55)
-	nyanCat.container.lookAt(new THREE.Vector3(0,0,1))
-	moon.add( nyanCat.container )
+		var moon	= addPlanets(THREEx.Planets.createMoon(), 5 * 2*Math.PI/6)
+		var nyanCat	= new THREEx.NyanCat()
+		nyanCat.container.scale.multiplyScalar(1/100)
+		nyanCat.container.position.set(0,0,0.55)
+		nyanCat.container.lookAt(new THREE.Vector3(0,0,1))
+		moon.add( nyanCat.container )	
+	}
 	
 	//////////////////////////////////////////////////////////////////////////////////
 	//		starfield							//
 	//////////////////////////////////////////////////////////////////////////////////
-	
-	var mesh	= THREEx.Planets.createStarfield()
-	object3d.add(mesh)
-
+	if( renderingProfile.displayStarfield ){
+		var mesh	= THREEx.Planets.createStarfield()
+		object3d.add(mesh)
+	}
 	//////////////////////////////////////////////////////////////////////////////////
 	//		montain arena							//
 	//////////////////////////////////////////////////////////////////////////////////
 	
-	var mesh	= new THREEx.MontainsArena()
-	mesh.scale.x	*= this.radius*2.5
-	mesh.scale.z	*= this.radius*2.5
-	mesh.scale.y	*= this.radius*1.5
-	mesh.children.forEach(function(montain){
-		var geometry	= montain.geometry
-		var material	= new THREEx.SolidWireframeMaterial(geometry)
-		material.uniforms.lineWidth.value	= 6.0
-		material.uniforms.lineColor.value.set('white')
-		material.uniforms.faceColor.value.set('black')
+	if( renderingProfile.displayMontainArena ){
+		var mesh	= new THREEx.MontainsArena()
+		mesh.scale.x	*= this.radius*2.5
+		mesh.scale.z	*= this.radius*2.5
+		mesh.scale.y	*= this.radius*1.5
+		mesh.children.forEach(function(montain){
+			var geometry	= montain.geometry
+			var material	= new THREEx.SolidWireframeMaterial(geometry)
+			material.uniforms.lineWidth.value	= 6.0
+			material.uniforms.lineColor.value.set('white')
+			material.uniforms.faceColor.value.set('black')
 
-		montain.material= material
-	})
-	object3d.add(mesh)
+			montain.material= material
+		})
+		object3d.add(mesh)
+	}
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		ground								//
@@ -106,15 +110,28 @@ THREEx.Stellar7Map	= function(){
 	texture.repeat.set(40,40)
 	// texture.anisotropy = 16; 
 
-	var geometry	= new THREE.PlaneGeometry(40, 40)
-	var material	= new THREE.MeshPhongMaterial({
-		map		: texture,
-		bumpMap		: texture,
-		bumpScale	: 0.02,
-		emissive	: '#444',
-		specular	: '#fff',
-		alphaTest	: 0.1
-	})
+	var geometry	= new THREE.CircleGeometry(this.radius*1.1, 32)
+	if( renderingProfile.groundMaterial === 'phong' ){	
+		var material	= new THREE.MeshLambertMaterial({
+			map		: texture,
+			bumpMap		: texture,
+			bumpScale	: 0.02,
+			emissive	: '#444',
+			specular	: '#fff',
+			alphaTest	: 0.1
+		})
+	}else if( renderingProfile.groundMaterial === 'lambert' ){	
+		var material	= new THREE.MeshLambertMaterial({
+			map		: texture,
+			bumpMap		: texture,
+			bumpScale	: 0.02,
+			emissive	: '#444',
+			specular	: '#fff',
+			alphaTest	: 0.1
+		})		
+	}else{
+		console.assert(false)
+	}
 
  	var mesh	= new THREE.Mesh(geometry, material)
 	mesh.lookAt(new THREE.Vector3(0,1,0))

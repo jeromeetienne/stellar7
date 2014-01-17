@@ -8,7 +8,6 @@ THREEx.Stellar7TankControlsVirtualJoystick	= function(tankControls){
 	//		joystickFire							//
 	//////////////////////////////////////////////////////////////////////////////////
 	
-
 	// one on the right of the screen
 	var joystickFire	= new VirtualJoystick({
 		container	: document.body,
@@ -22,12 +21,10 @@ THREEx.Stellar7TankControlsVirtualJoystick	= function(tankControls){
 		return true
 	});
 
-
 	joystickFire.addEventListener('touchStart', function(){
 		var inputs	= tankControls.inputs
 		inputs.fire	= true
 	})
-
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		joystickMove							//
@@ -36,6 +33,8 @@ THREEx.Stellar7TankControlsVirtualJoystick	= function(tankControls){
 	var joystickMove	= new VirtualJoystick({
 		container	: document.body,
 		strokeStyle	: 'cyan',
+		limitStickTravel: true,
+		stickRadius	: 120,	
 	});
 	joystickMove.addEventListener('touchStartValidation', function(event){
 		var touch	= event.changedTouches[0];
@@ -49,6 +48,8 @@ THREEx.Stellar7TankControlsVirtualJoystick	= function(tankControls){
 		inputs.turnRight= joystickMove.right()
 		inputs.moveAhead= joystickMove.up()
 		inputs.moveBack	= joystickMove.down()
+
+		// NOTE: no gunLeft/gunRight as it is 
 
 		// inputs.gunLeft	= keyboard.pressed('q')
 		// inputs.gunRight	= keyboard.pressed('e')
