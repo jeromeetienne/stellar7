@@ -1,11 +1,11 @@
 {
   "name": "webaudiox",
   "homepage": "https://github.com/jeromeetienne/webaudiox",
-  "_release": "c540f42a02",
+  "_release": "b16a59712f",
   "_resolution": {
     "type": "branch",
     "branch": "master",
-    "commit": "c540f42a0279b9cfe7acefdf2de2d96818093001"
+    "commit": "b16a59712f6baa07b422dac3989e748240b7f74c"
   },
   "_source": "git://github.com/jeromeetienne/webaudiox.git",
   "_target": "*",

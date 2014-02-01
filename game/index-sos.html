@@ -27,7 +27,6 @@
 <script src='threex.stellar7game.js'></script>
 <script src='threex.stellar7map.js'></script>
 <script src='threex.stellar7minimap.js'></script>
-<script src='webaudiox.gamesounds.js'></script>
 <script src='threex.lightpool.js'></script>
 <script src='threex.sphericalblastemitter.js'></script>
 
@@ -121,6 +120,9 @@ body{
 #renderingProfileDomElement {
 	font-size: 150%;
 }
+#soundTrackDomElement {
+	font-size: 150%;	
+}
 </style>
 <div id='osdLeftColumn'>
 	<div class='osdFont'>
@@ -136,6 +138,9 @@ body{
 <div id='osdRightColumn'>
 	<div class='osdFont clickableOsd' id="renderingProfileDomElement">
 		Graphics: <span>High</span>
+	</div>
+	<div class='osdFont clickableOsd' id="soundTrackDomElement">
+		SoundTrack: <span>On</span>
 	</div>
 	<div id="muteOsd" class='osdFont clickableOsd'></div>
 </div>
@@ -527,95 +532,127 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 		miniMap.domElement.style.bottom		= '1em'		
 	}
 	
+	//////////////////////////////////////////////////////////////////////////////////
+	//		gamesounds							//
+	//////////////////////////////////////////////////////////////////////////////////
+
+	var gameSounds	= new WebAudiox.GameSounds2()
+	gameSounds.lineOut.volume	= 0.2
+	gameSounds.follow(camera)
+	onRenderFcts.push(function(delta){
+		gameSounds.update(delta)
+	})
 	
-	//////////////////////////////////////////////////////////////////////////////////
-	//		comment								//
-	//////////////////////////////////////////////////////////////////////////////////
-// TODO pass that as document.event
-	var sounds	= new WebAudiox.GameSounds()
-	Stellar7.sounds	= sounds
-	sounds.lineOut.volume	= 0.2
-	sounds.add('contactFence', 'sounds/169689__beman87__impact-zap-2.wav')
-	sounds.add('bulletTank', 'sounds/151022__bubaproducer__laser-shot-silenced.wav')
-	sounds.add('explosion', 'sounds/211339__rjonesxlr8__explosion-04.wav')
-	sounds.add('enemyDead', 'sounds/196841__omarstone__hahahaha-cartoon-monster.wav')
-	//sounds.add('hitByBullet', 'sounds/95078__sandyrb__the-crash.wav')
-	sounds.add('hitByBullet', 'sounds/211234__rjonesxlr8__explosion-14.wav', function(sound, context, destination){
-		var gain	= context.createGain();
-		gain.gain.value	= 0.3
-		gain.connect(destination)
-		destination	= gain
-		
-		var source	= context.createBufferSource()
-		source.buffer	= sound.buffer
-		source.connect(destination)
-		source.start(0)
-		return source		
-	})
-	sounds.add('intertank.collision', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
-	sounds.add('localtankmap.collision', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
-	sounds.add('gameOver', 'sounds/macsay-gameover.wav')
-	sounds.add('gameOver2', 'sounds/159408__noirenex__lifelost.wav')
-	sounds.add('gameStart', 'sounds/macsay-areyouready.wav')
-	sounds.add('enemyExplode', 'sounds/153445__lukechalaudio__8bit-robot-sound.wav')
-	sounds.add('soundTrack', 'sounds/rezoner-7DFPS-2013-2.mp3', undefined, function(){
-		sounds.play('soundTrack')
-	})  
-
-	document.addEventListener('playSound', function(event){
-		var name	= event.detail.name
-		sounds.play(name)
-	})
-
-	document.addEventListener('playSoundAt', function(event){
-debugger;
-		var name	= event.detail.name
-		var position	= event.detail.position
-		var sound	= sounds.get(name)
-		if( sound.isReady() === false )	return
-
-		var context	= sounds.context
-		var destination	= sounds.lineOut.destination
-
-		var panner	= context.createPanner()
-		panner.setPosition(position.x, position.y, position.z)
-		panner.connect(destination)
-		destination	= panner
-
-		var gain	= context.createGain();
-		gain.gain.value	= 10
-		gain.connect(destination)
-		destination	= gain
-		
-		var source	= context.createBufferSource()
-		// source.loop	= true;
-		source.buffer	= sound.buffer
-		source.connect(destination)
-		source.start(0)
-		return source		
-	})
-
-
 	// handle mute UI
 	document.querySelector('#muteOsd').addEventListener('click', function(event){
 		// change sounds
-		sounds.lineOut.toggleMute()
+		gameSounds.lineOut.toggleMute()
 		// change display
 		var element	= event.target
 		element.classList.toggle("muted");
 		// save 
-		localStorage.setItem('isMuted', sounds.lineOut.isMuted ? 'muted' : 'no' )
+		localStorage.setItem('isMuted', gameSounds.lineOut.isMuted ? 'muted' : 'no' )
 	})
 	if( localStorage.getItem('isMuted') === 'muted' ){
 		var element	= document.querySelector('#muteOsd')
 		element.classList.toggle("muted");
-		sounds.lineOut.toggleMute()
+		gameSounds.lineOut.toggleMute()
 	}
 	
-	// put a ListenerObject3DUpdater
-	var listenerUpdater	= new WebAudiox.ListenerObject3DUpdater(sounds.context, humanPlayer.model.object3d)
-	onRenderFcts.push(function(delta, now){
-		listenerUpdater.update(delta, now)
+
+	// handle soundTrack UI
+	document.querySelector('#soundTrackDomElement').addEventListener('click', function(event){
+		var element	= document.querySelector('#soundTrackDomElement span')
+		var soundTrackEnabled	= element.innerText === 'On' ? true : false
+		// toggle it		
+		soundTrackEnabled	= soundTrackEnabled === true ? false : true
+		
+		
+		
+		element.innerText	= soundTrackEnabled === true ? 'On' : 'Off'
+		// save 
+		localStorage.setItem('soundTrack', soundTrackEnabled ? 'enabled' : 'disabled' )
+
+		soundTrack.gainNode.gain.value	= soundTrackEnabled ? 0.2 : 0
+	})
+	if( localStorage.getItem('soundTrack') !== null ){
+		
+		var soundTrackEnabled	= localStorage.getItem('soundTrack') === 'enabled'
+
+		var element		= document.querySelector('#soundTrackDomElement span')
+		element.innerText	= soundTrackEnabled === true ? 'On' : 'Off'
+	}else{
+		localStorage.setItem('soundTrack', 'enabled' )
+	}
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		init soundBank							//
+	//////////////////////////////////////////////////////////////////////////////////
+	
+// TODO this should be in THREEx.GameSounds
+	var soundBank	= {}
+	
+	// sound track
+	soundBank['soundTrack']	= gameSounds.createSound()
+		.load('sounds/rezoner-7DFPS-2013-2.mp3', function(sound){
+			var soundTrackEnabled	= localStorage.getItem('soundTrack') === 'enabled' ? true : false
+			var utterance	= sound.play({
+				loop	: true,
+				volume	: soundTrackEnabled ? 0.2 : 0.0,
+			})
+			window.soundTrack	= utterance
+		})
+	
+	soundBank['contactFence']		= gameSounds.createSound()
+		.load('sounds/169689__beman87__impact-zap-2.wav')
+	soundBank['bulletTank']		= gameSounds.createSound()
+		.load('sounds/151022__bubaproducer__laser-shot-silenced.wav')
+
+	soundBank['hitByBullet']		= gameSounds.createSound({
+		volume	: 0.3	
+	}).load('sounds/211234__rjonesxlr8__explosion-14.wav')
+
+	soundBank['gameStart']			= gameSounds.createSound()
+		.load('sounds/macsay-areyouready.wav')
+	soundBank['intertank.collision']	= gameSounds.createSound()
+		.load('sounds/95802__robinhood76__01670-electric-future-blast.wav')
+	soundBank['localtankmap.collision']	= gameSounds.createSound()
+		.load('sounds/95802__robinhood76__01670-electric-future-blast.wav')
+
+	soundBank['gameOver']	= gameSounds.createSound()
+		.load('sounds/macsay-gameover.wav')
+	soundBank['gameOver2']	= gameSounds.createSound()
+		.load('sounds/159408__noirenex__lifelost.wav')
+		
+	soundBank['enemyDead']		= gameSounds.createSound()
+		.load('sounds/196841__omarstone__hahahaha-cartoon-monster.wav')
+	soundBank['enemyExplode']	= gameSounds.createSound()
+		.load('sounds/153445__lukechalaudio__8bit-robot-sound.wav')
+		
+	soundBank['enemyExplode']	= gameSounds.createSound()
+		.load('sounds/153445__lukechalaudio__8bit-robot-sound.wav')
+
+	// document.dispatchEvent(new CustomEvent('playSound', { detail: {
+	// 	label	: 'gameStart',
+	// 	volume	: 0.5,
+	// 	position: {},
+	// 	follow: {},
+	// }}));
+	
+	document.addEventListener('playSound', function(event){
+		var label	= event.detail.label	|| console.assert(false)
+
+		var options	= {}
+		if( event.detail.position )	options.position= event.detail.position
+		if( event.detail.follow )	options.follow	= event.detail.follow
+		if( event.detail.volume )	options.volume	= event.detail.volume
+
+		var sound	= soundBank[label]
+		console.assert(sound !== undefined, 'tried to play unexisting sound :'+label)
+		if( sound.loaded !== true )	console.warn('tried to play unloaded sound :'+label)
+		if( sound.loaded !== true )	return
+
+		sound.play(options)
 	})
 
 	
@@ -623,7 +660,7 @@ debugger;
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
 
-	document.addEventListener('gameStart', function(){
+	document.addEventListener('gameStart', function(){ 
 		var position	= humanPlayer.model.object3d.position
 		position.y	= 5;
 		game.frozen	= true
@@ -635,7 +672,9 @@ debugger;
 			next()
 		}).seq(function(next){
 			setTimeout(function(){
-				Stellar7.sounds.play('gameStart')
+				document.dispatchEvent(new CustomEvent('playSound', { detail: {
+					label	: 'gameStart',
+				}}));
 				next()
 			}, 1000*0.5)
 		}).seq(function(next){
@@ -658,7 +697,10 @@ debugger;
 		var rotation	= tankBody.model.object3d.rotation
 		game.frozen	= true
 
-		Stellar7.sounds.play('gameOver')
+		document.dispatchEvent(new CustomEvent('playSound', { detail: {
+			label	: 'gameOver',
+		}}));
+
 
 		// cinematic
 		var osdElement	= document.querySelector('#gameLostOsd')
@@ -685,7 +727,9 @@ debugger;
 				.start()
 		}).par(function(next){
 			setTimeout(function(){
-				Stellar7.sounds.play('gameOver2')
+				document.dispatchEvent(new CustomEvent('playSound', { detail: {
+					label	: 'gameOver2',
+				}}));
 				next()
 			}, 1000*2)
 		}).seq(function(next){ 
@@ -819,7 +863,7 @@ debugger;
 	//		ping animation + sounds						//
 	//////////////////////////////////////////////////////////////////////////////////
 
-	var badTVJamming	= new THREEx.BadTVJamming(badTVPasses, sounds.context, sounds.lineOut.destination)
+	var badTVJamming	= new THREEx.BadTVJamming(badTVPasses, gameSounds.context, gameSounds.lineOut.destination)
 	document.addEventListener('BadTVJamming', function(event){
 		var presetLabel	= event.detail.presetLabel
 		badTVJamming.preset(presetLabel)		
