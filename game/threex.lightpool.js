@@ -38,3 +38,11 @@ THREEx.LightPool	= function(scene, nPointLights){
 		pointLights.push(pointLight)
 	}
 }
+
+// Make a better.js for THREEx.LightPool
+if( BetterJS ){
+	THREEx.LightPool	= Bjs.Class(THREEx.LightPool, {
+		privatize	: true,
+		arguments	: [THREE.Scene, [Number, undefined]],
+	})
+}

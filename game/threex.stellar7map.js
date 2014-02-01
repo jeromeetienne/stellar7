@@ -98,21 +98,15 @@ THREEx.Stellar7Map	= function(){
 	//		ground								//
 	//////////////////////////////////////////////////////////////////////////////////
 	
-	var texture	= THREE.ImageUtils.loadTexture('images/border-neon.jpg');
-	texture.wrapS	= THREE.RepeatWrapping;
-	texture.wrapT	= THREE.RepeatWrapping;
-	texture.repeat.set(20,20)
-	texture.anisotropy = 16; 
-
 	var texture	= THREEx.Stellar7Map._buildTexture()
 	texture.wrapS	= THREE.RepeatWrapping;
 	texture.wrapT	= THREE.RepeatWrapping;
 	texture.repeat.set(40,40)
-	// texture.anisotropy = 16; 
 
 	var geometry	= new THREE.CircleGeometry(this.radius*1.1, 32)
+	// var geometry	= new THREE.PlaneGeometry(this.radius*1.1, this.radius*1.1)
 	if( renderingProfile.groundMaterial === 'phong' ){	
-		var material	= new THREE.MeshLambertMaterial({
+		var material	= new THREE.MeshPhongMaterial({
 			map		: texture,
 			bumpMap		: texture,
 			bumpScale	: 0.02,
@@ -123,15 +117,12 @@ THREEx.Stellar7Map	= function(){
 	}else if( renderingProfile.groundMaterial === 'lambert' ){	
 		var material	= new THREE.MeshLambertMaterial({
 			map		: texture,
-			bumpMap		: texture,
-			bumpScale	: 0.02,
-			emissive	: '#444',
-			specular	: '#fff',
 			alphaTest	: 0.1
-		})		
+		})
 	}else{
 		console.assert(false)
 	}
+	if( renderingProfile.alphaTestBuggy )	material.alphaTest	= undefined	
 
  	var mesh	= new THREE.Mesh(geometry, material)
 	mesh.lookAt(new THREE.Vector3(0,1,0))
@@ -141,9 +132,8 @@ THREEx.Stellar7Map	= function(){
 	for(var i = 0; i < 0; i ++){
 		var meshLayer	= mesh.clone()
 		meshLayer.material	= mesh.material.clone()
-		meshLayer.position.y	= -0.05*(i+1)
+		meshLayer.position.y	= -0.02*(i+1)
 		meshLayer.material.color.setRGB(1/(i/2+1), 1/(i/2+1), 1/(i/2+1))
-		// meshLayer.material.color.setRGB(1/2,1/2,1/2)
 		object3d.add(meshLayer)
 	}
 	//////////////////////////////////////////////////////////////////////////////////

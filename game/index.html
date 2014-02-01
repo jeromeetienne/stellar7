@@ -1,4 +1,6 @@
 <!DOCTYPE html>
+<script src='bower_components/better.js/build/better.js'></script>
+
 <script src='vendor/three.js/build/three.js'></script>
 <script src='vendor/three.js/examples/js/libs/stats.min.js'></script>
 <script src='vendor/three.js/examples/js/libs/tween.min.js'></script>
@@ -98,6 +100,16 @@ body{
 }
 </style>
 <style>
+.clickableOsd {
+	padding: 4px;
+	margin: 4px;	
+}
+.clickableOsd:hover {
+	background-color: rgba(255,0,0,0.5);
+	border-radius	: 6px;  	
+	pointer		: 'hand';
+}
+
 #muteOsd {
 	font-family: FontAwesome;
 }
@@ -106,6 +118,9 @@ body{
 }
 #muteOsd.muted:before {
 	content: "\f026";	/* icon for muted */
+}
+#renderingProfileDomElement {
+	font-size: 150%;
 }
 </style>
 <div id='osdLeftColumn'>
@@ -120,7 +135,10 @@ body{
 	</div>
 </div>
 <div id='osdRightColumn'>
-	<div id="muteOsd" class='osdFont'></div>
+	<div class='osdFont clickableOsd' id="renderingProfileDomElement">
+		Graphics: <span>High</span>
+	</div>
+	<div id="muteOsd" class='osdFont clickableOsd'></div>
 </div>
 <div id='osdCenterColumn'>
 	<div id="gameStartOsd" class='osdFont osdHidden'>Ready ?</div>
@@ -149,7 +167,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	//////////////////////////////////////////////////////////////////////////////////
 	
 	var renderingProfiles	= []
-	renderingProfiles['desktop']	= {
+	renderingProfiles['desktop_high']	= {
 		devicePixelRatio	: 1,
 		miniMapEnabled		: true,
 		displayPlanets		: true,
@@ -157,23 +175,80 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 		displayMontainArena	: true,
 		groundMaterial		: 'phong',
 		postProcessing		: true,
+		badTvPasses		: true,
+		colorPasses		: true,
+		alphaTestBuggy		: false,
 	}
-	renderingProfiles['mobile']	= {
+	renderingProfiles['desktop_low']	= {
+		devicePixelRatio	: 1/2,
+		miniMapEnabled		: true,
+		displayPlanets		: true,
+		displayStarfield	: true,
+		displayMontainArena	: true,
+		groundMaterial		: 'lambert',
+		postProcessing		: true,
+		badTvPasses		: false,
+		colorPasses		: true,
+		alphaTestBuggy		: true,
+	}
+	renderingProfiles['mobile_high']	= {
 		devicePixelRatio	: 1/2,
 		miniMapEnabled		: false,
 		displayPlanets		: false,
 		displayStarfield	: false,
-		displayMontainArena	: false,
+		displayMontainArena	: true,
 		groundMaterial		: 'lambert',
 		postProcessing		: true,
+		badTvPasses		: false,
+		colorPasses		: true,
+		alphaTestBuggy		: false,
 	}
-	// pick a renderingProfile
-	var onMobile	= 'ontouchstart' in window ? true : false
-	if( onMobile ){
-		window.renderingProfile	= renderingProfiles['mobile']		
-	}else{
-		window.renderingProfile	= renderingProfiles['desktop']
+	renderingProfiles['mobile_low']	= {
+		devicePixelRatio	: 1/2,
+		miniMapEnabled		: false,
+		displayPlanets		: false,
+		displayStarfield	: false,
+		displayMontainArena	: true,
+		groundMaterial		: 'lambert',
+		postProcessing		: true,
+		badTvPasses		: false,
+		colorPasses		: true,
+		alphaTestBuggy		: false,
 	}
+	
+	;(function(){
+		// default to high quality
+		var quality	= 'high'
+		
+		// get it from localStorage if it exists
+		if( localStorage.getItem("graphics_quality") !== null ){
+			quality	= localStorage.getItem("graphics_quality")
+		}
+		// save it in localStorage
+		localStorage.setItem("graphics_quality", quality)
+	
+		// pick a renderingProfile based on quality and category
+		var onMobile	= 'ontouchstart' in window ? true : false
+		var category	= onMobile ? 'mobile' : 'desktop'
+		var profileName	= category + '_' + quality
+		
+		// set the renderingProfile
+		window.renderingProfile	= renderingProfiles[profileName]		
+
+		// handl teh
+		var element	= document.querySelector('#renderingProfileDomElement span')
+		element.innerText	= quality === 'high' ? 'High' : 'Low'
+		document.querySelector('#renderingProfileDomElement').addEventListener('click', function(){
+			// toggle the quality
+			quality	= quality === 'high' ? 'low' : 'high'
+			// update the screen
+			element.innerText	= quality === 'high' ? 'High' : 'Low'
+			// save the value
+			localStorage.setItem("graphics_quality", quality)
+			// reload the page
+			location.reload()
+		})
+	})()
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		three.js init							//
@@ -194,7 +269,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	document.body.appendChild( renderer.domElement );
 	// setup a scene and camera
 	var scene	= new THREE.Scene();
-	var camera	= new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.01, 1000);
+	var camera	= new THREE.PerspectiveCamera(90, window.innerWidth / window.innerHeight, 0.01, 100);
 	camera.position.z = 3;
 
 	// declare the rendering loop
@@ -223,7 +298,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
 	
-	var lightPool	= new THREEx.LightPool(scene)
+	var lightPool	= new THREEx.LightPool(scene, NaN)
 	Stellar7.lightPool	= lightPool
 
 	//////////////////////////////////////////////////////////////////////////////////
@@ -461,49 +536,44 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	var sounds	= new WebAudiox.GameSounds()
 	Stellar7.sounds	= sounds
 	sounds.lineOut.volume	= 0.2
-	// sounds.add('contactFence', 'sounds/169689__beman87__impact-zap-2.wav')
-	// sounds.add('bulletTank', 'sounds/151022__bubaproducer__laser-shot-silenced.wav')
-	// sounds.add('explosion', 'sounds/211339__rjonesxlr8__explosion-04.wav')
-	// sounds.add('enemyDead', 'sounds/196841__omarstone__hahahaha-cartoon-monster.wav')
-	// //sounds.add('hitByBullet', 'sounds/95078__sandyrb__the-crash.wav')
-	// sounds.add('hitByBullet', 'sounds/211234__rjonesxlr8__explosion-14.wav', function(sound, context, destination){
-	// 	var gain	= context.createGain();
-	// 	gain.gain.value	= 0.3
-	// 	gain.connect(destination)
-	// 	destination	= gain
+	sounds.add('contactFence', 'sounds/169689__beman87__impact-zap-2.wav')
+	sounds.add('bulletTank', 'sounds/151022__bubaproducer__laser-shot-silenced.wav')
+	sounds.add('explosion', 'sounds/211339__rjonesxlr8__explosion-04.wav')
+	sounds.add('enemyDead', 'sounds/196841__omarstone__hahahaha-cartoon-monster.wav')
+	//sounds.add('hitByBullet', 'sounds/95078__sandyrb__the-crash.wav')
+	sounds.add('hitByBullet', 'sounds/211234__rjonesxlr8__explosion-14.wav', function(sound, context, destination){
+		var gain	= context.createGain();
+		gain.gain.value	= 0.3
+		gain.connect(destination)
+		destination	= gain
 		
-	// 	var source	= context.createBufferSource()
-	// 	source.buffer	= sound.buffer
-	// 	source.connect(destination)
-	// 	source.start(0)
-	// 	return source		
-	// })
-	// sounds.add('intertank.collision', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
-	// sounds.add('localtankmap.collision', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
+		var source	= context.createBufferSource()
+		source.buffer	= sound.buffer
+		source.connect(destination)
+		source.start(0)
+		return source		
+	})
+	sounds.add('intertank.collision', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
+	sounds.add('localtankmap.collision', 'sounds/95802__robinhood76__01670-electric-future-blast.wav')
 	sounds.add('gameOver', 'sounds/macsay-gameover.wav')
-	// sounds.add('gameOver2', 'sounds/159408__noirenex__lifelost.wav')
-	// sounds.add('gameStart', 'sounds/macsay-areyouready.wav')
-	// sounds.add('enemyExplode', 'sounds/153445__lukechalaudio__8bit-robot-sound.wav')
-	// sounds.add('soundTrack', 'sounds/rezoner-7DFPS-2013-2.mp3', undefined, function(){
-	// 	sounds.play('soundTrack')
-	// })  
+	sounds.add('gameOver2', 'sounds/159408__noirenex__lifelost.wav')
+	sounds.add('gameStart', 'sounds/macsay-areyouready.wav')
+	sounds.add('enemyExplode', 'sounds/153445__lukechalaudio__8bit-robot-sound.wav')
+	sounds.add('soundTrack', 'sounds/rezoner-7DFPS-2013-2.mp3', undefined, function(){
+		sounds.play('soundTrack')
+	})  
 
 	document.addEventListener('playSound', function(event){
 		var name	= event.detail.name
 		sounds.play(name)
 	})
 
-document.dispatchEvent(new CustomEvent('playSoundAt', {detail:{
-	name	: 'gameOver',
-	position: new THREE.Vector3(10,0,0),
-}}))
-
 	document.addEventListener('playSoundAt', function(event){
 		var name	= event.detail.name
 		var position	= event.detail.position
 		var sound	= sounds.get(name)
 		if( sound.isReady() === false )	return
-	console.log('ddd')
+
 		var context	= sounds.context
 		var destination	= sounds.lineOut.destination
 
@@ -555,7 +625,7 @@ document.dispatchEvent(new CustomEvent('playSoundAt', {detail:{
 
 	document.addEventListener('gameStart', function(){
 		var position	= humanPlayer.model.object3d.position
-		position.y	= 3;
+		position.y	= 5;
 		game.frozen	= true
 		
 		var osdElement	= document.querySelector('#gameStartOsd')
@@ -638,7 +708,7 @@ document.dispatchEvent(new CustomEvent('playSoundAt', {detail:{
 	document.addEventListener('spawnPlayer', function(){
 		var tankBody	= humanPlayer;
 		var position	= tankBody.model.object3d.position
-		position.y	= 3;
+		position.y	= 5;
 		game.frozen	= true
 
 		// cinematic
@@ -738,9 +808,9 @@ document.dispatchEvent(new CustomEvent('playSoundAt', {detail:{
 	composer.addPass( renderPass );
 
 	// add colorPasses to composer	
-	colorPasses.addPassesTo(composer)
+	if( renderingProfile.colorPasses )	colorPasses.addPassesTo(composer)
 	// add badTVPasses to composer	
-	badTVPasses.addPassesTo(composer)
+	if( renderingProfile.badTvPasses )	badTVPasses.addPassesTo(composer)
 
 	composer.passes[composer.passes.length -1 ].renderToScreen	= true;
 
@@ -810,7 +880,7 @@ document.dispatchEvent(new CustomEvent('playSoundAt', {detail:{
 <!-- Share Part -->
 
 <!-- twitter, google plus -->
-<div style='position: absolute; top: 180px; left: 10px;'>
+<div style='position: absolute; top: 130px; left: 10px;'>
 	<!-- twitter -->
 	<a href="https://twitter.com/share" class="twitter-share-button" data-via="jerome_etienne" data-text='Come Play Stellar7! A free 3d tank game where you kill other tanks. So Fun!'>Tweet</a>
 	<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0],p=/^http:/.test(d.location)?'http':'https';if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src=p+'://platform.twitter.com/widgets.js';fjs.parentNode.insertBefore(js,fjs);}}(document, 'script', 'twitter-wjs');</script>
