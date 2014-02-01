@@ -182,7 +182,10 @@ THREEx.Stellar7Game	= function(scene){
 				color		: 'yellow',
 				maxRadius	: 1,
 			}}))
-			Stellar7.sounds.play('contactFence')
+			document.dispatchEvent(new CustomEvent('playSound', { detail: {
+				label	: 'contactFence',
+				position: bullet.model.object3d.position
+			}}));
 			bullet.die()
 		})
 	})
@@ -202,7 +205,11 @@ THREEx.Stellar7Game	= function(scene){
 		}
 
 		tankBody.addEventListener('hitByBullet', function(event){
-			Stellar7.sounds.play('hitByBullet')
+
+			document.dispatchEvent(new CustomEvent('playSound', { detail: {
+				label	: 'hitByBullet',
+				position: event.data.contactPoint,
+			}}))
 
 			event.data.fromTank.score	+= 100
 			document.dispatchEvent(new CustomEvent('emitSphericalBlast', {detail:{
@@ -231,7 +238,10 @@ THREEx.Stellar7Game	= function(scene){
 				bulletBodies.splice(bulletBodies.indexOf(bullet),1)
 			})
 
-			Stellar7.sounds.play('bulletTank')
+			document.dispatchEvent(new CustomEvent('playSound', { detail: {
+				label	: 'bulletTank',
+				position: bullet.model.object3d,
+			}}));
 		})
 	}
 
@@ -279,14 +289,21 @@ THREEx.Stellar7Game	= function(scene){
 		})
 		// tankCollision
 		tankBody.addEventListener('tankCollision', function(event){
-			Stellar7.sounds.play('intertank.collision')		
+			document.dispatchEvent(new CustomEvent('playSound', { detail: {
+				label	: 'intertank.collision',
+				position: event.contactPoint
+			}}));
+	
 			document.dispatchEvent(new CustomEvent('BadTVJamming', { detail: {
 				presetLabel	: 'lightNoScroll'
 			}}));		
 		})
 		// mapCollision
 		tankBody.addEventListener('mapCollision', function(){
-			Stellar7.sounds.play('localtankmap.collision')	
+			document.dispatchEvent(new CustomEvent('playSound', { detail: {
+				label	: 'localtankmap.collision',
+				position: tankBody.model.object3d
+			}}));
 			document.dispatchEvent(new CustomEvent('BadTVJamming', { detail: {
 				presetLabel	: 'lightNoScroll'
 			}}));		
@@ -354,7 +371,11 @@ THREEx.Stellar7Game	= function(scene){
 					maxRadius	: 2,
 					maxAge		: 2
 				}})) 
-				Stellar7.sounds.play('enemyExplode')
+				document.dispatchEvent(new CustomEvent('playSound', { detail: {
+					label	: 'enemyExplode',
+					position: tankBody.model.object3d,
+				}}));
+
 
 				position.y	= srcPosition.y
 				tankBody.resetPosition(map)
@@ -363,7 +384,10 @@ THREEx.Stellar7Game	= function(scene){
 		})
 		// reallyDead
 		tankBody.addEventListener('reallyDead', function(){
-			Stellar7.sounds.play('enemyDead')
+			document.dispatchEvent(new CustomEvent('playSound', { detail: {
+				label	: 'enemyDead',
+				position: tankBody.model.object3d,
+			}}));
 			tankBodies.splice(tankBodies.indexOf(tankBody),1)
 			scene.remove(tankBody.model.object3d)
 		})		

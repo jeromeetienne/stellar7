@@ -64,6 +64,12 @@ Feel free to send pull requests. i love little helpers which are useful :)
   * you can try with ```bower install webaudiox```
 *  v1.0.0 initial release
 
+## Plugins
+* [webaudiox.ConvolverHelper](https://github.com/erichlof/webaudiox.ConvolverHelper)
+is a plugin by @erichlof .
+It provides a simple mean to use convolvers, thus you can simulate being thru an old
+telephone, in a hall, or in a tunnel.
+
 # API for Each Helpers
 
 Here is all the helpers provided and their respective API. the source contains a jsdoc
@@ -92,14 +98,39 @@ WebAudiox.ByteToNormalizedFloat32Array(srcArray, dstArray);
 WebAudiox.ByteToNormalizedFloat32Array(bytesFreq, histogram)
 ```
 
-## webaudiox.analyseraverage.js
+## webaudiox.analyser2canvas.js
 
 You can see the
-[file on github](https://github.com/jeromeetienne/webaudiox/blob/master/lib/webaudiox.analyseraverage.js).
+[file on github](https://github.com/jeromeetienne/webaudiox/blob/master/lib/webaudiox.analyser2canvas.js).
 You can try an usage 
-[example live](http://jeromeetienne.github.io/webaudiox/examples/analyseraverage.html)
+[example live](http://jeromeetienne.github.io/webaudiox/examples/analyser2canvas.html)
 and check its 
-[source](https://github.com/jeromeetienne/webaudiox/blob/master/examples/analyseraverage.html).
+[source](https://github.com/jeromeetienne/webaudiox/blob/master/examples/analyser2canvas.html).
+Sure but what does it do ?
+
+It display various visualisation of the played sound, the one analysed by ```analyser```.
+It display a FFT histogram, a waveform, and a volume. It is there mainly for debug.
+
+First you create the object
+
+```
+var analyser2canvas	= new WebAudiox.Analyser2Canvas(analyser, canvas);
+```
+
+Then every time you want to draw on the canvas do 
+
+```
+analyser2canvas.update()
+```
+
+## webaudiox.analyser2volume.js
+
+You can see the
+[file on github](https://github.com/jeromeetienne/webaudiox/blob/master/lib/webaudiox.analyser2volume.js).
+You can try an usage 
+[example live](http://jeromeetienne.github.io/webaudiox/examples/analyser2volume.html)
+and check its 
+[source](https://github.com/jeromeetienne/webaudiox/blob/master/examples/analyser2volume.html).
 Sure but what does it do ?
 
 It makes an average on a ByteFrequencyData from an analyser node. clear ? :)
@@ -108,8 +139,17 @@ It is often used to detect pulse in some frequency range.
 like detecting pulse in the low frequencies can be a easy beat detector.
 
 ```javascript
-var average	= new WebAudiox.analyserAverage(analyser, width, offset);
-// average is a Number of the computed average
+// create the object
+var analyser2Volume	= new WebAudiox.Analyser2Volume(analyser)
+var rawVolume		= analyser2Volume.rawValue()
+var smoothedVolume	= analyser2Volume.smoothedValue()
+```
+
+It is possible to directly compute the raw volume.
+
+```javascript
+var rawVolume	= new WebAudiox.Analyser2Volume.compute(analyser, width, offset);
+// rawVolume is a Number of the computed average
 ```
 
 width is optional and default to ```analyser.frequencyBinCount```.
@@ -268,39 +308,6 @@ Additionally there is ```WebAudiox.loadBuffer.inProgressCount```.
 it is counter of all the .loadBuffer in progress. 
 it useful to know is all your sounds as been loaded.
 
-## webaudiox.convolver.js
-
-You can see the 
-[file on github](https://github.com/jeromeetienne/webaudiox/blob/master/lib/webaudiox.convolver.js).
-You can try a
-[demo live](http://jeromeetienne.github.io/webaudiox/examples/ConvolverDemo.html)
-and check its 
-[source](https://github.com/jeromeetienne/webaudiox/blob/master/examples/ConvolverDemo.html).
-Sure but what does it do ?
-It is helper to create a convolver.  A convolver takes an audio impulse file and blends it with your
-original sound.  It can be used to create spatial acoustics (like hall-reverb and echo) or complex filter
-effects (like an old telephone, or high-frequency muffler).
-
-To use it, first load a sound with WebAudioX.loadBuffer() in the normal manner, as described above.  
-We will call this the 'source'.  
-
-Next, use the WebAudioX.Convolver() function, which takes the 'AudioContext' as its first parameter and the impulse file 'url' as its second parameter.  Then connect your original 'source' to the convolver and connect the convolver to the lineOut (speakers).  Your original sound source will now be modified by the impulse file.
-
-Looking for free-to-download impulse files?  You will find some very handy ones [here](http://chromium.googlecode.com/svn/trunk/samples/audio/impulse-responses/).
-
-Here is a usage example:
-
-```javascript
-// Create Convolver
-var convolver = new WebAudiox.Convolver(context, 'sounds/telephone.wav');
-// connect sound source to convolver			
-source.connect(convolver);
-// then connect convolver to lineOut(speakers)
-convolver.connect(lineOut.destination);
-// now that everything is hooked up, we can play the sound source
-source.start(0);
-```
-
 ## webaudiox.three.js
 
 You can see the 
@@ -354,6 +361,9 @@ listenerUpdater.update(delta, now)
 Now let's localise a sound source.
 A sound source is localised only if it has a 
 [panner node](https://dvcs.w3.org/hg/audio/raw-file/tip/webaudio/specification.html#PannerNode).
+
+#### if you want a sound to follow a Object3D
+
 So you create a ```PannerObject3DUpdater``` for that 
 
 ```javascript
@@ -371,6 +381,22 @@ listener
 pannerUpdater.update(delta, now)
 ```
 
+#### if you want a sound to be played at a given position
+
+```
+var panner	= context.createPanner()
+var position	= new THREE.Vector3(1,0,0)
+WebAudiox.PannerSetPosition(panner, position)
+```
+
+#### if you want a sound to be played from a THREE.Object3D
+
+```
+var panner	= context.createPanner()
+var object3d	= new THREE.Object3D
+WebAudiox.PannerSetObject3D(panner, object3d)
+```
+
 # Other Examples
 
 here are the various examples: 
@@ -383,6 +409,8 @@ here are the various examples:
 
 
 # TODO
+* http://webaudiodemos.appspot.com/
+* http://webaudioapi.com/
 * port examples from webaudio.js
 * QF-MichaelK: jetienne: http://www.youtube.com/watch?v=Nwuwg_tkHVA it's the rainbow one in the middle...
 * QF-MichaelK: http://www.smartjava.org/content/exploring-html5-web-audio-visualizing-sound
