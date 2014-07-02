@@ -1,0 +1,14 @@
+{
+  "name": "threex.geometricglow",
+  "homepage": "https://github.com/jeromeetienne/threex.geometricglow",
+  "_release": "4a95685a9f",
+  "_resolution": {
+    "type": "branch",
+    "branch": "master",
+    "commit": "4a95685a9f63e85d018d550b020e1d7820548548"
+  },
+  "_source": "git://github.com/jeromeetienne/threex.geometricglow.git",
+  "_target": "*",
+  "_originalSource": "threex.geometricglow",
+  "_direct": true
+}

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<script src='vendor/three.js/build/three.min.js'></script>
+<script src="vendor/three.js/examples/js/postprocessing/EffectComposer.js"></script>
+<script src="vendor/three.js/examples/js/postprocessing/MaskPass.js"></script>
+<script src="vendor/three.js/examples/js/postprocessing/RenderPass.js"></script>
+<script src="vendor/three.js/examples/js/postprocessing/ShaderPass.js"></script>
+<script src="vendor/three.js/examples/js/shaders/CopyShader.js"></script>
+<script src="../threex.coloradjust.js"></script>
+<div style='position:absolute; right: 0px; color: white; background: grey; padding: 10px; border-bottom-left-radius: 20px 20px; opacity: 0.5;'>
+	Transition Delay<br/>
+	<input type="range" min="0" max="3" style='background: grey;' step='any' onchange='colorPasses.delay=this.value;'>
+	<div>
+		<label>Random Transition : 
+			<input type='checkbox'  onChange='switchRandom();'>
+		</label>
+	</div>
+</div>
+<div style='width: 100%; text-align: center; position:absolute; bottom: 0px; color: grey; font-size:3em;'>
+	Current Color Cube: <span id='currentValue'>n/a</space>
+</div>
+<div style='position:absolute; color: grey;'>
+	<div style='font-size: 2em;'>Predefined Color Cubes</div>
+	<button onclick='switchValue(this.innerText);'>default</button><br/>
+	<button onclick='switchValue(this.innerText);'>monochrome</button><br/>
+	<button onclick='switchValue(this.innerText);'>sepia</button><br/>
+	<button onclick='switchValue(this.innerText);'>saturated</button><br/>
+	<button onclick='switchValue(this.innerText);'>posterize</button><br/>
+	<button onclick='switchValue(this.innerText);'>inverse</button><br/>
+	<button onclick='switchValue(this.innerText);'>color-negative</button><br/>
+	<button onclick='switchValue(this.innerText);'>high-contrast-bw</button><br/>
+	<button onclick='switchValue(this.innerText);'>funky-contrast</button><br/>
+	<button onclick='switchValue(this.innerText);'>nightvision</button><br/>
+	<button onclick='switchValue(this.innerText);'>thermal</button><br/>
+	<button onclick='switchValue(this.innerText);'>black-white</button><br/>
+	<button onclick='switchValue(this.innerText);'>hue-plus-60</button><br/>
+	<button onclick='switchValue(this.innerText);'>hue-plus-180</button><br/>
+	<button onclick='switchValue(this.innerText);'>hue-minus-60</button><br/>
+	<button onclick='switchValue(this.innerText);'>red-to-cyan</button><br/>
+	<button onclick='switchValue(this.innerText);'>blues</button><br/>
+	<button onclick='switchValue(this.innerText);'>infrared</button><br/>
+	<button onclick='switchValue(this.innerText);'>radioactive</button><br/>
+	<button onclick='switchValue(this.innerText);'>goolgey</button><br/>
+	<button onclick='switchValue(this.innerText);'>bgy</button><br/>
+</div>
+<body style='margin: 0px; background-color: #000000; overflow: hidden;'><script>
+	var renderer	= new THREE.WebGLRenderer();
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	document.body.appendChild( renderer.domElement );
+
+	var onRenderFcts= [];
+	var scene	= new THREE.Scene();
+	var camera	= new THREE.OrthographicCamera(window.innerWidth / -2, window.innerWidth / 2,  window.innerHeight / 2, window.innerHeight / -2, -100, 100);
+				
+	//////////////////////////////////////////////////////////////////////////////////
+	//		create the video texture					//
+	//////////////////////////////////////////////////////////////////////////////////
+
+	var video	= document.createElement('video');
+	video.width	= 320
+	video.height	= 240
+	video.autoplay	= true
+	video.loop	= true
+	video.volume	= 0
+	video.src	= 'videos/sintel.ogv';
+	var texture	= new THREE.Texture( video );
+	onRenderFcts.push(function(){
+		if( video.readyState !== video.HAVE_ENOUGH_DATA )	return;
+		texture.needsUpdate	= true;		
+	})
+
+	// trick to work around bugs in the video loop
+	onRenderFcts.push(function(delta, now){
+		if( video.currentTime === video.duration ){
+			video.src = video.src	
+		}
+	})
+	
+	// to pause the video on click
+	document.querySelector('canvas').addEventListener('click', function(event){
+		console.log('Video paused.')
+		if( video.paused ){
+			video.play()	
+		}else{
+			video.pause()
+		}
+	}, false)
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		Create the screen THREE.Plane to receive video texture		//
+	//////////////////////////////////////////////////////////////////////////////////	
+
+	var geometry	= new THREE.PlaneGeometry( window.innerWidth, window.innerHeight )
+	var material	= new THREE.MeshBasicMaterial();
+	material.map	= texture
+	// material.color.set('white')
+	var mesh	= new THREE.Mesh(geometry, material)
+	scene.add(mesh)
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		colorPasses							//
+	//////////////////////////////////////////////////////////////////////////////////
+
+	var colorPasses	= new THREEx.ColorAdjust.Passes();
+	onRenderFcts.push(function(delta, now){
+		colorPasses.update(delta, now)
+	});
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		EffectComposer							//
+	//////////////////////////////////////////////////////////////////////////////////
+
+	var composer	= new THREE.EffectComposer(renderer);
+	var renderPass	= new THREE.RenderPass( scene, camera );
+	composer.addPass( renderPass );
+
+	// add colorPasses to composer	
+	colorPasses.addPassesTo(composer)
+
+	composer.passes[composer.passes.length -1 ].renderToScreen	= true;
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		for UI								//
+	//////////////////////////////////////////////////////////////////////////////////
+	
+	function switchValue(value){
+		// set actual color cube
+		colorPasses.setColorCube(value)
+		// update feedback value in the DOM
+		document.querySelector('#currentValue').innerText	= value;
+		// update browser location for bookmarkability
+		location.hash	= value
+	}
+	// switch to the value from the browser location
+	switchValue(location.hash.substr(1) || 'default')
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		for random transition						//
+	//////////////////////////////////////////////////////////////////////////////////
+
+	var randomEnabled	= false
+	function switchRandom(){
+		randomEnabled	= randomEnabled === false ? true : false;
+	}
+	
+	setInterval(function(){
+		if( randomEnabled === false )	return
+		var values	= Object.keys(THREEx.ColorAdjust.colorCubes)
+		var index	= Math.floor(Math.random()*values.length)
+		switchValue(values[index])
+	}, 2*1000)
+	
+	//////////////////////////////////////////////////////////////////////////////////
+	//		render the scene						//
+	//////////////////////////////////////////////////////////////////////////////////
+	onRenderFcts.push(function(delta, now){
+		// disable rendering directly thru renderer 
+		// renderer.render( scene, camera )
+		
+		// render thru composer
+		composer.render(delta)
+	})
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		loop runner							//
+	//////////////////////////////////////////////////////////////////////////////////
+	var lastTimeMsec= null
+	requestAnimationFrame(function animate(nowMsec){
+		// keep looping
+		requestAnimationFrame( animate );
+		// measure time
+		lastTimeMsec	= lastTimeMsec || nowMsec-1000/60
+		var deltaMsec	= Math.min(200, nowMsec - lastTimeMsec)
+		lastTimeMsec	= nowMsec
+		// call each update function
+		onRenderFcts.forEach(function(onRenderFct){
+			onRenderFct(deltaMsec/1000, nowMsec/1000)
+		})
+	})
+</script></body>

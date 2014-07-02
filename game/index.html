@@ -512,9 +512,19 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	//		put camera behind						//
 	//////////////////////////////////////////////////////////////////////////////////
 	
+if( false ){
 	humanPlayer.model.cannonMesh.add(camera)
 	camera.position.set(0,0.3,-0.9)
 	camera.lookAt(new THREE.Vector3(0,0,2))
+}else{
+	onRenderFcts.push(function(){
+		var playerPosition	= humanPlayer.model.object3d.position
+		var cameraPosition	= camera.position
+		var delta	= new THREE.Vector3(0,4,-3).setLength(2)
+		cameraPosition.addVectors(playerPosition, delta)
+		camera.lookAt(playerPosition)
+	})
+}
 
 
 	//////////////////////////////////////////////////////////////////////////////////
@@ -563,13 +573,14 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	gameSounds.createSound('hitByBullet', {
 		volume	: 0.3	
 	}).load('sounds/211234__rjonesxlr8__explosion-14.wav')
-	gameSounds.createSound('gameStart')		.load('sounds/macsay-areyouready.wav')
+	gameSounds.createSound('gameStart')	.load('sounds/macsay-areyouready.wav')
+	gameSounds.createSound('gameOver')	.load('sounds/macsay-gameover.wav')
+	gameSounds.createSound('gameOver2')	.load('sounds/159408__noirenex__lifelost.wav')
+	gameSounds.createSound('enemyDead')	.load('sounds/196841__omarstone__hahahaha-cartoon-monster.wav')
+	gameSounds.createSound('enemyExplode')	.load('sounds/153445__lukechalaudio__8bit-robot-sound.wav')
+
 	gameSounds.createSound('intertank.collision')	.load('sounds/95802__robinhood76__01670-electric-future-blast.wav')
 	gameSounds.createSound('localtankmap.collision').load('sounds/95802__robinhood76__01670-electric-future-blast.wav')
-	gameSounds.createSound('gameOver')		.load('sounds/macsay-gameover.wav')
-	gameSounds.createSound('gameOver2')		.load('sounds/159408__noirenex__lifelost.wav')
-	gameSounds.createSound('enemyDead')		.load('sounds/196841__omarstone__hahahaha-cartoon-monster.wav')
-	gameSounds.createSound('enemyExplode')		.load('sounds/153445__lukechalaudio__8bit-robot-sound.wav')
 		
 	// document.dispatchEvent(new CustomEvent('playSound', { detail: {
 	// 	label	: 'gameStart',
