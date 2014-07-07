@@ -39,7 +39,6 @@ THREEx.Stellar7MiniMap	= function(game){
 	onRenderFcts.push(function(delta, now){
 		var localPlayer		= game.localPlayer
 		var localPosition	= localPlayer.model.object3d.position
-		var localRotationY	= localPlayer.model.object3d.rotation.y
 		var mapRadius		= game.map.radius
 		game.tankBodies.forEach(function(tankBody){
 			var position	= tankBody.model.object3d.position.clone()
@@ -55,7 +54,6 @@ THREEx.Stellar7MiniMap	= function(game){
 				context.fillStyle	= "rgba(255,0,0,1.0)"			
 			}
 			context.translate(canvas.width/2, canvas.height/2)
-			context.rotate(localRotationY);
 			context.translate(canvasX, canvasY)			
 			context.rotate(-rotation.y);
 			context.fillRect(-2,-4, 4, 8)
@@ -71,7 +69,6 @@ THREEx.Stellar7MiniMap	= function(game){
 	onRenderFcts.push(function(delta, now){
 		var localPlayer		= game.localPlayer
 		var localPosition	= localPlayer.model.object3d.position
-		var localRotationY	= localPlayer.model.object3d.rotation.y
 		var mapRadius		= game.map.radius
 		game.bulletBodies.forEach(function(bulletBody){
 			var position	= bulletBody.model.object3d.position.clone()
@@ -85,7 +82,6 @@ THREEx.Stellar7MiniMap	= function(game){
 			context.save()
 			context.fillStyle	= "rgba(255,255,0,1.0)"
 			context.translate(canvas.width/2, canvas.height/2)			
-			context.rotate(localRotationY);
 			context.translate(canvasX, canvasY)			
 			context.rotate(-rotation.y);
 			context.fillRect(-1,-2, 2, 4)

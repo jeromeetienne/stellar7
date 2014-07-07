@@ -116,8 +116,7 @@ THREEx.Stellar7TankBody	= function(){
 		})
 
 		// init cannonControls
-		var domElement		= Stellar7.renderer.domElement
-		domElement	= document.body
+		var domElement		= document.body
 		var camera		= Stellar7.camera
 		var groundMesh		= Stellar7.game.map.ground
 		var cannonControls	= new THREEx.Stellar7TankCannonControls(tankControls, domElement, camera, groundMesh)

@@ -384,6 +384,9 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 		;(function(){
 			var tankBody	= new THREEx.Stellar7TankBody()
 
+			tankBody.maxEnergy	= 250
+			tankBody.energy		= tankBody.maxEnergy
+
 			tankBody.lives	= 9999	// infinite lives
 			tankBody.model.setFaceColor('darkred')
 			tankBody.model.setLineColor('pink')
