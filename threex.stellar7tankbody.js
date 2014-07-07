@@ -115,6 +115,16 @@ THREEx.Stellar7TankBody	= function(){
 			controls.update(delta, now)
 		})
 
+		// init cannonControls
+		var domElement		= Stellar7.renderer.domElement
+		domElement	= document.body
+		var camera		= Stellar7.camera
+		var groundMesh		= Stellar7.game.map.ground
+		var cannonControls	= new THREEx.Stellar7TankCannonControls(tankControls, domElement, camera, groundMesh)
+		onRenderFcts.push(function(delta, now){
+			cannonControls.update()
+		})
+
 		return this
 	}
 	this.setControlsVirtualJoystick	= function(){
@@ -138,7 +148,7 @@ THREEx.Stellar7TankBody	= function(){
 	//		comment								//
 	//////////////////////////////////////////////////////////////////////////////////
 
-	this.onMapCollision	= function(){
+	this.onMapCollision	= function(event){
 		this.dispatchEvent({ type: 'mapCollision', data: event })
 	}
 	this.onTankCollision	= function(event){

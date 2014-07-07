@@ -127,6 +127,7 @@ THREEx.Stellar7Map	= function(){
  	var mesh	= new THREE.Mesh(geometry, material)
 	mesh.lookAt(new THREE.Vector3(0,1,0))
 	object3d.add(mesh)
+	this.ground	= mesh
 	
 	// to add sub layer to the ground
 	for(var i = 0; i < 0; i ++){

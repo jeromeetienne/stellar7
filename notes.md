@@ -1,3 +1,35 @@
+Refactoring
+===========
+* Trying to copy http://tanks.moka.co/ controls
+  * nice camera controls
+  * nice player controls
+  * nice way to display the energy of the tanks
+    - currently not even visible for enemy
+    - visible for player if you read it below the score
+* maybe doing a multiplayer, linked with twitter
+
+### Description of the player controls
+* if up arrow is pressed and not going up, turn toward up of the screen
+  - and so on for up/down/left/right arrows
+* the cannon is pointed toward the mouse
+  - the mouse position is projected on the ground
+  - the cannon of the player's tank is pointing toward this position
+
+#### About coding the cannon controls with the mouse
+* threex.stellar7tankcannoncontrols.js
+* needs the camera and the ground plane to get the mouse position
+* q. do i really need to have those 2 levels controls ?
+  - dont forget you got the bots tanks and the controls for mobile too
+
+### Description of the camera controls
+* the camera is a fixed offset relative to the player position
+* additionaly there is a slight delta based on the current mouse position
+  - so the camera is between the player itself and the mouse position
+* ```cameraBasePosition = playerPosition + (mousePosition-playerPosition)/4```
+* ```cameraPosition = cameraBasePosition - new THREE.Vector3(0,4,4)```
+
+=================================================================
+
 TODO
 ====
 * put 1 enemy only

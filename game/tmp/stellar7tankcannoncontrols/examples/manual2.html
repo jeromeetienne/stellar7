@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<script src='vendor/three.js/build/three.js'></script>
+<body style='margin: 0px; background-color: #bbbbbb; overflow: hidden;'><script>
+	var renderer	= new THREE.WebGLRenderer();
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	document.body.appendChild( renderer.domElement );
+
+	var onRenderFcts= [];
+	var scene	= new THREE.Scene();
+	var camera	= new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.01, 1000);
+	camera.position.z = 3;
+	camera.position.y = 1;
+
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		set 3 point lighting						//
+	//////////////////////////////////////////////////////////////////////////////////
+
+	;(function(){
+		// add a ambient light
+		var light	= new THREE.AmbientLight( 0x020202 )
+		scene.add( light )
+		// add a light in front
+		var light	= new THREE.DirectionalLight('white', 1)
+		light.position.set(0.5, 0.5, 2)
+		scene.add( light )
+		// add a light behind
+		var light	= new THREE.DirectionalLight('white', 0.75)
+		light.position.set(-0.5, -0.5, -2)
+		scene.add( light )		
+	})()	
+
+
+
+	var geometry	= new THREE.CubeGeometry( 1,1,1);
+	var material	= new THREE.MeshNormalMaterial();
+	var impact	= new THREE.Mesh( geometry, material );
+	impact.scale.multiplyScalar(0.1)
+	scene.add( impact );
+	impact.visible	= false
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		add an object and make it move					//
+	//////////////////////////////////////////////////////////////////////////////////	
+	var geometry	= new THREE.PlaneGeometry( 10, 10);
+	var material	= new THREE.MeshPhongMaterial();
+	var ground	= new THREE.Mesh( geometry, material );
+	ground.lookAt(new THREE.Vector3(0,1,0))
+	scene.add( ground );
+	
+
+	/**
+	 * it requires
+	 * - renderer for the domElement
+	 * - camera
+	 * - ground mesh
+	 */
+
+        var projector	= new THREE.Projector();
+	var domElement	= renderer.domElement
+	var raycaster	= new THREE.Raycaster();
+	domElement.addEventListener('mousemove', function(event){
+		var clientRect	= domElement.getBoundingClientRect();
+		var mouseX	= (event.clientX - clientRect.left) / clientRect.width;
+		var mouseY	= (event.clientY - clientRect.top) / clientRect.height;
+		var mouseVector = new THREE.Vector3();
+		mouseVector.set( mouseX*2 - 1, -mouseY* 2 + 1, 0.5 );
+		projector.unprojectVector( mouseVector, camera );
+
+		raycaster.set( camera.position, mouseVector.sub( camera.position ).normalize() );
+
+		var intersects  = raycaster.intersectObjects( [ground] );
+		if( intersects.length === 0 ){
+			impact.visible	= false
+		}else{
+			impact.visible	= true
+			impact.position.copy(intersects[0].point)
+		}
+	})
+
+
+
+	//////////////////////////////////////////////////////////////////////////////////
+	//		render the scene						//
+	//////////////////////////////////////////////////////////////////////////////////
+	onRenderFcts.push(function(){
+		renderer.render( scene, camera );		
+	})
+	
+	//////////////////////////////////////////////////////////////////////////////////
+	//		loop runner							//
+	//////////////////////////////////////////////////////////////////////////////////
+	var lastTimeMsec= null
+	requestAnimationFrame(function animate(nowMsec){
+		// keep looping
+		requestAnimationFrame( animate );
+		// measure time
+		lastTimeMsec	= lastTimeMsec || nowMsec-1000/60
+		var deltaMsec	= Math.min(200, nowMsec - lastTimeMsec)
+		lastTimeMsec	= nowMsec
+		// call each update function
+		onRenderFcts.forEach(function(onRenderFct){
+			onRenderFct(deltaMsec/1000, nowMsec/1000)
+		})
+	})
+</script></body>

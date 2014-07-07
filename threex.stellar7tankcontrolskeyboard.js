@@ -7,7 +7,6 @@ THREEx.Stellar7TankControlsKeyboard	= function(keyboard, tankControls){
 
 	// add EventDispatcher in this object
 	THREE.EventDispatcher.prototype.apply(this)
-
 	
 	this.update	= function(delta, now){
 		var inputs	= tankControls.inputs

@@ -8,7 +8,7 @@ THREEx.Stellar7TankModel	= function(){
 	geometry.applyMatrix(matrix)
 	var material	= new THREE.MeshNormalMaterial();
 var material	= new THREEx.SolidWireframeMaterial(geometry)
-material.uniforms.lineWidth.value	= 10
+material.uniforms.lineWidth.value	= 1
 material.uniforms.lineColor.value.set('cyan')
 material.uniforms.faceColor.value.set('black')
 
@@ -20,7 +20,7 @@ material.uniforms.faceColor.value.set('black')
 	var geometry	= new THREE.CubeGeometry( 0.3, 0.15, 0.3);
 	var material	= new THREE.MeshNormalMaterial();
 var material	= new THREEx.SolidWireframeMaterial(geometry)
-material.uniforms.lineWidth.value	= 5
+material.uniforms.lineWidth.value	= 1
 material.uniforms.lineColor.value.set('cyan')
 material.uniforms.faceColor.value.set('black')
 
@@ -33,7 +33,7 @@ material.uniforms.faceColor.value.set('black')
 	var geometry	= new THREE.CylinderGeometry( 0.05, 0.05, 0.3 );
 	var material	= new THREE.MeshNormalMaterial();
 var material	= new THREEx.SolidWireframeMaterial(geometry)
-material.uniforms.lineWidth.value	= 5
+material.uniforms.lineWidth.value	= 1
 material.uniforms.lineColor.value.set('cyan')
 material.uniforms.faceColor.value.set('black')
 

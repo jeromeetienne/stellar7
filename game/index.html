@@ -19,7 +19,8 @@
 <script src='../threex.stellar7tankmodel.js'></script>
 <script src='../threex.stellar7tankcontrols.js'></script>
 <script src='../threex.stellar7tankcontrolsvirtualjoystick.js'></script>
-<script src='../threex.stellar7tankcontrolskeyboard.js'></script>
+<script src='../threex.stellar7tankcontrolskeyboardENWS.js'></script>
+<script src='tmp/stellar7tankcannoncontrols/threex.stellar7tankcannoncontrols.js'></script>
 <script src='../threex.stellar7tankcontrolsqueue.js'></script>
 <script src='../threex.stellar7tankbody.js'></script>
 <script src='../threex.stellar7bulletmodel.js'></script>
@@ -267,7 +268,6 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	var renderer	= new THREE.WebGLRenderer();
 
 	renderer.devicePixelRatio	= renderingProfile.devicePixelRatio
-
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	renderer.domElement.style.zIndex	= -1
 	document.body.appendChild( renderer.domElement );
@@ -283,6 +283,10 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 	var winResize	= new THREEx.WindowResize(renderer, camera)
 
 	window.Stellar7	= {}
+
+	Stellar7.renderer	= renderer
+	Stellar7.camera		= camera
+	Stellar7.scene		= scene
 
 	//////////////////////////////////////////////////////////////////////////////////
 	//		default 3 points lightning					//
@@ -331,7 +335,7 @@ require([ 'bower_components/threex.keyboardstate/package.require.js'
 
 	tankBody.model.setFaceColor('black')
 	tankBody.model.setLineColor('cyan')
-	tankBody.model.setLineWidth(10)
+	tankBody.model.setLineWidth(4)
 
 	humanPlayer		= tankBody
 	Stellar7.humanPlayer	= tankBody
@@ -520,7 +524,7 @@ if( false ){
 	onRenderFcts.push(function(){
 		var playerPosition	= humanPlayer.model.object3d.position
 		var cameraPosition	= camera.position
-		var delta	= new THREE.Vector3(0,4,-3).setLength(2)
+		var delta	= new THREE.Vector3(0,4,-3).setLength(3)
 		cameraPosition.addVectors(playerPosition, delta)
 		camera.lookAt(playerPosition)
 	})

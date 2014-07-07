@@ -10,7 +10,10 @@ THREEx.Stellar7TankControls	= function(tank){
 			onRenderFct(delta, now)
 		})
 	}
-	
+
+	// export tank
+	this.tank	= tank
+
 	//////////////////////////////////////////////////////////////////////////////////
 	//		controls							//
 	//////////////////////////////////////////////////////////////////////////////////
@@ -50,12 +53,12 @@ THREEx.Stellar7TankControls	= function(tank){
 	}
 	this.inputs	= inputs
 	onRenderFcts.push(function(delta, now){
-		if( inputs.turnRight )		turnSpeed	= -Math.PI/4
-		else if( inputs.turnLeft )	turnSpeed	= +Math.PI/4
+		if( inputs.turnRight )		turnSpeed	= -Math.PI/4*4
+		else if( inputs.turnLeft )	turnSpeed	= +Math.PI/4*4
 		else				turnSpeed	= 0
 
-		if( inputs.moveAhead )		moveSpeed	= +2
-		else if( inputs.moveBack )	moveSpeed	= -2
+		if( inputs.moveAhead )		moveSpeed	= +2*2
+		else if( inputs.moveBack )	moveSpeed	= -2*2
 		else				moveSpeed	=  0
 
 		if( inputs.gunRight )		gunSpeed	= -Math.PI/4
